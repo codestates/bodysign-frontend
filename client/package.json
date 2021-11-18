@@ -1,5 +1,5 @@
 {
-  "name": "trainers",
+  "name": "client",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -8,16 +8,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.4.17",
+    "graphql": "^15.7.2",
     "next": "12.0.4",
     "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "tailwindcss": "^2.2.19"
+    "react-dom": "17.0.2"
   },
   "devDependencies": {
     "@types/node": "16.11.7",
     "@types/react": "17.0.35",
+    "autoprefixer": "^10.4.0",
     "eslint": "7.32.0",
     "eslint-config-next": "12.0.4",
+    "postcss": "^8.3.11",
+    "tailwindcss": "^2.2.19",
     "typescript": "4.4.4"
   }
 }
