@@ -10,7 +10,7 @@ const Home: NextPage = () => {
 			</Head>
 
 			<main className="flex justify-center">
-				<div className="max-w-[800px] border p-2 w-full">Home</div>
+				<div className="max-w-[800px] border p-2 w-full">Home..</div>
 			</main>
 
 			<footer></footer>
