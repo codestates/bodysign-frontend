@@ -1,5 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import Main from '../components/member/main'
 
 const Home: NextPage = () => {
 	return (
@@ -12,6 +13,8 @@ const Home: NextPage = () => {
 			<main className="flex justify-center">
 				<div className="max-w-[800px] border p-2 w-full">Home</div>
 			</main>
+
+			<Main />
 
 			<footer></footer>
 		</div>
