@@ -14,8 +14,6 @@ const Home: NextPage = () => {
 				<div className="max-w-[800px] border p-2 w-full">Home</div>
 			</main>
 
-			<Main />
-
 			<footer></footer>
 		</div>
 	)
