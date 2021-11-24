@@ -1,11 +1,12 @@
 import { NextPage } from 'next'
+import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import Layout from '../components/Layout'
-import dummyData from '../../dummydata.json'
-import { modalVar } from '../graphql/cache'
+import session_dummy from '../../session_dummy.json'
+import { modalVar } from '../graphql/vars'
 import { useReactiveVar } from '@apollo/client'
 
-interface NameTime {
+interface MemberSession {
 	id: string
 	name: string
 	gender: string
@@ -14,10 +15,10 @@ interface NameTime {
 
 const Session: NextPage = () => {
 	const [category, setCategory] = useState('일정')
-	const overlay = useReactiveVar(modalVar)
+	const modal = useReactiveVar(modalVar)
 
-	const sessionObject: Record<string, NameTime[]> = {}
-	dummyData
+	const sessionObject: Record<string, MemberSession[]> = {}
+	session_dummy
 		.sort((a, b) => {
 			const aDate = new Date(`${a.date} ${a.time}`).getTime()
 			const bDate = new Date(`${b.date} ${b.time}`).getTime()
@@ -34,6 +35,10 @@ const Session: NextPage = () => {
 				time: el.time
 			})
 		})
+
+	// 카테고리 필터 및 정렬
+	// 수업 완료 API
+	// 수업 삭제 API
 
 	useEffect(() => {
 		if (category === '피드백') {
@@ -62,19 +67,21 @@ const Session: NextPage = () => {
 							</div>
 						</span>
 						<span className="flex">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								className="w-7 h-7"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={1.5}
-									d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-								/>
-							</svg>
+							<Link href="/session/add-session">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									className="w-7 h-7"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor">
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={1.5}
+										d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+									/>
+								</svg>
+							</Link>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="mx-2 w-7 h-7"
@@ -91,64 +98,62 @@ const Session: NextPage = () => {
 						</span>
 					</div>
 
-					<div>
-						{Object.entries(sessionObject).map((entry, idx) => {
-							return (
-								<React.Fragment key={idx}>
-									<div
-										className="mt-4"
-										onClick={() => {
-											modalVar(true)
-										}}>
-										<div className="text-[16px]">{entry[0]}</div>
-										{entry[1].reverse().map((session, idx2) => {
-											return (
-												<React.Fragment key={idx2}>
-													<div className="text-[16px]">
-														<div className="flex justify-between px-3 py-3 mt-1 border">
-															<div className="flex">
-																<svg
-																	xmlns="http://www.w3.org/2000/svg"
-																	className={`w-6 h-6 ${
-																		session.gender === 'male'
-																			? 'text-blue-300'
-																			: 'text-pink-300'
-																	}`}
-																	fill="none"
-																	viewBox="0 0 24 24"
-																	stroke="currentColor">
-																	<path
-																		strokeLinecap="round"
-																		strokeLinejoin="round"
-																		strokeWidth={1.5}
-																		d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-																	/>
-																</svg>
-																<div className="ml-1">
-																	{session.name} 회원님
-																</div>
+					{Object.entries(sessionObject).map((entry, idx) => {
+						return (
+							<React.Fragment key={idx}>
+								<div
+									className="mt-4"
+									onClick={() => {
+										modalVar(true)
+									}}>
+									<div className="text-[16px]">{entry[0]}</div>
+									{entry[1].reverse().map((session, idx2) => {
+										return (
+											<React.Fragment key={idx2}>
+												<div className="text-[16px] mt-1">
+													<div className="flex justify-between px-3 py-3 border">
+														<div className="flex">
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																className={`w-6 h-6 ${
+																	session.gender === 'male'
+																		? 'text-blue-300'
+																		: 'text-pink-300'
+																}`}
+																fill="none"
+																viewBox="0 0 24 24"
+																stroke="currentColor">
+																<path
+																	strokeLinecap="round"
+																	strokeLinejoin="round"
+																	strokeWidth={1.5}
+																	d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+																/>
+															</svg>
+															<div className="ml-1">
+																{session.name} 회원님
 															</div>
-															<div className="ml-3">{session.time}</div>
 														</div>
+														<div className="ml-3">{session.time}</div>
 													</div>
-												</React.Fragment>
-											)
-										})}
-									</div>
-								</React.Fragment>
-							)
-						})}
-					</div>
+												</div>
+											</React.Fragment>
+										)
+									})}
+								</div>
+							</React.Fragment>
+						)
+					})}
 				</div>
 
-				{overlay ? (
+				{modal ? (
 					<div className="fixed max-w-[450px] w-full bottom-0">
 						<div
 							className="fixed inset-0 z-[-1] bg-black opacity-20"
 							onClick={() => modalVar(false)}></div>
 						<div className="bg-white flex z-[50] h-[200px] flex-col justify-center">
 							<div className="py-3 text-center text-[20px]">
-								수업을 완료하였습니다.
+								수업을 완료하였습니까?
 							</div>
 							<div className="max-w-[450px] self-end mt-4">
 								<button
