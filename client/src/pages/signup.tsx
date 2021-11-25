@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../components/Layout'
 
-interface IFormInput {
+interface FormInput {
 	email: string
 	password: string
 	name: string
@@ -24,10 +24,10 @@ const Signup: NextPage = () => {
 		register,
 		formState: { errors },
 		handleSubmit
-	} = useForm<IFormInput>()
-	const onSubmit: SubmitHandler<IFormInput> = data => {
+	} = useForm<FormInput>()
+	const onSubmit: SubmitHandler<FormInput> = data => {
 		let test = { ...data, ...form }
-		console.log(test)
+		// 회원가입 API
 	}
 
 	return (
