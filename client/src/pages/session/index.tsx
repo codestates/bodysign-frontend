@@ -1,9 +1,9 @@
 import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import Layout from '../components/Layout'
-import session_dummy from '../../session_dummy.json'
-import { modalVar } from '../graphql/vars'
+import Layout from '../../components/Layout'
+import session_dummy from '../../../session_dummy.json'
+import { modalVar } from '../../graphql/vars'
 import { useReactiveVar } from '@apollo/client'
 
 interface MemberSession {
