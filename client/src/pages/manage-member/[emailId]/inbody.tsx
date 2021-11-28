@@ -70,7 +70,7 @@ const Inbody: NextPage = () => {
 						<Link href="/manage-member/emailId/info">
 							<span className="ml-0">회원정보</span>
 						</Link>
-						<Link href="/manage-member/emailId/session">
+						<Link href="/manage-member/emailId/sessions">
 							<span className="ml-2">수업기록</span>
 						</Link>
 						<Link href="/manage-member/emailId/inbody">

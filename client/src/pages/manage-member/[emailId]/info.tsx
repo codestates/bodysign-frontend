@@ -96,14 +96,14 @@ const Info: NextPage = () => {
 					</div>
 
 					<div className="flex justify-between pr-3 mt-4">
-						<span className="pb-1 ml-0 border-b border-black">
+						<span className="pb-1 ml-0 border-b border-black cursor-pointer">
 							회원정보
 						</span>
-						<Link href="/manage-member/emailId/session">
-							<span className="ml-2">수업기록</span>
+						<Link href="/manage-member/emailId/sessions">
+							<span className="ml-2 cursor-pointer">수업기록</span>
 						</Link>
 						<Link href="/manage-member/emailId/inbody">
-							<span className="ml-2">인바디</span>
+							<span className="ml-2 cursor-pointer">인바디</span>
 						</Link>
 					</div>
 
@@ -207,7 +207,7 @@ const Info: NextPage = () => {
 						</div>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							className="self-center w-6 h-6 mt-4 text-gray-500"
+							className="self-center w-6 h-6 mt-4 text-gray-500 cursor-pointer"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke="currentColor"

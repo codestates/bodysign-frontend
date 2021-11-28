@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../components/Layout'
 import dummydata from '../../../dummydata.json'
-import { modalVar } from '../../graphql/vars'
+import { deleteStateVar, modalVar } from '../../graphql/vars'
 import { useReactiveVar } from '@apollo/client'
 
 interface Member {
@@ -27,9 +27,9 @@ interface FormInput {
 const ManageMember: NextPage = () => {
 	const [category, setCategory] = useState('관리')
 	const [checkModal, setCheckModal] = useState('addmember')
-	const [check, setCheck] = useState(false)
 	const [checkList, setCheckList] = useState([])
 	const modal = useReactiveVar(modalVar)
+	const deleteState = useReactiveVar(deleteStateVar)
 
 	const {
 		register,
@@ -83,7 +83,7 @@ const ManageMember: NextPage = () => {
 							</div>
 						</span>
 						<span className="flex">
-							{!check ? (
+							{!deleteState ? (
 								<>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +118,7 @@ const ManageMember: NextPage = () => {
 										fill="none"
 										viewBox="0 0 24 24"
 										stroke="currentColor"
-										onClick={() => setCheck(true)}>
+										onClick={() => deleteStateVar(true)}>
 										<path
 											strokeLinecap="round"
 											strokeLinejoin="round"
@@ -136,7 +136,7 @@ const ManageMember: NextPage = () => {
 									stroke="currentColor"
 									onClick={() => {
 										// 3. 회원 삭제 API
-										setCheck(false)
+										deleteStateVar(false)
 									}}>
 									<path
 										strokeLinecap="round"
@@ -186,7 +186,7 @@ const ManageMember: NextPage = () => {
 													className="text-[16px] mt-1"
 													data-id={member.id}
 													onClick={
-														!check
+														!deleteState
 															? undefined
 															: e => {
 																	console.log(e.target)

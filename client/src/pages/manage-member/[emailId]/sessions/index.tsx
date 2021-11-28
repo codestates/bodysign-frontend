@@ -2,9 +2,9 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import React from 'react'
 import Layout from '../../../../components/Layout'
-import session_dummy from '../../../../../dummydata.json'
+import dummydata from '../../../../../dummydata.json'
 
-const Session: NextPage = () => {
+const Sessions: NextPage = () => {
 	const member_dummy = {
 		id: '1',
 		email: 'jsmsumin1234@naver.com',
@@ -57,32 +57,37 @@ const Session: NextPage = () => {
 
 					<div className="flex justify-between pr-3 mt-4">
 						<Link href="/manage-member/emailId/info">
-							<span className="ml-0">회원정보</span>
+							<span className="ml-0 cursor-pointer">회원정보</span>
 						</Link>
-						<Link href="/manage-member/emailId/session">
-							<span className="pb-1 ml-2 border-b border-black ">
+						<Link href="/manage-member/emailId/sessions">
+							<span className="pb-1 ml-2 border-b border-black cursor-pointer">
 								수업기록
 							</span>
 						</Link>
 						<Link href="/manage-member/emailId/inbody">
-							<span className="ml-2">인바디</span>
+							<span className="ml-2 cursor-pointer">인바디</span>
 						</Link>
 					</div>
 
 					<div className="flex flex-col mt-4">
-						{session_dummy.map(session => {
+						{dummydata.map(session => {
 							return (
 								<React.Fragment key={session.id}>
-									<div className="flex px-3 py-3 mt-1 border first:mt-0 text-[16px] justify-around items-center relative">
-										<span>{session.date}</span>
-										<span>{week[new Date(session.date).getDay()]}</span>
-										<span>{session.time}</span>
-										{session.feedback ? (
-											<span className="w-3 h-3 bg-green-300 rounded-full"></span>
-										) : (
-											<span className="w-3 h-3 bg-gray-300 rounded-full"></span>
-										)}
-									</div>
+									<Link
+										href={`/manage-member/${
+											session.email.split('@')[0]
+										}/sessions/${session.date}`}>
+										<div className="flex px-3 py-3 mt-1 border first:mt-0 text-[16px] justify-around items-center relative cursor-pointer">
+											<span>{session.date}</span>
+											<span>{week[new Date(session.date).getDay()]}</span>
+											<span>{session.time}</span>
+											{session.feedback ? (
+												<span className="w-3 h-3 bg-green-300 rounded-full"></span>
+											) : (
+												<span className="w-3 h-3 bg-gray-300 rounded-full"></span>
+											)}
+										</div>
+									</Link>
 								</React.Fragment>
 							)
 						})}
@@ -109,4 +114,4 @@ const Session: NextPage = () => {
 	)
 }
 
-export default Session
+export default Sessions
