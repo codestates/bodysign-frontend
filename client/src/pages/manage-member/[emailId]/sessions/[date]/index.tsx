@@ -139,6 +139,19 @@ const Detail: NextPage = () => {
 				<div className="flex flex-col justify-center w-full mx-4 my-5">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[20px]">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="self-center w-6 h-6"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={1.5}
+									d="M15 19l-7-7 7-7"
+								/>
+							</svg>
 							<div className="font-semibold">{dummydata[0].date}</div>
 						</span>
 						<span className="flex items-center">
@@ -232,22 +245,24 @@ const Detail: NextPage = () => {
 						})}
 					</div>
 
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						className="self-center w-6 h-6 mt-4 text-gray-500"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-						onClick={() => {
-							// 운동 종목 추가 API
-						}}>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth={1.5}
-							d="M12 4v16m8-8H4"
-						/>
-					</svg>
+					<Link
+						href={`/manage-member/${
+							dummydata[0].email.split('@')[0]
+						}/sessions/${dummydata[0].date}/select-exercise`}>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="self-center w-6 h-6 mt-4 text-gray-500"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={1.5}
+								d="M12 4v16m8-8H4"
+							/>
+						</svg>
+					</Link>
 
 					<textarea
 						className="w-full px-10 py-3 mt-4"

@@ -74,6 +74,19 @@ const Info: NextPage = () => {
 				<div className="flex flex-col justify-center w-full mx-4 my-5">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[20px]">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="self-center w-6 h-6"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={1.5}
+									d="M15 19l-7-7 7-7"
+								/>
+							</svg>
 							<div className="font-semibold">
 								{member_dummy.name} 회원님
 							</div>
