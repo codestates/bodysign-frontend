@@ -1,6 +1,10 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Menu from '../components/menu'
+import Inbody from '../components/menu/inbody'
+import Detail from '../components/session/detail'
+import Session from '../components/session/session'
+import Main from '../components/member/main'
 
 const Home: NextPage = () => {
 	return (
@@ -11,8 +15,9 @@ const Home: NextPage = () => {
 			</Head>
 
 			<main className="flex justify-center">
-				<div className="max-w-[800px] border p-2 w-full">Home</div>
+				<div className="max-w-[800px] border p-2 w-full">Home..</div>
 			</main>
+			<Session />
 			<footer></footer>
 		</div>
 	)
