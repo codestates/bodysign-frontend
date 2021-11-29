@@ -10,13 +10,16 @@
 	"dependencies": {
 		"@apollo/client": "^3.4.17",
 		"axios": "^0.24.0",
+		"chart.js": "^3.6.0",
 		"graphql": "^15.7.2",
 		"next": "12.0.4",
 		"next-auth": "^3.29.0",
 		"react": "17.0.2",
-		"react-dom": "17.0.2",
 		"react-google-login": "^5.2.2",
 		"react-kakao-login": "^2.1.0"
+		"react-chartjs-2": "^4.0.0",
+		"react-dom": "17.0.2",
+		"react-hook-form": "^7.20.2"
 	},
 	"devDependencies": {
 		"@types/node": "16.11.7",
