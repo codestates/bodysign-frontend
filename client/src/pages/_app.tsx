@@ -1,19 +1,22 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
+import { Provider } from 'next-auth/client'
 import {
 	ApolloClient,
 	InMemoryCache,
 	ApolloProvider
 } from '@apollo/client'
 
-const client = new ApolloClient({
-	cache: new InMemoryCache()
-})
-
 function MyApp({ Component, pageProps }: AppProps) {
-	return (
+  const client = new ApolloClient({
+	  cache: new InMemoryCache()
+  })
+	
+  return (
 		<ApolloProvider client={client}>
-			<Component {...pageProps} />
+      <Provider session={pageProps.session}>
+			  <Component {...pageProps} />
+      </Provider>
 		</ApolloProvider>
 	)
 }
