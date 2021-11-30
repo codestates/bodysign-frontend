@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import { useState } from 'react'
-import ChangePasswordModal from '../../trainer/trainer-menu/changePasswordModal'
+import ChangePasswordModal from './changePasswordModal'
 import Layout from '../../../components/Layout'
 
 const userInfo: NextPage = () => {
