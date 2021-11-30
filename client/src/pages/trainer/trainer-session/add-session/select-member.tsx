@@ -1,9 +1,9 @@
 import { NextPage } from 'next'
 import Link from 'next/link'
 import React from 'react'
-import Layout from '../../../components/Layout'
-import session_dummy from '../../../../session_dummy.json'
-import { selectedMemberVar } from '../../../graphql/vars'
+import Layout from '../../../../components/Layout'
+import session_dummy from '../../../../../session_dummy.json'
+import { selectedMemberVar } from '../../../../graphql/vars'
 
 interface MemberSession {
 	id: string

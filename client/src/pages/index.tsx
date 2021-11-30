@@ -1,11 +1,11 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Login from '../components/login'
-import Menu from '../components/menu'
-import Inbody from '../components/menu/inbody'
-import Detail from '../components/session/detail'
-import Session from '../components/session/session'
-import Main from '../components/member/main'
+import Menu from './user/user-menu'
+import Inbody from './user/user-menu/inbody'
+import Detail from './user/user-session/detail'
+import Session from './user/user-session'
+import Main from './user/main'
 
 const Home: NextPage = () => {
 	return (

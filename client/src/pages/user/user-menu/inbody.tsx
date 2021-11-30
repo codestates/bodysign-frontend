@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
-import AddInbody from '../addInbody'
+import AddInbody from '../../../components/addInbody'
 
 // TODO: 인바디 차트 라이브러리 찾기
 

@@ -2,8 +2,8 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import Layout from '../../components/Layout'
-import { modalVar } from '../../graphql/vars'
+import Layout from '../../../components/Layout'
+import { modalVar } from '../../../graphql/vars'
 import { useReactiveVar } from '@apollo/client'
 
 interface FormInput {
@@ -12,7 +12,7 @@ interface FormInput {
 	checkPassword: string
 }
 
-const Info: NextPage = () => {
+const trainerInfo: NextPage = () => {
 	const [checkModal, setCheckModal] = useState('changepassword')
 	const modal = useReactiveVar(modalVar)
 
@@ -226,4 +226,4 @@ const Info: NextPage = () => {
 	)
 }
 
-export default Info
+export default trainerInfo

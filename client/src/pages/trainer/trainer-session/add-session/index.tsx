@@ -2,8 +2,8 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import React from 'react'
 import { useReactiveVar } from '@apollo/client'
-import Layout from '../../../components/Layout'
-import { selectedMemberVar } from '../../../graphql/vars'
+import Layout from '../../../../components/Layout'
+import { selectedMemberVar } from '../../../../graphql/vars'
 
 const AddSession: NextPage = () => {
 	const selectedMember = useReactiveVar(selectedMemberVar)

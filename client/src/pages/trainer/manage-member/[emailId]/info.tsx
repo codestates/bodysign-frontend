@@ -2,8 +2,8 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import Layout from '../../../components/Layout'
-import { modalVar } from '../../../graphql/vars'
+import Layout from '../../../../components/Layout'
+import { modalVar } from '../../../../graphql/vars'
 import { useReactiveVar } from '@apollo/client'
 
 interface FormInput {

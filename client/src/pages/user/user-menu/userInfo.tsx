@@ -1,8 +1,8 @@
 import type { NextPage } from 'next'
 import { useState } from 'react'
-import ChangePasswordModal from './changePasswordModal'
+import ChangePasswordModal from '../../trainer/trainer-menu/changePasswordModal'
 
-const myInfo: NextPage = () => {
+const userInfo: NextPage = () => {
     
     const [ userInfo, setUserInfo ] = useState({
         name: "홍길동",
@@ -68,4 +68,4 @@ const myInfo: NextPage = () => {
 	)
 }
 
-export default myInfo
+export default userInfo

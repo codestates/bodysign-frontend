@@ -1,7 +1,7 @@
 import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import Layout from '../../components/Layout'
+import Layout from '../../../components/Layout'
 
 const Menu: NextPage = () => {
 	return (

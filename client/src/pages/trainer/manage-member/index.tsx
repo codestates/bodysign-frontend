@@ -2,9 +2,9 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import Layout from '../../components/Layout'
-import dummydata from '../../../dummydata.json'
-import { deleteStateVar, modalVar } from '../../graphql/vars'
+import Layout from '../../../components/Layout'
+import dummydata from '../../../../dummydata.json'
+import { deleteStateVar, modalVar } from '../../../graphql/vars'
 import { useReactiveVar } from '@apollo/client'
 
 interface Member {
@@ -216,6 +216,7 @@ const ManageMember: NextPage = () => {
 															</svg>
 															<Link
 																href={`/manage-member/${
+																	// ! TypeError: Cannot read property 'split' of undefined
 																	member.email.split('@')[0]
 																}/info`}>
 																<div className="ml-1 hover:cursor-pointer">

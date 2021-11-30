@@ -1,8 +1,8 @@
 import { NextPage } from 'next'
 import Link from 'next/link'
 import React from 'react'
-import Layout from '../../../../components/Layout'
-import dummydata from '../../../../../dummydata.json'
+import Layout from '../../../../../components/Layout'
+import dummydata from '../../../../../../dummydata.json'
 
 const Sessions: NextPage = () => {
 	const member_dummy = {

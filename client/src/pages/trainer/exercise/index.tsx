@@ -1,8 +1,8 @@
 import { NextPage } from 'next'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import Layout from '../components/Layout'
-import { deleteStateVar, modalVar } from '../graphql/vars'
+import Layout from '../../../components/Layout'
+import { deleteStateVar, modalVar } from '../../../graphql/vars'
 import { useReactiveVar } from '@apollo/client'
 
 interface Exercise {
