@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
 import Detail from './detail'
+import Layout from '../../../components/Layout'
 
 // TODO: 날짜, 요일, 시간 쪽을 클릭하면 e.target.children이 빈 배열로 나옴 -> 에러 발생
 
@@ -44,12 +45,13 @@ const session: NextPage = () => {
     }
 
 	return (
-		<div className="flex flex-col m-5">
+        <Layout variant="Web">
+		<div className="flex flex-col m-5 mx-4 my-5 text-[12px]">
                 {isDetailOpen === true ? 
                     <Detail date={clickedSession.date} day={clickedSession.day} isOpen={isDetailOpen} changeOpen={setIsDetailOpen} /> 
                 : 
                 <>
-                <div className="mb-10 font-bold">수업 기록</div>
+                <div className="text-[20px] mb-3 font-bold">수업 기록</div>
                 {
                     sessionList.map((session) => (
                         <div onClick={directSessionDetail} className="border border-gray-300 rounded-2xl mb-2 hover:bg-gray-100 hover:cursor-pointer">
@@ -62,6 +64,7 @@ const session: NextPage = () => {
                 </>
                 }
 		</div>
+        </Layout>
 	)
 }
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
+import Layout from '../../components/Layout'
 
 // TODO: CSS 애니메이션 꾸미기
 // https://codepen.io/Tbgse/pen/dYaJyJ
@@ -42,28 +43,28 @@ const main: NextPage = () => {
 	}
 
 	return (
-		<div className="flex flex-col m-5">
-			<div className="mb-2.5">
+		<Layout variant="Web">
+			<div className="mb-2.5 flex flex-col w-full mx-4 my-5 text-[12px]">
 				Bodysign logo
 			</div>
 			<div className="text-xs mt-2.5">
 				{`${inbodyList[0].date} 측정 기준`}
 			</div>
-			<div className="font-bold text-xl">
+			<div className="font-bold text-[20px]">
 				{/* 체중, 골격근량, 체지방 보여주기 */}
 				{/* 이 때 CSS 애니메이션 추가가 필요 */}
 				{`체중이 ${inbodyList[1].weight - inbodyList[0].weight} kg 변화했어요.`}
 			</div>
 			<div className="bottom-2 fixed mb-2">
-				<div className="font-bold mx-1 mb-1">
+				<div className="font-bold text-[20px] mb-3 m-5">
 					예정된 수업
 				</div>
-				<div className="border border-gray-300 bg-gray-50 rounded-2xl">
+				<div className="border border-gray-300 bg-gray-50 rounded-2xl m-5">
 					<div className="inline-block p-1 mx-3">{classData.date}</div>
 					<div className="inline-block p-1 mx-3">{classData.time}</div>
 				</div>
 			</div>
-		</div>
+		</Layout>
 	)
 }
 
