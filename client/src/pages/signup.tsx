@@ -33,7 +33,7 @@ const Signup: NextPage = () => {
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="flex flex-col w-full mx-4 my-5 text-[12px]">
+				<div className="flex flex-col mx-4 my-5 text-[12px]">
 					<div className="text-[20px] mb-3 text-center">회원가입</div>
 
 					<form onSubmit={handleSubmit(onSubmit)}>
