@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
-import Layout from '../../../components/Layout'
+import Layout from './Layout'
 
-// TODO: typescript
-
-const detail: NextPage = ({ date , day, isOpen, changeOpen }) => {
+const Detail: NextPage = ({ date, day, isOpen, changeOpen }) => {
     const [ exerciseData, setExerciseData ] = useState([{
         exerciseName: "오버 헤드 프레스",
         weight: 0,
@@ -79,4 +77,4 @@ const detail: NextPage = ({ date , day, isOpen, changeOpen }) => {
 	)
 }
 
-export default detail
+export default Detail

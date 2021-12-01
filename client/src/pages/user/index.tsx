@@ -47,6 +47,7 @@ const main: NextPage = () => {
 			<div className="mb-2.5 flex flex-col w-full mx-4 my-5 text-[12px]">
 				Bodysign logo
 			</div>
+			<div className="m-5">
 			<div className="text-xs mt-2.5">
 				{`${inbodyList[0].date} 측정 기준`}
 			</div>
@@ -56,13 +57,14 @@ const main: NextPage = () => {
 				{`체중이 ${inbodyList[1].weight - inbodyList[0].weight} kg 변화했어요.`}
 			</div>
 			<div className="bottom-2 fixed mb-2">
-				<div className="font-bold text-[20px] mb-3 m-5">
+				<div className="font-bold text-[20px] mb-3">
 					예정된 수업
 				</div>
-				<div className="border border-gray-300 bg-gray-50 rounded-2xl m-5">
+				<div className="border border-gray-300 bg-gray-50 rounded-2xl items-center m-5">
 					<div className="inline-block p-1 mx-3">{classData.date}</div>
 					<div className="inline-block p-1 mx-3">{classData.time}</div>
 				</div>
+			</div>
 			</div>
 		</Layout>
 	)

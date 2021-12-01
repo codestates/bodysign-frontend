@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
-import Detail from './detail'
+import Detail from '../../../components/Detail'
 import Layout from '../../../components/Layout'
 
 // TODO: 날짜, 요일, 시간 쪽을 클릭하면 e.target.children이 빈 배열로 나옴 -> 에러 발생
 
-const session: NextPage = () => {
+const Session: NextPage = () => {
 
     const [ sessionList, setSessionList ] = useState([
         {
@@ -33,7 +33,6 @@ const session: NextPage = () => {
     })
 
     const directSessionDetail = (e: any) => {
-        // 세션 클릭하면 디테일 화면으로 넘어가게
         let date = e.target.children[0].textContent
         let day = e.target.children[1].textContent
 
@@ -68,4 +67,4 @@ const session: NextPage = () => {
 	)
 }
 
-export default session
+export default Session

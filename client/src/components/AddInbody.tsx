@@ -56,8 +56,8 @@ const AddInbody: NextPage = ({ inbodyModalOpenhandler, isOpen }) => {
 
 	return (
         <>
-        <div onClick={modalCloseHandler} className="modal-overlay absolute w-full h-full top-0 left-0 bg-black opacity-70"></div>
-        <div className="modal-container absolute item-center bg-white w-8/12 mx-auto right-0 left-0 rounded shadow-lg z-50 overflow-y-auto p-3">
+        <div onClick={modalCloseHandler} className="modal-overlay absolute w-full h-full top-0 left-0 bg-black opacity-70 z-10"></div>
+        <div className="modal-container absolute bg-white w-8/12 mx-auto right-0 left-0 rounded shadow-lg z-30 p-3">
             <div className="text-center mb-2">인바디 등록</div>
             <div className="text-center items-center mb-2">
                 <input onChange={addDate} className="text-xs rounded-xl border p-1 px-3 m-1 w-4/5" type="text" placeholder="날짜" />
