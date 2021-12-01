@@ -9,3 +9,8 @@
 .toggle-checkbox:checked + .toggle-label {
 	background-color: #fde68a;
 }
+
+input[type='date']::-webkit-calendar-picker-indicator {
+	display: flex;
+	justify-content: center;
+}

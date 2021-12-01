@@ -16,7 +16,7 @@ const Menu: NextPage = () => {
 
 					<div className="mt-4">
 						<div className="flex flex-col justify-between px-3 py-3 border">
-							<Link href="/menu/info">
+							<Link href="/trainer-menu/info">
 								<div className="flex justify-between cursor-pointer">
 									<span>내 정보</span>
 									<svg
@@ -34,7 +34,7 @@ const Menu: NextPage = () => {
 									</svg>
 								</div>
 							</Link>
-							<Link href="/menu/sales">
+							<Link href="/trainer-menu/sales">
 								<div className="flex justify-between mt-1 cursor-pointer">
 									<span>매출 조회</span>
 									<svg
@@ -52,7 +52,7 @@ const Menu: NextPage = () => {
 									</svg>
 								</div>
 							</Link>
-							<Link href="/menu/ledger">
+							<Link href="/trainer-menu/ledger">
 								<div className="flex justify-between mt-1 cursor-pointer">
 									<span>수업료 정산</span>
 									<svg

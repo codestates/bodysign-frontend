@@ -61,7 +61,6 @@ const SelectMember: NextPage = () => {
 								)
 							})}
 						</span>
-						<span className="mr-3 text-gray-400">+카테고리</span>
 					</div>
 
 					{Object.entries(sessionObject).map((entry, idx) => {

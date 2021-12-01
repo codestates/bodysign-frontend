@@ -5,6 +5,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
 import { modalVar } from '../../../graphql/vars'
 import { useReactiveVar } from '@apollo/client'
+import dummytotalsession from '../../../../dummyTotalSession.json'
 
 interface FormInput {
 	session_date: string
@@ -30,32 +31,6 @@ const Info: NextPage = () => {
 		membercategory: '바디프로필'
 	}
 	const member_category_dummy = ['다이어트', '바디프로필', '스트렝스']
-	const total_session_dummy = [
-		{
-			id: 1,
-			session_date: '2021.11.01',
-			cost: 40000,
-			times: 8
-		},
-		{
-			id: 2,
-			session_date: '2021.12.01',
-			cost: 30000,
-			times: 5
-		},
-		{
-			id: 3,
-			session_date: '2021.11.24',
-			cost: 50000,
-			times: 10
-		},
-		{
-			id: 4,
-			session_date: '2021.10.28',
-			cost: 50000,
-			times: 6
-		}
-	]
 
 	const {
 		register,
@@ -195,26 +170,34 @@ const Info: NextPage = () => {
 									</tr>
 								</thead>
 								<tbody className="bg-white divide-y divide-gray-200">
-									{total_session_dummy.map(session => {
-										return (
-											<React.Fragment key={session.id}>
-												<tr>
-													<td className="p-3 text-sm text-gray-500">
-														{session.session_date}
-													</td>
-													<td className="p-3 text-sm text-gray-500">
-														{session.cost}원
-													</td>
-													<td className="p-3 text-sm text-gray-500">
-														{session.times}회
-													</td>
-													<td className="p-3 text-sm text-gray-500">
-														{session.cost * session.times}원
-													</td>
-												</tr>
-											</React.Fragment>
-										)
-									})}
+									{dummytotalsession
+										.sort((a, b): any => {
+											const dateA = new Date(a.session_date).getTime()
+											const dateB = new Date(b.session_date).getTime()
+											if (dateA > dateB) return 1
+											if (dateA < dateB) return -1
+											return 0
+										})
+										.map(session => {
+											return (
+												<React.Fragment key={session.id}>
+													<tr>
+														<td className="p-3 text-sm text-gray-500">
+															{session.session_date}
+														</td>
+														<td className="p-3 text-sm text-gray-500">
+															{session.cost}원
+														</td>
+														<td className="p-3 text-sm text-gray-500">
+															{session.times}회
+														</td>
+														<td className="p-3 text-sm text-gray-500">
+															{session.cost * session.times}원
+														</td>
+													</tr>
+												</React.Fragment>
+											)
+										})}
 								</tbody>
 							</table>
 						</div>

@@ -81,11 +81,6 @@ const Exercise: NextPage = () => {
 								)
 							})}
 						</span>
-						<span
-							className="mr-3 text-gray-400 cursor-pointer"
-							data-check-modal="addcategory">
-							+카테고리
-						</span>
 					</div>
 
 					{Object.entries(categoryObeject).map((category, idx) => {

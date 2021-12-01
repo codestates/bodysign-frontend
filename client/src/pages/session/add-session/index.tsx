@@ -1,14 +1,18 @@
 import { NextPage } from 'next'
 import Link from 'next/link'
-import React from 'react'
-import { useReactiveVar } from '@apollo/client'
+import React, { useState } from 'react'
 import Layout from '../../../components/Layout'
+import { useReactiveVar } from '@apollo/client'
 import { selectedMemberVar } from '../../../graphql/vars'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 const AddSession: NextPage = () => {
+	const [startDate, setStartDate] = useState(new Date())
 	const selectedMember = useReactiveVar(selectedMemberVar)
 
 	// 수업 추가 API
+	// console.log(selectedMember, startDate)
 
 	return (
 		<>
@@ -64,6 +68,18 @@ const AddSession: NextPage = () => {
 					</div>
 
 					<div className="mt-4">
+						<div className="text-[16px]">날짜 / 시간</div>
+						<div className="p-3 mt-1 text-center border">
+							<DatePicker
+								className="text-center"
+								showTimeSelect
+								selected={startDate}
+								onChange={date => setStartDate(date as any)}
+							/>
+						</div>
+					</div>
+
+					{/* <div className="mt-4">
 						<div className="text-[16px]">날짜</div>
 						<input className="w-full p-3 mt-1 border" type="date" />
 					</div>
@@ -71,7 +87,7 @@ const AddSession: NextPage = () => {
 					<div className="mt-4">
 						<div className="text-[16px]">시간</div>
 						<input className="w-full p-3 mt-1 border" type="time" />
-					</div>
+					</div> */}
 				</div>
 			</Layout>
 		</>
