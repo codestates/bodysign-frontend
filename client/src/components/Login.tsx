@@ -4,6 +4,7 @@ import { signIn, signOut, useSession } from 'next-auth/client'
 import GoogleLogin from 'react-google-login'
 import KaKaoLogin from 'react-kakao-login'
 import Layout from '../components/Layout'
+import Loading from './Loading'
 
 const googleCliendId = "122713240467-oq4tee3gshbdfmodg5b20ljsb9ajfsoe.apps.googleusercontent.com"
 const kakaoAppKey = "6e971578908fd66a46f5962ba278215a"
@@ -17,7 +18,9 @@ const Login: NextPage = () => {
     });
 
     if(loading) {
-        return <div>loading...</div>
+        return (
+          <Loading />
+        )
     }
 
     const onChangeId = (e: any) => {
