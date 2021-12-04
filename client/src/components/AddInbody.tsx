@@ -56,7 +56,7 @@ const AddInbody: NextPage = ({ inbodyModalOpenhandler, isOpen }) => {
 
 	return (
         <>
-        <div onClick={modalCloseHandler} className="modal-overlay absolute w-full h-full top-0 left-0 bg-black opacity-70 z-10"></div>
+        <div onClick={modalCloseHandler} className="modal-overlay absolute w-full h-full top-0 left-0 bg-black opacity-70 z-10 font-IBM font-thin"></div>
         <div className="modal-container absolute bg-white w-8/12 mx-auto right-0 left-0 rounded shadow-lg z-30 p-3">
             <div className="text-center mb-2">인바디 등록</div>
             <div className="text-center items-center mb-2">

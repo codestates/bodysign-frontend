@@ -5,8 +5,6 @@ import AddInbody from '../../../components/AddInbody'
 import Layout from '../../../components/Layout'
 import Chart from 'chart.js/auto'
 
-// TODO: 인바디 차트
-
 const Inbody: NextPage = () => {
 	const [isInbodyModalOpen, setIsInbodyModalOpen] = useState(false)
 	const canvasRef = useRef(null)
@@ -89,7 +87,7 @@ const Inbody: NextPage = () => {
 					isOpen={isInbodyModalOpen}
 				/>
 			) : null}
-			<div className="flex-col m-5 items-center mx-4 my-5">
+			<div className="font-IBM flex-col m-5 items-center mx-4 my-5">
 				<div className="flex mb-10 text-[12px] items-center">
 					<Link href="/user/menu">
 						<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -50,17 +50,17 @@ const Session: NextPage = () => {
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="flex flex-col justify-center mx-4 my-5">
+				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[20px]">
 							<div
-								className={`${category === '일정' ? 'font-semibold' : ''}`}
+								className={`${category === '일정' ? 'font-bold' : ''}`}
 								onClick={() => setCategory('일정')}>
 								일정
 							</div>
 							<div
 								className={`ml-3 ${
-									category === '피드백' ? 'font-semibold' : ''
+									category === '피드백' ? 'font-bold' : ''
 								}`}
 								onClick={() => setCategory('피드백')}>
 								피드백
@@ -102,7 +102,7 @@ const Session: NextPage = () => {
 						return (
 							<React.Fragment key={idx}>
 								<div
-									className="mt-4"
+									className="mt-4 font-thin font-medium"
 									onClick={() => {
 										modalVar(true)
 									}}>
@@ -111,7 +111,7 @@ const Session: NextPage = () => {
 										return (
 											<React.Fragment key={idx2}>
 												<div className="text-[16px] mt-1">
-													<div className="flex justify-between px-3 py-3 border">
+													<div className="flex justify-between px-3 py-3 border font-thin">
 														<div className="flex">
 															<svg
 																xmlns="http://www.w3.org/2000/svg"
@@ -134,7 +134,7 @@ const Session: NextPage = () => {
 																{session.name} 회원님
 															</div>
 														</div>
-														<div className="ml-3">{session.time}</div>
+														<div className="ml-3 font-medium">{session.time}</div>
 													</div>
 												</div>
 											</React.Fragment>
@@ -147,17 +147,17 @@ const Session: NextPage = () => {
 				</div>
 
 				{modal ? (
-					<div className="fixed max-w-[450px] w-full bottom-0">
+					<div className="font-IBM font-thin fixed max-w-[450px] w-full bottom-0">
 						<div
 							className="fixed inset-0 z-[-1] bg-black opacity-20"
 							onClick={() => modalVar(false)}></div>
 						<div className="bg-white flex z-[50] h-[200px] flex-col justify-center">
 							<div className="py-3 text-center text-[20px]">
-								수업을 완료하였습니까?
+								수업을 완료하셨습니까?
 							</div>
 							<div className="max-w-[450px] self-end mt-4">
 								<button
-									className="px-4 py-3 bg-gray-100 border"
+									className="px-4 py-3 bg-gray-100 border font-thin"
 									onClick={() => modalVar(false)}>
 									취소
 								</button>

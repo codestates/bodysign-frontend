@@ -31,9 +31,9 @@ const SelectMember: NextPage = () => {
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="flex flex-col justify-center mx-4 my-5">
+				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
-						<span className="flex text-[20px] font-semibold">
+						<span className="flex text-[20px] font-bold">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="w-7 h-7"
@@ -56,7 +56,7 @@ const SelectMember: NextPage = () => {
 							{Object.keys(sessionObject).map((category, idx) => {
 								return (
 									<React.Fragment key={idx}>
-										<span className="ml-2 first:ml-0">{category}</span>
+										<span className="ml-2 first:ml-0 font-thin">{category}</span>
 									</React.Fragment>
 								)
 							})}
@@ -67,7 +67,7 @@ const SelectMember: NextPage = () => {
 						return (
 							<React.Fragment key={idx}>
 								<div className="mt-4">
-									<div className="text-[16px]">{entry[0]}</div>
+									<div className="text-[16px] font-bold">{entry[0]}</div>
 									{entry[1].map((member, idx2) => {
 										return (
 											<React.Fragment key={idx2}>
@@ -93,7 +93,7 @@ const SelectMember: NextPage = () => {
 															</svg>
 															<Link href="/trainer/session/add-session">
 																<div
-																	className="ml-1 hover:cursor-pointer"
+																	className="ml-1 hover:cursor-pointer font-thin"
 																	data-id={member.id}
 																	onClick={e => {
 																		if (
@@ -111,7 +111,7 @@ const SelectMember: NextPage = () => {
 																</div>
 															</Link>
 														</div>
-														<div className="ml-3">{member.times}</div>
+														<div className="ml-3 font-medium">{member.times}</div>
 													</div>
 												</div>
 											</React.Fragment>

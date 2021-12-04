@@ -65,7 +65,7 @@ const Modify: NextPage = () => {
 
 	return (
 		<Layout variant="Web">
-		<div className="flex flex-col m-5 mx-4 my-5 text-[12px]">
+		<div className="font-IBM flex flex-col m-5 mx-4 my-5 text-[12px]">
 			<div className="flex items-center mb-10">
 				<Link href="/user/menu/info">
 				<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -81,32 +81,32 @@ const Modify: NextPage = () => {
 				<tbody>
 					<tr className="flex">
 						<td className="flex-auto font-bold">이름</td>
-						<td className="text-right">
-							<input value={userInfo.name} onChange={getNewName} />
+						<td>
+							<input className="font-thin text-right" value={userInfo.name} onChange={getNewName} />
 						</td>
 					</tr>
 					<tr className="flex">
 						<td className="flex-auto font-bold">성별</td>
-						<td className="text-right">
-							<input value={userInfo.sex} onChange={getNewSex} />
+						<td>
+							<input className="font-thin text-right" value={userInfo.sex} onChange={getNewSex} />
 						</td>
 					</tr>
 					<tr className="flex">
 						<td className="flex-auto font-bold">이메일</td>
-						<td className="text-right">
-							<input value={userInfo.email} onChange={getNewEmail} />
+						<td>
+							<input className="font-thin text-right" value={userInfo.email} onChange={getNewEmail} />
 						</td>
 					</tr>
 					<tr className="flex">
 						<td className="flex-auto font-bold">생년월일</td>
-						<td className="text-right">
-							<input value={userInfo.birth} onChange={getNewBirth} />
+						<td>
+							<input className="font-thin text-right" value={userInfo.birth} onChange={getNewBirth} />
 						</td>
 					</tr>
 					<tr className="flex">
 						<td className="flex-auto font-bold">전화번호</td>
-						<td className="text-right">
-							<input value={userInfo.phone} onChange={getNewPhone} />
+						<td>
+							<input className="font-thin text-right" value={userInfo.phone} onChange={getNewPhone} />
 						</td>
 					</tr>
 				</tbody>

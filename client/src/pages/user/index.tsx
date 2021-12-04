@@ -44,23 +44,23 @@ const main: NextPage = () => {
 
 	return (
 		<Layout variant="Web">
-			<div className="mb-2.5 flex flex-col w-full mx-4 my-5 text-[12px]">
+			<div className="mb-2.5 flex flex-col w-full mx-4 my-5 text-[12px] font-IBM">
 				Bodysign logo
 			</div>
-			<div className="m-5">
+			<div className="m-5 font-IBM font-thin">
 			<div className="text-xs mt-2.5">
 				{`${inbodyList[0].date} 측정 기준`}
 			</div>
-			<div className="font-bold text-[20px]">
+			<div className="font-IBM font-extrabold text-[20px]">
 				{/* 체중, 골격근량, 체지방 보여주기 */}
 				{/* 이 때 CSS 애니메이션 추가가 필요 */}
 				{`체중이 ${inbodyList[1].weight - inbodyList[0].weight} kg 변화했어요.`}
 			</div>
 			<div className="bottom-2 fixed mb-2">
-				<div className="font-bold text-[20px] mb-3">
+				<div className="font-IBM font-bold text-[20px] mb-3">
 					예정된 수업
 				</div>
-				<div className="border border-gray-300 bg-gray-50 rounded-2xl items-center m-5">
+				<div className="font-IBM font-medium border border-gray-300 bg-gray-50 rounded-2xl items-center m-5">
 					<div className="inline-block p-1 mx-3">{classData.date}</div>
 					<div className="inline-block p-1 mx-3">{classData.time}</div>
 				</div>
