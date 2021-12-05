@@ -6,6 +6,7 @@ import {
 	InMemoryCache,
 	ApolloProvider
 } from '@apollo/client'
+import '../components/loading.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
   const client = new ApolloClient({

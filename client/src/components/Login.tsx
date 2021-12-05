@@ -4,6 +4,7 @@ import { signIn, signOut, useSession } from 'next-auth/client'
 import GoogleLogin from 'react-google-login'
 import KaKaoLogin from 'react-kakao-login'
 import Layout from '../components/Layout'
+import Loading from './Loading'
 
 const googleCliendId = "122713240467-oq4tee3gshbdfmodg5b20ljsb9ajfsoe.apps.googleusercontent.com"
 const kakaoAppKey = "6e971578908fd66a46f5962ba278215a"
@@ -17,7 +18,9 @@ const Login: NextPage = () => {
     });
 
     if(loading) {
-        return <div>loading...</div>
+        return (
+          <Loading />
+        )
     }
 
     const onChangeId = (e: any) => {
@@ -73,17 +76,17 @@ const Login: NextPage = () => {
 
     return <>
     <Layout variant="Web">
-      <div className="flex flex-col w-full mx-4 my-5 text-[12px]">
+      <div className="flex flex-col mx-auto my-5 text-[12px]">
         {!session && <>
           <div className="max-w-screen-md">
-            <input className="rounded-xl border p-1 m-1 w-4/5" type="text" placeholder="이메일" onChange={onChangeId} />
-            <input className="rounded-xl border p-1 m-1 w-4/5" type="text" placeholder="비밀번호" onChange={onChangePassword}/>
-            <button onClick={onSubmit} className="py-1 rounded text-gray-800 bg-gray-300 hover:bg-gray-400 hover:text-white m-1 w-4/5 ">
+            <input className="font-IBM font-thin rounded-xl border p-1 m-1 w-4/5" type="text" placeholder="이메일" onChange={onChangeId} />
+            <input className="font-IBM font-thin rounded-xl border p-1 m-1 w-4/5" type="text" placeholder="비밀번호" onChange={onChangePassword}/>
+            <button onClick={onSubmit} className="font-IBM font-thin py-1 rounded text-gray-800 bg-gray-300 hover:bg-gray-400 hover:text-white m-1 w-4/5 ">
               로그인
             </button>
             <div className="flex w-4/5 border-0">
               <GoogleLogin
-                className="m-1 w-1/2"
+                className="m-1 w-1/2 font-IBM font-thin"
                 clientId={googleCliendId}
                 buttonText="Login"
                 onSuccess={onSuccessGoogle}
@@ -93,7 +96,7 @@ const Login: NextPage = () => {
                 구글로 로그인
               </GoogleLogin>
               <KaKaoLogin
-                className="m-1 w-1/2"
+                className="m-1 w-1/2 font-IBM font-thin"
                 token={kakaoAppKey}
                 onSuccess={onSuccessKakao}
                 onFail={onFailureKakao}
@@ -101,7 +104,7 @@ const Login: NextPage = () => {
                 카카오로 로그인
               </KaKaoLogin>
             </div>
-            <button onClick={onSignup} className="m-1 w-4/5 py-1 rounded text-gray-500 transition-colors duration-150 border border-gray-300 focus:shadow-outline hover:bg-gray-300 hover:text-white">회원가입</button>
+            <button onClick={onSignup} className="font-IBM font-thin m-1 w-4/5 py-1 rounded text-gray-500 transition-colors duration-150 border border-gray-300 focus:shadow-outline hover:bg-gray-300 hover:text-white">회원가입</button>
           </div>
     
         </>}

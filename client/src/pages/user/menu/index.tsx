@@ -1,23 +1,17 @@
 import React, { useState } from 'react'
+import Link from 'next/link'
 import type { NextPage } from 'next'
 import Layout from '../../../components/Layout'
 
 const Menu: NextPage = () => {
-	const moveMypage = () => {
-		// 내 정보로 이동
-	}
-
-	const moveInbody = () => {
-		// 인바디로 이동
-	}
 
 	return (
 		<Layout variant="Web">
-			<div className="flex flex-col m-5 mx-4 my-5 text-[12px]">
-				<div className="font-bold mb-5 text-[20px]">전체</div>
+			<div className="font-IBM flex flex-col m-5 mx-4 my-5 text-[12px]">
+				<div className="font-IBM font-bold mb-5 text-[20px]">전체</div>
+				<Link href="/user/menu/info">
 				<div
-					onClick={moveMypage}
-					className="flex items-center justify-between hover:bg-gray-100">
+					className="flex items-center justify-between hover:bg-gray-100 font-IBM">
 					<li className="m-1 text-gray-400 list-none">내 정보</li>
 					<svg
 						className="m-2 text-gray-400"
@@ -32,9 +26,10 @@ const Menu: NextPage = () => {
 							stroke-linecap="square"></path>
 					</svg>
 				</div>
+				</Link>
+				<Link href="/user/menu/inbody">
 				<div
-					onClick={moveInbody}
-					className="flex items-center justify-between hover:bg-gray-100">
+					className="flex items-center justify-between hover:bg-gray-100 font-IBM">
 					<li className="m-1 text-gray-400 list-none">인바디</li>
 					<svg
 						className="m-2 text-gray-400"
@@ -49,6 +44,7 @@ const Menu: NextPage = () => {
 							stroke-linecap="square"></path>
 					</svg>
 				</div>
+				</Link>
 			</div>
 		</Layout>
 	)

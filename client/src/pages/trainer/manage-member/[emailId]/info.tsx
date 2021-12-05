@@ -46,7 +46,7 @@ const Info: NextPage = () => {
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="flex flex-col justify-center mx-4 my-5">
+				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[20px]">
 							<svg
@@ -62,7 +62,7 @@ const Info: NextPage = () => {
 									d="M15 19l-7-7 7-7"
 								/>
 							</svg>
-							<div className="font-semibold">
+							<div className="font-bold">
 								{member_dummy.name} 회원님
 							</div>
 						</span>
@@ -83,7 +83,7 @@ const Info: NextPage = () => {
 						</span>
 					</div>
 
-					<div className="flex justify-between pr-3 mt-4">
+					<div className="flex justify-between pr-3 mt-4 text-[12px]">
 						<span className="pb-1 ml-0 border-b border-black cursor-pointer">
 							회원정보
 						</span>
@@ -96,7 +96,7 @@ const Info: NextPage = () => {
 					</div>
 
 					<div className="mt-4">
-						<div className="flex flex-col justify-between px-3 py-3 border">
+						<div className="flex flex-col justify-between px-3 py-3 border text-[12px]">
 							<div className="flex justify-between">
 								<span>이름</span>
 								<span>{member_dummy.name}</span>
@@ -149,22 +149,22 @@ const Info: NextPage = () => {
 							</div>
 						</div>
 					</div>
-					<div className="flex flex-col mt-4">
+					<div className="flex flex-col mt-4 text-[12px]">
 						<div className="p-3 text-center">세션</div>
 						<div className="border-b border-gray-200">
 							<table className="min-w-full divide-y divide-gray-200">
 								<thead className="bg-gray-50">
 									<tr>
-										<th className="p-3 text-xs text-left text-gray-500">
+										<th className="p-3 text-[12px] text-left text-gray-500">
 											날짜
 										</th>
-										<th className="p-3 text-xs text-left text-gray-500">
+										<th className="p-3 text-[12px] text-left text-gray-500">
 											단가
 										</th>
-										<th className="p-3 text-xs text-left text-gray-500">
+										<th className="p-3 text-[12px] text-left text-gray-500">
 											횟수
 										</th>
-										<th className="p-3 text-xs text-left text-gray-500">
+										<th className="p-3 text-[12px] text-left text-gray-500">
 											총액
 										</th>
 									</tr>
@@ -182,16 +182,16 @@ const Info: NextPage = () => {
 											return (
 												<React.Fragment key={session.id}>
 													<tr>
-														<td className="p-3 text-sm text-gray-500">
+														<td className="p-2 text-[12px] text-gray-500 font-thin">
 															{session.session_date}
 														</td>
-														<td className="p-3 text-sm text-gray-500">
+														<td className="p-2 text-[12px] text-gray-500 font-thin">
 															{session.cost}원
 														</td>
-														<td className="p-3 text-sm text-gray-500">
+														<td className="p-2 text-[12px] text-gray-500 font-thin">
 															{session.times}회
 														</td>
-														<td className="p-3 text-sm text-gray-500">
+														<td className="p-2 text-[12px] text-gray-500">
 															{session.cost * session.times}원
 														</td>
 													</tr>
@@ -219,7 +219,7 @@ const Info: NextPage = () => {
 				</div>
 
 				{modal ? (
-					<div className="fixed max-w-[450px] w-full bottom-0">
+					<div className="font-IBM fixed max-w-[450px] w-full bottom-0">
 						<div
 							className="fixed inset-0 z-[-1] bg-black opacity-20"
 							onClick={() => modalVar(false)}></div>

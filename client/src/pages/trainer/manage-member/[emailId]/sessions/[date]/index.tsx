@@ -136,9 +136,9 @@ const Detail: NextPage = () => {
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="flex flex-col justify-center mx-4 my-5">
+				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
-						<span className="flex text-[20px]">
+						<span className="flex text-[20px] font-bold">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6"
@@ -152,7 +152,7 @@ const Detail: NextPage = () => {
 									d="M15 19l-7-7 7-7"
 								/>
 							</svg>
-							<div className="font-semibold">{dummydata[0].date}</div>
+							<div className="font-bold">{dummydata[0].date}</div>
 						</span>
 						<span className="flex items-center">
 							{!deleteState ? (
@@ -217,7 +217,7 @@ const Detail: NextPage = () => {
 							return (
 								<React.Fragment key={exercise.id}>
 									<div
-										className="flex px-3 py-3 mt-1 border first:mt-0 text-[16px] flex-col items-center"
+										className="font-thin flex px-3 py-3 mt-1 border first:mt-0 text-[16px] flex-col items-center"
 										onClick={() => modalVar(true)}>
 										<div className="w-full p-3 text-center border bg-gray-50">
 											{exercise.name}
@@ -265,7 +265,7 @@ const Detail: NextPage = () => {
 					</Link>
 
 					<textarea
-						className="w-full px-10 py-3 mt-4"
+						className="w-full px-10 py-3 mt-4 text-gray-400 font-IBM font-thin"
 						autoFocus
 						autoSave="true"
 						defaultValue={'피드백을 입력해주세요.'}
@@ -276,7 +276,7 @@ const Detail: NextPage = () => {
 				</div>
 
 				{modal ? (
-					<div className="fixed max-w-[450px] w-full bottom-0">
+					<div className="font-IBM fixed max-w-[450px] w-full bottom-0">
 						<div
 							className="fixed inset-0 z-[-1] bg-black opacity-20"
 							onClick={() => modalVar(false)}></div>

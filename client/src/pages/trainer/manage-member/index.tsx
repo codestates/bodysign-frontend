@@ -66,17 +66,17 @@ const ManageMember: NextPage = () => {
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="flex flex-col justify-center mx-4 my-5">
+				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[20px]">
 							<div
-								className={`${category === '관리' ? 'font-semibold' : ''}`}
+								className={`${category === '관리' ? 'font-bold' : ''}`}
 								onClick={() => setCategory('관리')}>
 								관리
 							</div>
 							<div
 								className={`ml-3 ${
-									category === '졸업' ? 'font-semibold' : ''
+									category === '졸업' ? 'font-bold' : ''
 								}`}
 								onClick={() => setCategory('졸업')}>
 								졸업
@@ -154,13 +154,13 @@ const ManageMember: NextPage = () => {
 							{Object.keys(sessionObject).map((category, idx) => {
 								return (
 									<React.Fragment key={idx}>
-										<span className="ml-2 first:ml-0">{category}</span>
+										<span className="ml-2 first:ml-0 font-thin">{category}</span>
 									</React.Fragment>
 								)
 							})}
 						</span>
 						<span
-							className="mr-3 text-gray-400"
+							className="mr-3 text-gray-400 hover:text-black"
 							data-check-modal="addcategory"
 							onClick={e => {
 								modalVar(true)
@@ -170,7 +170,7 @@ const ManageMember: NextPage = () => {
 									}
 								}
 							}}>
-							+카테고리
+							+ 카테고리
 						</span>
 					</div>
 
@@ -178,7 +178,7 @@ const ManageMember: NextPage = () => {
 						return (
 							<React.Fragment key={idx}>
 								<div className="mt-4">
-									<div className="text-[16px]">{entry[0]}</div>
+									<div className="text-[16px] font-bold">{entry[0]}</div>
 									{entry[1].map((member, idx2) => {
 										return (
 											<React.Fragment key={idx2}>
@@ -219,7 +219,7 @@ const ManageMember: NextPage = () => {
 																	// ! TypeError: Cannot read property 'split' of undefined
 																	member.email.split('@')[0]
 																}/info`}>
-																<div className="ml-1 hover:cursor-pointer">
+																<div className="ml-2 hover:cursor-pointer font-thin">
 																	{member.name} 회원님
 																</div>
 															</Link>

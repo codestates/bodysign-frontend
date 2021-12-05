@@ -1,48 +1,85 @@
 import { NextPage } from 'next'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Layout from '../../../../components/Layout'
+import Chart from 'chart.js/auto'
 
 const Inbody: NextPage = () => {
-	const inbody_dummy = [
+	const canvasRef = useRef(null)
+	const [inbodyDataList, setInbodyDataList] = useState([
 		{
-			id: 1,
-			name: 'Alice',
-			inbody_date: '2021.11.01',
-			weight: 60,
-			skeletal_muscle: 15,
+			date: '2021.01.01',
+			weight: 75,
+			muscle_mass: 40,
 			body_fat: 30
-		},
+		}
+		,
 		{
-			id: 2,
-			name: '오렌지',
-			inbody_date: '2021.12.01',
-			weight: 50,
-			skeletal_muscle: 20,
+			date: '2021.02.01',
+			weight: 70,
+			muscle_mass: 50,
 			body_fat: 15
 		},
 		{
-			id: 3,
-			name: 'Mollie',
-			inbody_date: '2021.11.24',
-			weight: 100,
-			skeletal_muscle: 35,
-			body_fat: 35
-		},
-		{
-			id: 4,
-			name: 'Munny',
-			inbody_date: '2021.10.28',
-			weight: 80,
-			skeletal_muscle: 45,
-			body_fat: 25
+			date: '2021.03.01',
+			weight: 60,
+			muscle_mass: 45,
+			body_fat: 20
 		}
-	]
+	])
+
+	const getInbodyDate = () => {
+		// 인바디 가져오기
+	}
+
+	const addInbodyData = () => {
+		// 인바디 추가하기
+		setIsInbodyModalOpen(!isInbodyModalOpen)
+		// 추가하고 나면 서버에서 다시 인바디 데이터 받아오기
+	}
+
+	useEffect(() => {
+		if (canvasRef.current) {
+			const chart = new Chart(canvasRef.current, {
+				type: 'line',
+				data: {
+					labels: inbodyDataList.map((inbodyData) => inbodyData.date),
+					datasets: [
+						{
+							label: '체중',
+							data: inbodyDataList.map((inbodyData) => inbodyData.weight),
+							fill: false,
+							borderColor: 'rgba(255, 206, 86, 1)',
+							borderWidth: 1,
+						},
+						{
+							label: '근육량',
+							data: inbodyDataList.map((inbodyData) => inbodyData.muscle_mass),
+							fill: false,
+							borderColor: 'rgba(54, 162, 235, 1)',
+							borderWidth: 1,
+						},
+						{
+							label: '체지방',
+							data: inbodyDataList.map((inbodyData) => inbodyData.body_fat),
+							fill: false,
+							borderColor: 'rgba(255, 99, 132, 1)',
+							borderWidth: 1,
+						}
+					]
+				},
+				options: {}
+			})
+			return () => {
+				chart.destroy()
+			 }
+		}
+	}, [])
 
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="flex flex-col justify-center mx-4 my-5">
+				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[20px]">
 							<svg
@@ -58,8 +95,8 @@ const Inbody: NextPage = () => {
 									d="M15 19l-7-7 7-7"
 								/>
 							</svg>
-							<div className="font-semibold">
-								{inbody_dummy[0].name} 회원님
+							<div className="font-bold">
+								김코딩 회원님
 							</div>
 						</span>
 						<span className="flex">
@@ -79,7 +116,7 @@ const Inbody: NextPage = () => {
 						</span>
 					</div>
 
-					<div className="flex justify-between pr-3 mt-4">
+					<div className="flex justify-between pr-3 mt-4 text-[12px]">
 						<Link href="/trainer/manage-member/emailId/info">
 							<span className="ml-0">회원정보</span>
 						</Link>
@@ -92,52 +129,39 @@ const Inbody: NextPage = () => {
 							</span>
 						</Link>
 					</div>
-
-					<div className="flex flex-col mt-4">
-						<div className="p-3 text-center">{'인바디 그래프'}</div>
-						<div className="mt-4 border-b border-gray-200">
-							<table className="min-w-full divide-y divide-gray-200">
-								<thead className="bg-gray-50">
-									<tr>
-										<th className="p-3 text-xs text-left text-gray-500">
-											날짜
-										</th>
-										<th className="p-3 text-xs text-left text-gray-500">
-											단가
-										</th>
-										<th className="p-3 text-xs text-left text-gray-500">
-											횟수
-										</th>
-										<th className="p-3 text-xs text-left text-gray-500">
-											총액
-										</th>
-									</tr>
-								</thead>
-								<tbody className="bg-white divide-y divide-gray-200">
-									{inbody_dummy.map(inbody => {
-										return (
-											<React.Fragment key={inbody.id}>
-												<tr>
-													<td className="p-3 text-sm text-gray-500">
-														{inbody.inbody_date}
-													</td>
-													<td className="p-3 text-sm text-gray-500">
-														{inbody.weight}kg
-													</td>
-													<td className="p-3 text-sm text-gray-500">
-														{inbody.skeletal_muscle}kg
-													</td>
-													<td className="p-3 text-sm text-gray-500">
-														{inbody.body_fat}kg
-													</td>
-												</tr>
-											</React.Fragment>
-										)
-									})}
-								</tbody>
-							</table>
-						</div>
+					<div className="relative my-4">
+						<canvas ref={canvasRef}></canvas>
 					</div>
+
+					<div className="flex-col">
+						<table className="text-xs mt-6 mx-auto text-center border w-4/5">
+							<thead>
+								<tr>
+									<th>날짜</th>
+									<th>체중</th>
+									<th>골격근량</th>
+									<th>체지방</th>
+								</tr>
+							</thead>
+							<tbody>
+								{inbodyDataList.map(inbodyData => {
+									return (
+										<tr>
+											<td>{inbodyData.date}</td>
+											<td>{inbodyData.weight}</td>
+											<td>{inbodyData.muscle_mass}</td>
+											<td>{inbodyData.body_fat}</td>
+										</tr>
+									)
+								})}
+							</tbody>
+						</table>
+						<svg onClick={addInbodyData} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mx-auto my-4" viewBox="0 0 20 20" fill="currentColor">
+						<path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+						</svg>
+					</div>
+
+
 				</div>
 			</Layout>
 		</>

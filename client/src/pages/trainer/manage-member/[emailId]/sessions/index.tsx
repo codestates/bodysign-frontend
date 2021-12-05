@@ -31,7 +31,7 @@ const Sessions: NextPage = () => {
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="flex flex-col justify-center mx-4 my-5">
+				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[20px]">
 							<svg
@@ -47,7 +47,7 @@ const Sessions: NextPage = () => {
 									d="M15 19l-7-7 7-7"
 								/>
 							</svg>
-							<div className="font-semibold">
+							<div className="font-bold">
 								{member_dummy.name} 회원님
 							</div>
 						</span>
@@ -68,7 +68,7 @@ const Sessions: NextPage = () => {
 						</span>
 					</div>
 
-					<div className="flex justify-between pr-3 mt-4">
+					<div className="flex justify-between pr-3 mt-4 text-[12px]">
 						<Link href="/trainer/manage-member/emailId/info">
 							<span className="ml-0 cursor-pointer">회원정보</span>
 						</Link>
@@ -82,7 +82,7 @@ const Sessions: NextPage = () => {
 						</Link>
 					</div>
 
-					<div className="flex flex-col mt-4">
+					<div className="flex flex-col mt-4 text-[12px]">
 						{dummydata.map(session => {
 							return (
 								<React.Fragment key={session.id}>
@@ -90,7 +90,7 @@ const Sessions: NextPage = () => {
 										href={`/trainer/manage-member/${
 											session.email.split('@')[0]
 										}/sessions/${session.date}`}>
-										<div className="flex px-3 py-3 mt-1 border first:mt-0 text-[16px] justify-around items-center relative cursor-pointer">
+										<div className="flex px-3 py-3 mt-1 border first:mt-0 text-[12px] justify-around items-center relative cursor-pointer font-thin">
 											<span>{session.date}</span>
 											<span>{week[new Date(session.date).getDay()]}</span>
 											<span>{session.time}</span>

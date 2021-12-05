@@ -17,9 +17,9 @@ const AddSession: NextPage = () => {
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="flex flex-col justify-center mx-4 my-5">
+				<div className="flex flex-col justify-center mx-4 my-5 font-IBM">
 					<div className="flex items-center justify-between">
-						<span className="flex text-[20px] font-semibold">
+						<span className="flex text-[20px] font-bold">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="w-7 h-7"
@@ -53,23 +53,23 @@ const AddSession: NextPage = () => {
 					</div>
 
 					<div className="mt-4">
-						<div className="text-[16px]">회원</div>
+						<div className="text-[16px] font-medium">회원</div>
 						{selectedMember === '' ? (
 							<Link href="/trainer/session/add-session/select-member">
-								<button className="w-full p-3 mt-1 border">
+								<button className="w-full p-3 mt-1 border font-thin">
 									회원 선택
 								</button>
 							</Link>
 						) : (
-							<div className="w-full p-3 mt-1 border">
+							<div className="w-full p-3 mt-1 border font-thin">
 								{selectedMemberVar()} 회원님
 							</div>
 						)}
 					</div>
 
 					<div className="mt-4">
-						<div className="text-[16px]">날짜 / 시간</div>
-						<div className="p-3 mt-1 text-center border">
+						<div className="text-[16px] font-medium">날짜 / 시간</div>
+						<div className="p-3 mt-1 text-center border font-thin">
 							<DatePicker
 								className="text-center"
 								showTimeSelect
