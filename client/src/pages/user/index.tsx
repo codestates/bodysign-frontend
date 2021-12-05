@@ -56,11 +56,11 @@ const main: NextPage = () => {
 				{/* 이 때 CSS 애니메이션 추가가 필요 */}
 				{`체중이 ${inbodyList[1].weight - inbodyList[0].weight} kg 변화했어요.`}
 			</div>
-			<div className="bottom-2 fixed mb-2">
+			<div className="bottom-2 mt-40 mb-2 width-full">
 				<div className="font-IBM font-bold text-[20px] mb-3">
 					예정된 수업
 				</div>
-				<div className="font-IBM font-medium border border-gray-300 bg-gray-50 rounded-2xl items-center m-5">
+				<div className="font-IBM font-medium border border-gray-300 bg-gray-50 rounded-2xl items-center m-5 width-full">
 					<div className="inline-block p-1 mx-3">{classData.date}</div>
 					<div className="inline-block p-1 mx-3">{classData.time}</div>
 				</div>
