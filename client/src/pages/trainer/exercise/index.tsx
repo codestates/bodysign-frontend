@@ -159,7 +159,7 @@ const Exercise: NextPage = () => {
 										return (
 											<React.Fragment key={exercise.id}>
 												<div className="text-[12px] mt-1">
-													<div className="flex justify-center px-3 py-3 border">
+													<div className="flex justify-center px-3 py-3 border rounded-3xl font-thin">
 														<div className="flex">
 															<div className="ml-1">{exercise.name}</div>
 														</div>

@@ -72,7 +72,7 @@ const SelectMember: NextPage = () => {
 										return (
 											<React.Fragment key={idx2}>
 												<div className="text-[16px] mt-1">
-													<div className="flex justify-between px-3 py-3 border">
+													<div className="flex justify-between px-3 py-3 border rounded-3xl">
 														<div className="flex">
 															<svg
 																xmlns="http://www.w3.org/2000/svg"

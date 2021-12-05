@@ -53,10 +53,10 @@ const AddSession: NextPage = () => {
 					</div>
 
 					<div className="mt-4">
-						<div className="text-[16px] font-medium">회원</div>
+						<div className="text-[12px] font-medium">회원</div>
 						{selectedMember === '' ? (
 							<Link href="/trainer/session/add-session/select-member">
-								<button className="w-full p-3 mt-1 border font-thin">
+								<button className="text-[12px] w-full p-2 mt-1 border font-thin rounded-3xl">
 									회원 선택
 								</button>
 							</Link>
@@ -68,8 +68,8 @@ const AddSession: NextPage = () => {
 					</div>
 
 					<div className="mt-4">
-						<div className="text-[16px] font-medium">날짜 / 시간</div>
-						<div className="p-3 mt-1 text-center border font-thin">
+						<div className="text-[12px] font-medium">날짜 / 시간</div>
+						<div className="text-[12px] p-2 mt-1 text-center border font-thin rounded-3xl">
 							<DatePicker
 								className="text-center"
 								showTimeSelect

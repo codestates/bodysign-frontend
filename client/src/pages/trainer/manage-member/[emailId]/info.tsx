@@ -96,7 +96,7 @@ const Info: NextPage = () => {
 					</div>
 
 					<div className="mt-4">
-						<div className="flex flex-col justify-between px-3 py-3 border text-[12px]">
+						<div className="flex flex-col justify-between px-3 py-3 text-[12px]">
 							<div className="flex justify-between">
 								<span>이름</span>
 								<span>{member_dummy.name}</span>
@@ -150,7 +150,6 @@ const Info: NextPage = () => {
 						</div>
 					</div>
 					<div className="flex flex-col mt-4 text-[12px]">
-						<div className="p-3 text-center">세션</div>
 						<div className="border-b border-gray-200">
 							<table className="min-w-full divide-y divide-gray-200">
 								<thead className="bg-gray-50">

@@ -90,7 +90,7 @@ const Sessions: NextPage = () => {
 										href={`/trainer/manage-member/${
 											session.email.split('@')[0]
 										}/sessions/${session.date}`}>
-										<div className="flex px-3 py-3 mt-1 border first:mt-0 text-[12px] justify-around items-center relative cursor-pointer font-thin">
+										<div className="flex px-3 py-3 mt-1 border rounded-3xl first:mt-0 text-[12px] justify-around items-center relative cursor-pointer font-thin">
 											<span>{session.date}</span>
 											<span>{week[new Date(session.date).getDay()]}</span>
 											<span>{session.time}</span>

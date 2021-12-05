@@ -195,7 +195,7 @@ const ManageMember: NextPage = () => {
 																	// 2. isCheck 상태에 따라 bg 컬러와 check-circle를 표시한다.
 															  }
 													}>
-													<div className="flex justify-between px-3 py-3 border">
+													<div className="flex justify-between px-3 py-3 border rounded-3xl">
 														<div className="flex">
 															<svg
 																xmlns="http://www.w3.org/2000/svg"
