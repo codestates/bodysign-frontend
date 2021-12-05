@@ -6,16 +6,17 @@ import KaKaoLogin from 'react-kakao-login'
 import Layout from '../components/Layout'
 import Loading from './Loading'
 
-const googleCliendId = "122713240467-oq4tee3gshbdfmodg5b20ljsb9ajfsoe.apps.googleusercontent.com"
-const kakaoAppKey = "6e971578908fd66a46f5962ba278215a"
+const googleCliendId =
+	'122713240467-oq4tee3gshbdfmodg5b20ljsb9ajfsoe.apps.googleusercontent.com'
+const kakaoAppKey = '6e971578908fd66a46f5962ba278215a'
 
 const Login: NextPage = () => {
-    const [ session, loading ] = useSession();
+	const [session, loading] = useSession()
 
-    const [form, setForm] = useState({
-      id: '',
-      password: ''
-    });
+	const [form, setForm] = useState({
+		id: '',
+		password: ''
+	})
 
     if(loading) {
         return (
@@ -23,56 +24,56 @@ const Login: NextPage = () => {
         )
     }
 
-    const onChangeId = (e: any) => {
-      const id = e.target.value;
-      console.log(id)
-      setForm({
-        ...form,
-        id: id
-      });
-      console.log(form)
-    };
+	const onChangeId = (e: any) => {
+		const id = e.target.value
+		console.log(id)
+		setForm({
+			...form,
+			id: id
+		})
+		console.log(form)
+	}
 
-    const onChangePassword = (e: any) => {
-      const password = e.target.value;
-      setForm({
-        ...form,
-        password: password
-      });
-    };
+	const onChangePassword = (e: any) => {
+		const password = e.target.value
+		setForm({
+			...form,
+			password: password
+		})
+	}
 
-    const onSubmit = (e: any) => {
-      console.log(form)
-    }
+	const onSubmit = (e: any) => {
+		console.log(form)
+	}
 
-    const onSuccessGoogle = (response: any) => {
-      console.log(response, "success")
-      console.log(response.accessToken)
-      //? 1. 여기서 받아온 액세스토큰을 서버로 넘겨주기
-      //? 2. 서버에서 구글 oauth로 요청
-      //? 3. 서버나 클라에서 로그인된 화면으로 리디렉션
-      //? 휴대폰 번호를 받아야 해서 회원가입 모달창 띄워야 함
-    }
+	const onSuccessGoogle = (response: any) => {
+		console.log(response, 'success')
+		console.log(response.accessToken)
+		//? 1. 여기서 받아온 액세스토큰을 서버로 넘겨주기
+		//? 2. 서버에서 구글 oauth로 요청
+		//? 3. 서버나 클라에서 로그인된 화면으로 리디렉션
+		//? 휴대폰 번호를 받아야 해서 회원가입 모달창 띄워야 함
+	}
 
-    const onFailureGoogle = (response: any) => {
-      console.log(response, "failed")
-    }
+	const onFailureGoogle = (response: any) => {
+		console.log(response, 'failed')
+	}
 
-    const onSuccessKakao = (res: any) => {
-      console.log(res)
-      //? 1. 여기서 받아온 액세스토큰을 서버로 넘겨주기
-      //? 2. 서버에서 카카오 oauth로 요청
-      //? 3. 서버나 클라에서 로그인된 화면으로 리디렉션
-      //? 휴대폰 번호를 받아야 해서 회원가입 모달창 띄워야 함
-    }
+	const onSuccessKakao = (res: any) => {
+		console.log(res)
+		//? 1. 여기서 받아온 액세스토큰을 서버로 넘겨주기
+		//? 2. 서버에서 카카오 oauth로 요청
+		//? 3. 서버나 클라에서 로그인된 화면으로 리디렉션
+		//? 휴대폰 번호를 받아야 해서 회원가입 모달창 띄워야 함
+	}
 
-    const onFailureKakao = (err: any) => {
-      console.log(err);
-    }
+	const onFailureKakao = (err: any) => {
+		console.log(err)
+	}
 
-    const onSignup = () => {
-      // 회원가입 링크로 넘기기
-    }
+	const onSignup = () => {
+		// 회원가입 링크로 넘기기
+	}
 
     return <>
     <Layout variant="Web">
