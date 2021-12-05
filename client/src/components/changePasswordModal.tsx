@@ -54,7 +54,7 @@ const ChangePasswordModal: NextPage = ({ passwordModalOpenhandler, isOpen }) => 
 
 	return (
         <>
-        <div onClick={modalCloseHandler} className="modal-overlay absolute w-full h-full top-0 left-0 bg-black opacity-70"></div>
+        <div onClick={modalCloseHandler} className="modal-overlay absolute w-full h-full top-0 left-0 bg-black opacity-70 font-IBM font-thin"></div>
         <div className="modal-container absolute item-center bg-white w-8/12 mx-auto right-0 left-0 rounded shadow-lg z-50 overflow-y-auto p-3">
             <div className="text-center mb-2">비밀번호 변경</div>
             <div className="text-center items-center mb-2">

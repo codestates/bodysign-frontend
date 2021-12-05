@@ -6,7 +6,11 @@ module.exports = {
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {}
+    extend: {
+      fontFamily: {
+        IBM: ['IBM Plex Sans KR', 'sans-serif'],
+       }
+    }
   },
   variants: {
     extend: {}
