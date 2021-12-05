@@ -67,6 +67,15 @@ const ManageMember: NextPage = () => {
 		}
 	}, [category])
 
+	const addMemberModalHandler = () => {
+		setIsAddMemberModalOpen(!isAddMemberModalOpen)
+	}
+
+	const SearchMemberModalHandler = () => {
+		setIsAddMemberModalOpen(!isAddMemberModalOpen)
+		setIsSearchMemberModalOpen(!isSearchMemberModalOpen)
+	}
+
 	return (
 		<>
 			<Layout variant="Web">
@@ -96,7 +105,7 @@ const ManageMember: NextPage = () => {
 										viewBox="0 0 24 24"
 										stroke="currentColor"
 										data-check-modal="addmember"
-										onClick={e => { setIsAddMemberModalOpen(!isAddMemberModalOpen)}}
+										onClick={addMemberModalHandler}
 									>
 										<path
 											strokeLinecap="round"
@@ -241,10 +250,10 @@ const ManageMember: NextPage = () => {
 					})}
 				</div>
 				{isSearchMemberModalOpen ? (
-					<SearchMemberModal />
+					<SearchMemberModal addMemberModalHandler={addMemberModalHandler} searchMemberModalHandler={SearchMemberModalHandler} />
 				) : null}
 				{isAddMemberModalOpen ? (
-					<AddMemberModal />
+					<AddMemberModal addMemberModalHandler={addMemberModalHandler} searchMemberModalHandler={SearchMemberModalHandler} />
 				) : null}
 			</Layout>
 		</>
