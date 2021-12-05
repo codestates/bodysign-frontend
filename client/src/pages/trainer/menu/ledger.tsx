@@ -11,6 +11,7 @@ import dummytotalsession from '../../../../dummyTotalSession.json'
 const Ledger: NextPage = () => {
 	const [startDate, setStartDate] = useState(new Date())
 	const [endDate, setEndDate] = useState(new Date())
+	const [rangeFilterResult, setRangeFilterResult] = useState(0)
 	const [month, setMonth] = useState('')
 	const modal = useReactiveVar(modalVar)
 	const canvasRef = useRef(null)
@@ -84,6 +85,7 @@ const Ledger: NextPage = () => {
 				},
 				options: {}
 			})
+
 			return () => {
 				chart.destroy()
 			 }
@@ -92,28 +94,29 @@ const Ledger: NextPage = () => {
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
-		// 기간별 수업료 정산
-		// year, month, day
-
 		const getYearMonthDay = (KST: Date) => {
 			const year = new Date(KST).getFullYear()
 			const month = new Date(KST).getMonth() + 1
-			const day = new Date(KST).getDay()
+			const day = new Date(KST).getDate()
 			return `${year} ${month} ${day}`
 		}
 		const getTimeStartDate = new Date(getYearMonthDay(startDate)).getTime()
 		const getTimeEndDate = new Date(getYearMonthDay(endDate)).getTime()
 
-		const test = dummytotalsession.filter(totalSession => {
-			const totalSessionGetTime = new Date(
-				totalSession.session_date
-			).getTime()
-			if (getTimeStartDate <= totalSessionGetTime) {
-				if (totalSessionGetTime <= getTimeEndDate) {
+		const result = dummytotalsession
+			.filter(totalSession => {
+				const totalSessionGetTime = new Date(
+					totalSession.session_date
+				).getTime()
+				if (
+					getTimeStartDate <= totalSessionGetTime &&
+					totalSessionGetTime <= getTimeEndDate
+				) {
 					return totalSession
-				}
-			} else return
-		})
+				} else return
+			})
+			.reduce((acc, cur) => acc + cur.cost * cur.times, 0)
+		setRangeFilterResult(result)
 	}
 
 	return (
@@ -166,11 +169,17 @@ const Ledger: NextPage = () => {
 										minDate={startDate}
 									/>
 									<button
+
 										className="h-7 px-1 ml-auto bg-yellow-100 border w-[85px]"
 										type="submit">
 										조회
 									</button>
 								</div>
+								{rangeFilterResult === 0 ? null : (
+									<div className="self-start mt-1 border w-[125px] text-center p-3">
+										{rangeFilterResult}원
+									</div>
+								)}
 							</form>
 						</div>
 					</div>
