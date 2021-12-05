@@ -6,6 +6,8 @@ import Layout from '../../../components/Layout'
 import dummydata from '../../../../dummydata.json'
 import { deleteStateVar, modalVar } from '../../../graphql/vars'
 import { useReactiveVar } from '@apollo/client'
+import SearchMemberModal from '../../../components/SearchMemberModal'
+import AddMemberModal from '../../../components/AddMemberModal'
 
 interface Member {
 	id: string
@@ -25,6 +27,8 @@ interface FormInput {
 }
 
 const ManageMember: NextPage = () => {
+	const [ isAddMemberModalOpen, setIsAddMemberModalOpen ] = useState(false)
+	const [ isSearchMemberModalOpen, setIsSearchMemberModalOpen ] = useState(false)
 	const [category, setCategory] = useState('관리')
 	const [checkModal, setCheckModal] = useState('addmember')
 	const [checkList, setCheckList] = useState([])
@@ -92,19 +96,8 @@ const ManageMember: NextPage = () => {
 										viewBox="0 0 24 24"
 										stroke="currentColor"
 										data-check-modal="addmember"
-										onClick={e => {
-											modalVar(true)
-											if (
-												e !== null &&
-												e.target instanceof SVGSVGElement
-											) {
-												{
-													setCheckModal(
-														e.target.dataset.checkModal as string
-													)
-												}
-											}
-										}}>
+										onClick={e => { setIsAddMemberModalOpen(!isAddMemberModalOpen)}}
+									>
 										<path
 											strokeLinecap="round"
 											strokeLinejoin="round"
@@ -247,102 +240,11 @@ const ManageMember: NextPage = () => {
 						)
 					})}
 				</div>
-
-				{modal ? (
-					checkModal === 'addmember' ? (
-						<div className="fixed max-w-[450px] w-full bottom-0">
-							<div
-								className="fixed inset-0 z-[-1] bg-black opacity-20"
-								onClick={() => modalVar(false)}></div>
-							<div className="bg-white flex z-[50] h-full flex-col py-10">
-								<div className="py-3 text-center text-[20px]">
-									회원 추가
-								</div>
-								<form
-									className="flex flex-col mt-4"
-									onSubmit={handleSubmit(onSubmit)}>
-									<input
-										className="w-full h-12 px-10 border"
-										type="text"
-										placeholder="휴대폰 번호 7자리 또는 8자리를 입력해주세요."
-										{...register('phone', {
-											required: true,
-											maxLength: 8,
-											pattern: /^([0-9]{3,4})([0-9]{4})$/
-										})}
-									/>
-									{errors.phone?.type === 'maxLength' && (
-										<div className="text-[16px] text-red-500 mt-1 text-center">
-											붙임표(-)를 제외한 휴대폰 번호 7~8자리를
-											입력해주세요.
-										</div>
-									)}
-									<select
-										className="w-full h-12 px-10 mt-1 bg-white border"
-										{...register('category', {
-											required: true
-										})}>
-										<option value="">
-											회원님의 카테고리를 선택해주세요.
-										</option>
-										{Object.keys(sessionObject).map((category, idx) => (
-											<option value={category} key={idx}>
-												{category}
-											</option>
-										))}
-									</select>
-
-									<div className="max-w-[450px] self-end mt-4">
-										<button
-											className="px-4 py-3 bg-gray-100 border"
-											onClick={() => modalVar(false)}>
-											취소
-										</button>
-										<button
-											className="px-4 py-3 mx-3 bg-yellow-100 border"
-											type="submit">
-											추가
-										</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					) : (
-						<div className="fixed max-w-[450px] w-full bottom-0">
-							<div
-								className="fixed inset-0 z-[-1] bg-black opacity-20"
-								onClick={() => modalVar(false)}></div>
-							<div className="bg-white flex z-[50] h-full flex-col py-10">
-								<div className="py-3 text-center text-[20px]">
-									카테고리 추가
-								</div>
-								<form
-									className="flex flex-col mt-4"
-									onSubmit={handleSubmit(onSubmit)}>
-									<input
-										className="w-full h-12 px-10 border"
-										type="text"
-										placeholder="새로운 카테고리 이름을 입력해주세요."
-										{...register('category', {
-											required: true
-										})}
-									/>
-									<div className="max-w-[450px] self-end mt-4">
-										<button
-											className="px-4 py-3 bg-gray-100 border"
-											onClick={() => modalVar(false)}>
-											취소
-										</button>
-										<button
-											className="px-4 py-3 mx-3 bg-yellow-100 border"
-											type="submit">
-											추가
-										</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					)
+				{isSearchMemberModalOpen ? (
+					<SearchMemberModal />
+				) : null}
+				{isAddMemberModalOpen ? (
+					<AddMemberModal />
 				) : null}
 			</Layout>
 		</>
