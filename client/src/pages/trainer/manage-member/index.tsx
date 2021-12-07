@@ -29,7 +29,7 @@ interface FormInput {
 const ManageMember: NextPage = () => {
 	const [ isAddMemberModalOpen, setIsAddMemberModalOpen ] = useState(false)
 	const [ isSearchMemberModalOpen, setIsSearchMemberModalOpen ] = useState(false)
-	const [category, setCategory] = useState('관리')
+	const [category, setCategory] = useState('관리중')
 	const [checkModal, setCheckModal] = useState('addmember')
 	const [checkList, setCheckList] = useState([])
 	const modal = useReactiveVar(modalVar)
@@ -63,7 +63,7 @@ const ManageMember: NextPage = () => {
 	useEffect(() => {
 		if (category === '졸업') {
 			// filter
-		} else if (category === '관리') {
+		} else if (category === '관리중') {
 		}
 	}, [category])
 
@@ -83,9 +83,9 @@ const ManageMember: NextPage = () => {
 					<div className="flex items-center justify-between">
 						<span className="flex text-[20px]">
 							<div
-								className={`${category === '관리' ? 'font-bold' : ''}`}
-								onClick={() => setCategory('관리')}>
-								관리
+								className={`${category === '관리중' ? 'font-bold' : ''}`}
+								onClick={() => setCategory('관리중')}>
+								관리중
 							</div>
 							<div
 								className={`ml-3 ${
@@ -193,7 +193,7 @@ const ManageMember: NextPage = () => {
 															: e => {
 																	console.log(e.target)
 																	// 회원 삭제 API
-																	// 1. Local-only fields를 이용해서 선택한 아이템의 isCheck 상태를 관리한다.
+																	// 1. Local-only fields를 이용해서 선택한 아이템의 isCheck 상태를 관리중한다.
 																	// 2. isCheck 상태에 따라 bg 컬러와 check-circle를 표시한다.
 															  }
 													}>
