@@ -9,15 +9,16 @@ import {
 import '../components/loading.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const client = new ApolloClient({
-	  cache: new InMemoryCache()
-  })
-	
-  return (
+	const client = new ApolloClient({
+		uri: 'http://localhost:4000/graphql',
+		cache: new InMemoryCache()
+	})
+
+	return (
 		<ApolloProvider client={client}>
-      <Provider session={pageProps.session}>
-			  <Component {...pageProps} />
-      </Provider>
+			<Provider session={pageProps.session}>
+				<Component {...pageProps} />
+			</Provider>
 		</ApolloProvider>
 	)
 }

@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import Layout from '../components/Layout'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import 'react-datepicker/dist/react-datepicker.css'
+import { gql, useMutation, useReactiveVar } from '@apollo/client'
+import { loginTypeVar, modalVar } from '../graphql/vars'
 
 interface FormInput {
 	email: string
@@ -13,6 +15,32 @@ interface FormInput {
 	loginType: string
 	gender: string
 }
+
+const CreateUserDocument = gql`
+	mutation CreateUser($createUserInput: CreateUserInput!) {
+		createTrainer(createUserInput: $createUserInput) {
+			email
+			userName
+			password
+			phoneNumber
+			gender
+			loginType
+		}
+	}
+`
+
+const CreateTrainerDocument = gql`
+	mutation CreateTrainer($createTrainerInput: CreateTrainerInput!) {
+		createTrainer(createTrainerInput: $createTrainerInput) {
+			email
+			userName
+			password
+			phoneNumber
+			gender
+			loginType
+		}
+	}
+`
 
 const labelProperties =
 	'after:absolute after:h-full after:bg-yellow-100 after:w-full after:top-0 after:z-[-1] after:transition-[left] after:duration-500 peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
@@ -27,6 +55,12 @@ const Signup: NextPage = () => {
 		{ id: 4, name: '필라테스', status: false },
 		{ id: 5, name: '기타', status: false }
 	])
+	const [checkedPersonalInfo, setCheckedPersonalInfo] = useState(false)
+	const [createUser, { loading, error }] = useMutation(
+		areYouTrainer ? CreateTrainerDocument : CreateUserDocument
+	)
+	const loginType = useReactiveVar(loginTypeVar)
+	const modal = useReactiveVar(modalVar)
 
 	const {
 		register,
@@ -34,9 +68,24 @@ const Signup: NextPage = () => {
 		handleSubmit
 	} = useForm<FormInput>()
 	const onSubmit: SubmitHandler<FormInput> = data => {
-		let test = { ...data }
-		// 회원가입 API
-		console.log(test)
+		createUser({
+			variables: {
+				createTrainerInput: {
+					email: data.email,
+					userName: data.name,
+					password: data.password,
+					phoneNumber: data.phone,
+					gender: data.gender,
+					loginType
+				}
+			}
+		})
+
+		console.log(error?.clientErrors)
+		console.log(error?.message)
+		console.log(error?.name)
+		console.log(error?.graphQLErrors)
+		console.log(error?.extraInfo)
 	}
 
 	return (
@@ -261,12 +310,46 @@ const Signup: NextPage = () => {
 							</div>
 						) : null}
 
+						<div className="flex items-center mt-4">
+							<input
+								className="mr-1"
+								type="checkbox"
+								onChange={e => {
+									setCheckedPersonalInfo(e.target.checked)
+								}}
+							/>
+							<p
+								className="underline"
+								onClick={() => {
+									modalVar(true)
+								}}>
+								개인정보 수집 및 이용동의 (필수)
+							</p>
+						</div>
+
 						<input
-							className="w-full h-12 mt-4 text-black bg-yellow-200 cursor-pointer disabled:opacity-50"
+							className={`w-full h-12 mt-4 text-black bg-yellow-200 cursor-pointer disabled:opacity-50`}
 							type="submit"
+							disabled={checkedPersonalInfo ? false : true}
 						/>
 					</form>
 				</div>
+
+				{modal ? (
+					<div className="fixed max-w-[450px] w-full bottom-0">
+						<div
+							className="fixed inset-0 z-[-1] bg-black opacity-20"
+							onClick={() => modalVar(false)}></div>
+						<div className="bg-white flex z-[50] h-full flex-col py-10">
+							<div className="py-3 text-center text-[20px]">
+								개인정보처리방침
+							</div>
+							<form
+								className="flex flex-col mt-4"
+								onSubmit={handleSubmit(onSubmit)}></form>
+						</div>
+					</div>
+				) : null}
 			</Layout>
 		</>
 	)
