@@ -5,31 +5,47 @@ import GoogleLogin from 'react-google-login'
 import KaKaoLogin from 'react-kakao-login'
 import Layout from '../components/Layout'
 import Loading from './Loading'
+import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
+import { loginTypeVar } from '../graphql/vars'
 
 const googleCliendId =
 	'122713240467-oq4tee3gshbdfmodg5b20ljsb9ajfsoe.apps.googleusercontent.com'
 const kakaoAppKey = '6e971578908fd66a46f5962ba278215a'
 
+const LOGIN = gql`
+	mutation LoginAuth($loginUserInput: LoginUserInput!) {
+		loginUser(loginUserInput: $loginUserInput) {
+			email
+			password
+			type
+		}
+  }
+`;
+
 const Login: NextPage = () => {
-	const [session, loading] = useSession()
 
 	const [form, setForm] = useState({
-		id: '',
+		email: '',
 		password: ''
 	})
 
-    if(loading) {
+	const [ loginAuth, { loading, error }] = useMutation(LOGIN);
+	const loginType = useReactiveVar(loginTypeVar)
+
+	const [session, pageLoading] = useSession() 
+
+    if(pageLoading) {
         return (
           <Loading />
         )
     }
 
 	const onChangeId = (e: any) => {
-		const id = e.target.value
-		console.log(id)
+		const email = e.target.value
+		console.log(email)
 		setForm({
 			...form,
-			id: id
+			email: email
 		})
 		console.log(form)
 	}
@@ -43,6 +59,15 @@ const Login: NextPage = () => {
 	}
 
 	const onSubmit = (e: any) => {
+		loginAuth({
+			variables: {
+				createTrainerInput: {
+					email: form.email,
+					password: form.password,
+					loginType
+				}
+			}
+		})
 		console.log(form)
 	}
 
@@ -81,7 +106,7 @@ const Login: NextPage = () => {
         {!session && <>
           <div className="max-w-screen-md">
             <input className="font-IBM font-thin rounded-xl border p-1 m-1 w-4/5" type="text" placeholder="이메일" onChange={onChangeId} />
-            <input className="font-IBM font-thin rounded-xl border p-1 m-1 w-4/5" type="text" placeholder="비밀번호" onChange={onChangePassword}/>
+            <input className="font-IBM font-thin rounded-xl border p-1 m-1 w-4/5" type="password" placeholder="비밀번호" onChange={onChangePassword}/>
             <button onClick={onSubmit} className="font-IBM font-thin py-1 rounded text-gray-800 bg-gray-300 hover:bg-gray-400 hover:text-white m-1 w-4/5 ">
               로그인
             </button>
