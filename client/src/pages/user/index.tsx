@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
 import Layout from '../../components/Layout'
+import logo from '../../../public/logo3.svg'
 
 // TODO: CSS 애니메이션 꾸미기
 // https://codepen.io/Tbgse/pen/dYaJyJ
@@ -45,7 +46,7 @@ const main: NextPage = () => {
 	return (
 		<Layout variant="Web">
 			<div className="mb-2.5 flex flex-col w-full mx-4 my-5 text-[12px] font-IBM">
-				Bodysign logo
+				<img src={logo} width="50" alt="logo"/>
 			</div>
 			<div className="m-5 font-IBM font-thin">
 			<div className="text-xs mt-2.5">
@@ -56,13 +57,13 @@ const main: NextPage = () => {
 				{/* 이 때 CSS 애니메이션 추가가 필요 */}
 				{`체중이 ${inbodyList[1].weight - inbodyList[0].weight} kg 변화했어요.`}
 			</div>
-			<div className="bottom-2 mt-40 mb-2 width-full">
+			<div className="bottom-2 mt-[400px] mb-2 width-full">
 				<div className="font-IBM font-bold text-[20px] mb-3">
 					예정된 수업
 				</div>
-				<div className="font-IBM font-medium border border-gray-300 bg-gray-50 rounded-2xl items-center m-5 width-full">
-					<div className="inline-block p-1 mx-3">{classData.date}</div>
-					<div className="inline-block p-1 mx-3">{classData.time}</div>
+				<div className="font-IBM font-medium border border-gray-300 bg-gray-50 rounded-2xl items-center m-3 width-full">
+					<div className="inline-block p-1 mx-3 font-bold">{classData.date}</div>
+					<div className="inline-block p-1 mx-3 font-bold float-right">{classData.time}</div>
 				</div>
 			</div>
 			</div>
