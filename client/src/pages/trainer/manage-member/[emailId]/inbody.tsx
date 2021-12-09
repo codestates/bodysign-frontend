@@ -81,7 +81,7 @@ const Inbody: NextPage = () => {
 			<Layout variant="Web">
 				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
-						<span className="flex text-[20px]">
+						<span className="flex text-[25px]">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6"
@@ -116,7 +116,7 @@ const Inbody: NextPage = () => {
 						</span>
 					</div>
 
-					<div className="flex justify-between pr-3 mt-4 text-[12px]">
+					<div className="flex justify-between pr-3 mt-4 text-[18px]">
 						<Link href="/trainer/manage-member/emailId/info">
 							<span className="ml-0">회원정보</span>
 						</Link>
@@ -134,7 +134,7 @@ const Inbody: NextPage = () => {
 					</div>
 
 					<div className="flex-col">
-						<table className="text-xs mt-6 mx-auto text-center border w-4/5">
+						<table className="text-[15px] mt-6 mx-auto text-center border w-4/5">
 							<thead>
 								<tr>
 									<th>날짜</th>

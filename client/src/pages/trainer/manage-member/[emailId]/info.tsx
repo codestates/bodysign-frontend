@@ -48,7 +48,7 @@ const Info: NextPage = () => {
 			<Layout variant="Web">
 				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
-						<span className="flex text-[20px]">
+						<span className="flex text-[25px]">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6"
@@ -83,7 +83,7 @@ const Info: NextPage = () => {
 						</span>
 					</div>
 
-					<div className="flex justify-between pr-3 mt-4 text-[12px]">
+					<div className="flex justify-between pr-3 mt-4 text-[18px]">
 						<span className="pb-1 ml-0 border-b border-black cursor-pointer">
 							회원정보
 						</span>
@@ -96,7 +96,7 @@ const Info: NextPage = () => {
 					</div>
 
 					<div className="mt-4">
-						<div className="flex flex-col justify-between px-3 py-3 text-[12px]">
+						<div className="flex flex-col justify-between px-3 py-3 text-[15px]">
 							<div className="flex justify-between">
 								<span>이름</span>
 								<span>{member_dummy.name}</span>
@@ -113,39 +113,41 @@ const Info: NextPage = () => {
 								<span>전화번호</span>
 								<span>{member_dummy.phone}</span>
 							</div>
-							<div className="flex justify-between mt-1">
-								<span>졸업유무</span>
-								<span className="relative inline-block w-10 align-middle select-none">
-									<input
-										className="absolute block w-6 h-6 bg-white border-4 rounded-full appearance-none cursor-pointer toggle-checkbox"
-										type="checkbox"
-										name="toggle"
-										id="toggle"
+							<div className="mt-5">
+								<div className="flex justify-between mt-1">
+									<span>졸업유무</span>
+									<span className="relative inline-block w-10 align-middle select-none">
+										<input
+											className="absolute block w-6 h-6 bg-white border-4 rounded-full appearance-none cursor-pointer toggle-checkbox"
+											type="checkbox"
+											name="toggle"
+											id="toggle"
+											onChange={e => {
+												// 졸업 유무 변경 API
+												// 데이터를 받고 checked 상태를 변경한다.
+												// e.target.checked을 가지고 mutation
+											}}
+										/>
+										<label
+											className="block h-6 overflow-hidden bg-gray-300 rounded-full cursor-pointer toggle-label"
+											htmlFor="toggle"
+										/>
+									</span>
+								</div>
+								<div className="flex justify-between mt-1">
+									<span>카테고리</span>
+									<select
+										className="bg-white border"
 										onChange={e => {
-											// 졸업 유무 변경 API
-											// 데이터를 받고 checked 상태를 변경한다.
-											// e.target.checked을 가지고 mutation
-										}}
-									/>
-									<label
-										className="block h-6 overflow-hidden bg-gray-300 rounded-full cursor-pointer toggle-label"
-										htmlFor="toggle"
-									/>
-								</span>
-							</div>
-							<div className="flex justify-between mt-1">
-								<span>카테고리</span>
-								<select
-									className="bg-white border"
-									onChange={e => {
-										// 회원 카테고리 변경 API
-										// e.target.value
-									}}>
-									<option value="">회원 카테고리</option>
-									{member_category_dummy.map((category, idx) => (
-										<option key={idx}>{category}</option>
-									))}
-								</select>
+											// 회원 카테고리 변경 API
+											// e.target.value
+										}}>
+										<option value="">회원 카테고리</option>
+										{member_category_dummy.map((category, idx) => (
+											<option key={idx}>{category}</option>
+										))}
+									</select>
+								</div>
 							</div>
 						</div>
 					</div>

@@ -33,7 +33,7 @@ const Sessions: NextPage = () => {
 			<Layout variant="Web">
 				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
-						<span className="flex text-[20px]">
+						<span className="flex text-[25px]">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6"
@@ -68,7 +68,7 @@ const Sessions: NextPage = () => {
 						</span>
 					</div>
 
-					<div className="flex justify-between pr-3 mt-4 text-[12px]">
+					<div className="flex justify-between pr-3 mt-4 text-[18px]">
 						<Link href="/trainer/manage-member/emailId/info">
 							<span className="ml-0 cursor-pointer">회원정보</span>
 						</Link>

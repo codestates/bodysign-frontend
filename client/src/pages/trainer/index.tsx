@@ -49,20 +49,35 @@ const main: NextPage = () => {
 				<img src={logo} width="50" alt="logo"/>
 			</div>
 			<div className="m-5 font-IBM font-thin">
-			<div className="font-IBM font-extrabold text-[20px]">
+			<div className="font-IBM font-extrabold text-[25px]">
 				{/* 체중, 골격근량, 체지방 보여주기 */}
 				{/* 이 때 CSS 애니메이션 추가가 필요 */}
+				{`안녕하세요. 김창동 선생님!`}
+				<br />
+				<br />
 				{`이번 달 정산 금액은`}
                 <br />
                 {`2,000,000원 입니다.`}
 			</div>
-			<div className="bottom-2 mt-[400px] mb-2 width-full">
+			<div className="bottom-2 mt-[300px] mb-2 width-full">
 				<div className="font-IBM font-bold text-[20px] mb-3">
 					오늘 예정된 수업
 				</div>
-				<div className="font-IBM font-medium border border-gray-300 bg-gray-50 rounded-2xl items-center m-3 width-full">
-					<div className="inline-block p-1 mx-3 font-bold">{"홍길동 회원님"}</div>
+				<div className="text-[22px] font-IBM font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
+					<div className="inline-block p-1 mx-3 font-bold">{"권오연 회원님"}</div>
 					<div className="inline-block p-1 mx-3 font-bold float-right">{classData.time}</div>
+				</div>
+				<div className="text-[22px] font-IBM font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
+					<div className="inline-block p-1 mx-3 font-bold">{"장수민 회원님"}</div>
+					<div className="inline-block p-1 mx-3 font-bold float-right">{"17:00"}</div>
+				</div>
+				<div className="text-[22px] font-IBM font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
+					<div className="inline-block p-1 mx-3 font-bold">{"최원준 회원님"}</div>
+					<div className="inline-block p-1 mx-3 font-bold float-right">{"19:00"}</div>
+				</div>
+				<div className="text-[22px] font-IBM font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
+					<div className="inline-block p-1 mx-3 font-bold">{"황현수 회원님"}</div>
+					<div className="inline-block p-1 mx-3 font-bold float-right">{"21:00"}</div>
 				</div>
 			</div>
 			</div>

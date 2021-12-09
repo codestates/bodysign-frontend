@@ -81,15 +81,15 @@ const ManageMember: NextPage = () => {
 			<Layout variant="Web">
 				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
-						<span className="flex text-[20px]">
+						<span className="flex text-[25px]">
 							<div
-								className={`${category === '관리중' ? 'font-bold' : ''}`}
+								className={`${category === '관리중' ? 'font-bold' : 'text-gray-400'}`}
 								onClick={() => setCategory('관리중')}>
 								관리중
 							</div>
 							<div
 								className={`ml-3 ${
-									category === '졸업' ? 'font-bold' : ''
+									category === '졸업' ? 'font-bold' : 'text-gray-400'
 								}`}
 								onClick={() => setCategory('졸업')}>
 								졸업
@@ -185,7 +185,7 @@ const ManageMember: NextPage = () => {
 										return (
 											<React.Fragment key={idx2}>
 												<div
-													className="text-[16px] mt-1"
+													className="text-[16px] mt-2"
 													data-id={member.id}
 													onClick={
 														!deleteState
@@ -199,30 +199,22 @@ const ManageMember: NextPage = () => {
 													}>
 													<div className="flex justify-between px-3 py-3 border rounded-3xl">
 														<div className="flex">
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																className={`w-6 h-6 ${
-																	member.gender === 'male'
-																		? 'text-blue-300'
-																		: 'text-pink-300'
-																}`}
-																fill="none"
-																viewBox="0 0 24 24"
-																stroke="currentColor">
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	strokeWidth={1.5}
-																	d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-																/>
-															</svg>
+															{
+																member.gender === 'male'
+																? <img src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png" width="25" height="25" />
+																: <img src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png" width="25" height="25" />
+															}
+															
 															<Link
 																href={`/trainer/manage-member/${
 																	// ! TypeError: Cannot read property 'split' of undefined
 																	member.email.split('@')[0]
 																}/info`}>
-																<div className="ml-2 hover:cursor-pointer font-thin">
-																	{member.name} 회원님
+																<div className="flex flex-col ml-1 h-1">
+																	<div className="ml-2 hover:cursor-pointer font-thin h-[18px]">
+																		{member.name} 회원님
+																	</div>
+																	<div className="text-[5px] ml-2 font-thin">10 / 24회</div>
 																</div>
 															</Link>
 														</div>

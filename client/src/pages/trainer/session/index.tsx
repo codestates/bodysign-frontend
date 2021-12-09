@@ -52,7 +52,7 @@ const Session: NextPage = () => {
 			<Layout variant="Web">
 				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
-						<span className="flex text-[20px]">
+						<span className="flex text-[25px]">
 							<div
 								className={`${category === '일정' ? 'font-bold' : ''}`}
 								onClick={() => setCategory('일정')}>
@@ -110,8 +110,8 @@ const Session: NextPage = () => {
 									{entry[1].reverse().map((session, idx2) => {
 										return (
 											<React.Fragment key={idx2}>
-												<div className="text-[16px] mt-1">
-													<div className="flex justify-between px-3 py-3 border font-thin rounded-3xl">
+												<div className="text-[16px] mt-2">
+													<div className="flex justify-between p-3 border font-thin rounded-3xl">
 														<div className="flex">
 															<svg
 																xmlns="http://www.w3.org/2000/svg"
