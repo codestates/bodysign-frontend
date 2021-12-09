@@ -27,11 +27,11 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 
 function MyApp({ Component, pageProps }: AppProps) {
 	const client = new ApolloClient({
-		link: concat(authMiddleware, httpLink),
+		uri: 'http://localhost:4000',
 		cache: new InMemoryCache()
 	})
-
-	return (
+	
+  return (
 		<ApolloProvider client={client}>
 			<Provider session={pageProps.session}>
 				<Component {...pageProps} />

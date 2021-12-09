@@ -66,61 +66,61 @@ const Detail: NextPage = () => {
 				}
 			]
 		},
-		{
-			id: 4,
-			name: '오버헤드프레스',
-			volumes: [
-				{ id: 1, weight: 30, reps: 5, sets: 1 },
-				{
-					id: 2,
-					weight: 32.5,
-					reps: 3,
-					sets: 1
-				},
-				{
-					id: 3,
-					weight: 35,
-					reps: 1,
-					sets: 1
-				}
-			]
-		},
-		{
-			id: 5,
-			name: '친업',
-			volumes: [
-				{
-					id: 1,
-					weight: 30,
-					reps: 5,
-					sets: 1
-				},
-				{
-					id: 2,
-					weight: 32.5,
-					reps: 3,
-					sets: 1
-				},
-				{
-					id: 3,
-					weight: 35,
-					reps: 1,
-					sets: 1
-				}
-			]
-		},
-		{
-			id: 6,
-			name: '풀업',
-			volumes: [
-				{
-					id: 1,
-					weight: 55,
-					reps: 5,
-					sets: 3
-				}
-			]
-		}
+		// {
+		// 	id: 4,
+		// 	name: '오버헤드프레스',
+		// 	volumes: [
+		// 		{ id: 1, weight: 30, reps: 5, sets: 1 },
+		// 		{
+		// 			id: 2,
+		// 			weight: 32.5,
+		// 			reps: 3,
+		// 			sets: 1
+		// 		},
+		// 		{
+		// 			id: 3,
+		// 			weight: 35,
+		// 			reps: 1,
+		// 			sets: 1
+		// 		}
+		// 	]
+		// },
+		// {
+		// 	id: 5,
+		// 	name: '친업',
+		// 	volumes: [
+		// 		{
+		// 			id: 1,
+		// 			weight: 30,
+		// 			reps: 5,
+		// 			sets: 1
+		// 		},
+		// 		{
+		// 			id: 2,
+		// 			weight: 32.5,
+		// 			reps: 3,
+		// 			sets: 1
+		// 		},
+		// 		{
+		// 			id: 3,
+		// 			weight: 35,
+		// 			reps: 1,
+		// 			sets: 1
+		// 		}
+		// 	]
+		// },
+		// {
+		// 	id: 6,
+		// 	name: '풀업',
+		// 	volumes: [
+		// 		{
+		// 			id: 1,
+		// 			weight: 55,
+		// 			reps: 5,
+		// 			sets: 3
+		// 		}
+		// 	]
+		// }
 	]
 
 	const {
@@ -138,7 +138,7 @@ const Detail: NextPage = () => {
 			<Layout variant="Web">
 				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
-						<span className="flex text-[20px] font-bold">
+						<span className="flex text-[25px] font-bold">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6"
@@ -265,7 +265,7 @@ const Detail: NextPage = () => {
 					</Link>
 
 					<textarea
-						className="w-full px-10 py-3 mt-4 text-gray-400 font-IBM font-thin"
+						className="w-full px-10 py-3 mt-4 text-gray-400 font-IBM font-thin text-center bg-gray-50 h-[150px]"
 						autoFocus
 						autoSave="true"
 						defaultValue={'피드백을 입력해주세요.'}
