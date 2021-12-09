@@ -1,101 +1,213 @@
 import { NextPage } from 'next'
-import Link from 'next/link'
-import React, { useState } from 'react'
+import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { useReactiveVar } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
+import Loading from '../../../components/Loading'
+import {
+	CreateNonRegisteredUserDocument,
+	TrainerDocument
+} from '../../../graphql/graphql'
+import { useRouter } from 'next/dist/client/router'
 
 interface FormInput {
-	session_date: string
-	cost: string
-	times: number
-	permission: number
+	name: string
+	phone: string
+	gender: string
+	userCategoryId: number
+	graduate: boolean
 }
 
-const Info: NextPage = () => {
+const labelProperties =
+	'after:absolute after:h-full after:bg-yellow-100 after:w-full after:top-0 after:z-[-1] after:transition-[left] after:duration-500 peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
 
-    const [ inputName, setInputName ] = useState("")
-    const [ inputPhoneNumber, setInputPhoneNumber ] = useState("")
-    const [ gender, setGender ] = useState("")
-
-    const member_category_dummy = ['다이어트', '바디프로필', '스트렝스']
-
-    const inputNameHandler = (e) => {
-        let name = e.target.value
-        setInputName(name)
-    }
-
-    const inputPhoneNumberHandler = (e) => {
-        let phoneNumber = e.target.value
-        setInputPhoneNumber(phoneNumber)
-    }
-
-    const addMemberHandler = () => {
-        // 서버로 회원 정보 데이터 보내서 저장하기
-    }
-
+const AddMember: NextPage = () => {
+	const router = useRouter()
+	const { loading, data } = useQuery(TrainerDocument)
+	const [createNonRegisteredUser] = useMutation(
+		CreateNonRegisteredUserDocument
+	)
+	const {
+		register,
+		formState: { errors },
+		handleSubmit
+	} = useForm<FormInput>()
+	const onSubmit: SubmitHandler<FormInput> = async data => {
+		const input = {
+			userName: data.name,
+			phoneNumber: data.phone,
+			gender: data.gender,
+			userCategoryId: data.userCategoryId,
+			graduate: data.graduate
+		}
+		try {
+			await createNonRegisteredUser({
+				variables: {
+					createNonRegisteredUserInput: {
+						trainerId: 21,
+						userName: input.userName,
+						phoneNumber: input.phoneNumber,
+						gender: input.gender
+					}
+				}
+			})
+			router.push('/trainer/manage-member')
+		} catch (error) {
+			console.log(error)
+		}
+	}
 
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
-					<div className="flex flex-col justify-between">
-						<div className="flex text-[20px]">
-                            <span className="flex">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="self-center w-6 h-6"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={1.5}
-                                        d="M15 19l-7-7 7-7"
-                                    />
-                                </svg>
-                            </span>
-							<span className="font-bold flex">
-								회원정보등록
-							</span>
-                            <span className="flex mr-3">
-                                <svg onClick={addMemberHandler} xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                            </span>
+				<div className="flex flex-col justify-center mx-4 my-5 font-IBM text-[12px]">
+					<div className="flex items-center justify-between">
+						<span className="flex text-[20px] font-bold">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="w-7 h-7"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={1.5}
+									d="M15 19l-7-7 7-7"
+								/>
+							</svg>
+							<div>회원정보등록</div>
+						</span>
+						<span className="flex"></span>
+					</div>
+
+					<form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+						<div>
+							<label>이름</label>
+							<input
+								className="w-full h-12 p-3 mt-1 border"
+								type="text"
+								{...register('name', {
+									required: true
+								})}
+							/>
 						</div>
-					</div>
-                    <div className="flex flex-col mt-5 mx-2">
-                        <div>
-                            <div className="text-[10px] mx-1 mt-1">이름</div>
-                            <input onChange={inputNameHandler} className="border bg-gray-100 rounded-2xl px-3 w-full" />
-                            <div className="text-[10px] mx-1 mt-1">전화번호</div>
-                            <input onChange={inputPhoneNumberHandler} className="border bg-gray-100 rounded-2xl px-3 w-full" />
-                        </div>
-                        <div className="flex justify-center mt-1 w-full">
-                            <div onClick={() => setGender("male")} className="bg-gray-100 w-1/2 border mr-1 mt-1 text-center p-1 text-[12px] rounded-2xl font-thin hover:bg-gray-200">남</div>
-                            <div onClick={() => setGender("female")} className="bg-gray-100 w-1/2 border ml-1 mt-1 text-center p-1 text-[12px] rounded-2xl font-thin hover:bg-gray-200">녀</div>
-                        </div>
-					</div>
-                    <div className="flex justify-between mt-3 mx-3 text-[10px]">
-                        <span>카테고리</span>
-                        <select
-                            className="bg-white border"
-                            onChange={e => {
-                                // 회원 카테고리 변경 API
-                                // e.target.value
-                            }}>
-                            <option value="">회원 카테고리</option>
-                            {member_category_dummy.map((category, idx) => (
-                                <option key={idx}>{category}</option>
-                            ))}
-                        </select>
-					</div>
+
+						<div className="mt-4">
+							<label>휴대폰 번호</label>
+							<input
+								className="w-full h-12 p-3 mt-1 border"
+								type="text"
+								{...register('phone', {
+									required: true,
+									pattern: /^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/
+								})}
+							/>
+							{errors.phone && (
+								<div className="text-[16px] text-red-500 mt-1 text-center">
+									붙임표(-)는 제외하고 입력해주세요.
+								</div>
+							)}
+						</div>
+
+						<div className="mt-4">
+							<label>카테고리</label>
+							{loading ? (
+								<Loading />
+							) : (
+								<select
+									className="w-full h-12 p-3 mt-1 bg-white border"
+									{...register('userCategoryId')}>
+									{data.userCategories.map((category: any) => (
+										<option key={category.id} value={category.id}>
+											{category.name}
+										</option>
+									))}
+								</select>
+							)}
+						</div>
+
+						<div className="mt-4">
+							<span>
+								<input
+									className="hidden peer"
+									type="radio"
+									id="male"
+									value="male"
+									defaultChecked
+									{...register('gender', {
+										required: true
+									})}
+								/>
+								<label
+									className={`${labelProperties} w-[208px] text-center p-3 inline-block relative border border-r-0 cursor-pointer after:left-full`}
+									htmlFor="male">
+									남성
+								</label>
+							</span>
+							<span>
+								<input
+									className="hidden peer"
+									type="radio"
+									id="female"
+									value="female"
+									{...register('gender', {
+										required: true
+									})}
+								/>
+								<label
+									className={`${labelProperties} w-[208px] text-center p-3 inline-block relative border border-l-0 cursor-pointer after:-left-full`}
+									htmlFor="female">
+									여성
+								</label>
+							</span>
+						</div>
+
+						<div className="mt-4">
+							<span>
+								<input
+									className="hidden peer"
+									type="radio"
+									id="management"
+									value="false"
+									defaultChecked
+									{...register('graduate', {
+										required: true
+									})}
+								/>
+								<label
+									className={`${labelProperties} w-[208px] text-center p-3 inline-block relative border border-r-0 cursor-pointer after:left-full`}
+									htmlFor="management">
+									관리중
+								</label>
+							</span>
+							<span>
+								<input
+									className="hidden peer"
+									type="radio"
+									id="graduate"
+									value="true"
+									{...register('graduate', {
+										required: true
+									})}
+								/>
+								<label
+									className={`${labelProperties} w-[208px] text-center p-3 inline-block relative border border-l-0 cursor-pointer after:-left-full`}
+									htmlFor="graduate">
+									졸업
+								</label>
+							</span>
+						</div>
+
+						<input
+							className={`w-full h-12 mt-4 text-black bg-yellow-200 cursor-pointer disabled:opacity-50`}
+							type="submit"
+						/>
+					</form>
 				</div>
 			</Layout>
 		</>
 	)
 }
 
-export default Info
+export default AddMember
