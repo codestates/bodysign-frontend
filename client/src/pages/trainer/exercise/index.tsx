@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { deleteStateVar, modalVar } from '../../../graphql/vars'
+import { modalVar } from '../../../graphql/vars'
 import { useReactiveVar } from '@apollo/client'
 
 interface Exercise {
@@ -17,8 +17,8 @@ interface FormInput {
 
 const Exercise: NextPage = () => {
 	const [checkModal, setCheckModal] = useState('addexercise')
+	const [readyDelete, setReadyDelete] = useState(false)
 	const modal = useReactiveVar(modalVar)
-	const deleteState = useReactiveVar(deleteStateVar)
 
 	const exerciseCategory = [
 		{ id: 1, name: '케틀벨', exercise: { id: 1, name: '스윙' } },
@@ -59,7 +59,7 @@ const Exercise: NextPage = () => {
 							<div>운동</div>
 						</span>
 						<span className="flex">
-							{!deleteState ? (
+							{!readyDelete ? (
 								<>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -94,7 +94,7 @@ const Exercise: NextPage = () => {
 										fill="none"
 										viewBox="0 0 24 24"
 										stroke="currentColor"
-										onClick={() => deleteStateVar(true)}>
+										onClick={() => setReadyDelete(true)}>
 										<path
 											strokeLinecap="round"
 											strokeLinejoin="round"
@@ -112,7 +112,7 @@ const Exercise: NextPage = () => {
 									stroke="currentColor"
 									onClick={() => {
 										// 운동 삭제 API
-										deleteStateVar(false)
+										setReadyDelete(false)
 									}}>
 									<path
 										strokeLinecap="round"
@@ -130,7 +130,9 @@ const Exercise: NextPage = () => {
 							{Object.keys(categoryObeject).map((category, idx) => {
 								return (
 									<React.Fragment key={idx}>
-										<span className="ml-2 first:ml-0 font-thin">{category}</span>
+										<span className="ml-2 font-thin first:ml-0">
+											{category}
+										</span>
 									</React.Fragment>
 								)
 							})}
@@ -154,12 +156,14 @@ const Exercise: NextPage = () => {
 						return (
 							<React.Fragment key={idx}>
 								<div className="mt-4">
-									<div className="text-[12px] font-bold">{category[0]}</div>
+									<div className="text-[12px] font-bold">
+										{category[0]}
+									</div>
 									{category[1].map(exercise => {
 										return (
 											<React.Fragment key={exercise.id}>
 												<div className="text-[12px] mt-1">
-													<div className="flex justify-center px-3 py-3 border rounded-3xl font-thin">
+													<div className="flex justify-center px-3 py-3 font-thin border rounded-3xl">
 														<div className="flex">
 															<div className="ml-1">{exercise.name}</div>
 														</div>

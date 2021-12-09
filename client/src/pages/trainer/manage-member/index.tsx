@@ -3,12 +3,13 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { deleteStateVar, modalVar } from '../../../graphql/vars'
-import { gql, useMutation, useQuery, useReactiveVar } from '@apollo/client'
+import { modalVar } from '../../../graphql/vars'
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import Loading from '../../../components/Loading'
 import {
 	CreateUserCategoryDocument,
-	TrainerDocument
+	TrainerDocument,
+	UpdateUserDocument
 } from '../../../graphql/graphql'
 
 interface Member {
@@ -24,29 +25,17 @@ interface FormInput {
 	userCategoryId: string
 }
 
-const UpdateUser = gql`
-	mutation UpdateUser($updateUserInput: UpdateUserInput!) {
-		updateUser(updateUserInput: $updateUserInput) {
-			email
-			userName
-			phoneNumber
-			gender
-			loginType
-		}
-	}
-`
-
 const ManageMember: NextPage = () => {
 	const [category, setCategory] = useState('관리')
 	const [checkModal, setCheckModal] = useState('addmember')
-	const [checkList, setCheckList] = useState([])
+	const [readyDelete, setReadyDelete] = useState(false)
+	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const modal = useReactiveVar(modalVar)
-	const deleteState = useReactiveVar(deleteStateVar)
 	const { loading, data } = useQuery(TrainerDocument, {
 		variables: { id: 21 }
 	})
 	const [createUserCategory] = useMutation(CreateUserCategoryDocument)
-	const [updateUser] = useMutation(UpdateUser)
+	const [updateUser] = useMutation(UpdateUserDocument)
 
 	const {
 		register,
@@ -100,13 +89,8 @@ const ManageMember: NextPage = () => {
 				sessionObject[userCategories[i].name] = []
 			}
 		}
-		console.log(sessionObject)
-
 		data.trainer.users.forEach((el: any) => {
 			const userCategory = userCategories[el.userCategoryId - 1]?.name
-			// if (sessionObject[userCategory] === undefined) {
-			// 	sessionObject[userCategory] = []
-			// }
 			sessionObject[userCategory].push({
 				id: el.id,
 				email: el.email,
@@ -144,7 +128,7 @@ const ManageMember: NextPage = () => {
 							</div>
 						</span>
 						<span className="flex">
-							{!deleteState ? (
+							{!readyDelete ? (
 								<>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -177,7 +161,7 @@ const ManageMember: NextPage = () => {
 										fill="none"
 										viewBox="0 0 24 24"
 										stroke="currentColor"
-										onClick={() => deleteStateVar(true)}>
+										onClick={() => setReadyDelete(true)}>
 										<path
 											strokeLinecap="round"
 											strokeLinejoin="round"
@@ -194,8 +178,10 @@ const ManageMember: NextPage = () => {
 									viewBox="0 0 24 24"
 									stroke="currentColor"
 									onClick={() => {
-										// 3. 회원 삭제 API
-										deleteStateVar(false)
+										// 회원 삭제 API 2
+										// update API 추가 예정
+										setReadyDelete(false)
+										deleteLists.clear()
 									}}>
 									<path
 										strokeLinecap="round"
@@ -242,22 +228,10 @@ const ManageMember: NextPage = () => {
 							<React.Fragment key={idx}>
 								<div className="mt-4">
 									<div className="text-[16px]">{entry[0]}</div>
-									{entry[1].map((member, idx2) => {
+									{entry[1].map(member => {
 										return (
-											<React.Fragment key={idx2}>
-												<div
-													className="text-[16px] mt-1"
-													data-id={member.id}
-													onClick={
-														!deleteState
-															? undefined
-															: e => {
-																	console.log(e.target)
-																	// 회원 삭제 API
-																	// 1. Local-only fields를 이용해서 선택한 아이템의 isCheck 상태를 관리한다.
-																	// 2. isCheck 상태에 따라 bg 컬러와 check-circle를 표시한다.
-															  }
-													}>
+											<React.Fragment key={member.id}>
+												<div className="text-[16px] mt-1">
 													<div className="flex justify-between px-3 py-3 border">
 														<div className="flex">
 															<svg
@@ -277,28 +251,81 @@ const ManageMember: NextPage = () => {
 																	d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
 																/>
 															</svg>
-															<Link
-																href={`/trainer/manage-member/${
-																	member.email.split('@')[0]
-																}/info`}>
-																<div className="ml-1 hover:cursor-pointer">
+															{!readyDelete ? (
+																<Link
+																	href={`/trainer/manage-member/${
+																		member.email.split('@')[0]
+																	}/info`}>
+																	<div className="ml-1 cursor-pointer">
+																		{member.userName} 회원님
+																	</div>
+																</Link>
+															) : (
+																<div
+																	className="ml-1 cursor-pointer"
+																	data-id={member.id}
+																	onClick={
+																		!readyDelete
+																			? undefined
+																			: e => {
+																					if (
+																						e !== null &&
+																						e.target instanceof HTMLElement
+																					) {
+																						// 회원 삭제 API 1
+																						if (e.target.dataset.id) {
+																							const id =
+																								+e.target.dataset.id
+																							if (deleteLists.has(id)) {
+																								setDeleteLists(
+																									prev =>
+																										new Set(
+																											[...prev].filter(
+																												el => el !== id
+																											)
+																										)
+																								)
+																							} else {
+																								setDeleteLists(
+																									prev =>
+																										new Set(prev.add(id))
+																								)
+																							}
+																						}
+																					}
+																			  }
+																	}>
 																	{member.userName} 회원님
 																</div>
-															</Link>
+															)}
 														</div>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															className="w-6 h-6"
-															fill="none"
-															viewBox="0 0 24 24"
-															stroke="currentColor">
-															<path
-																strokeLinecap="round"
-																strokeLinejoin="round"
-																strokeWidth={1.5}
-																d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
-															/>
-														</svg>
+														{!readyDelete ? (
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																className="w-6 h-6"
+																fill="none"
+																viewBox="0 0 24 24"
+																stroke="currentColor">
+																<path
+																	strokeLinecap="round"
+																	strokeLinejoin="round"
+																	strokeWidth={1.5}
+																	d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+																/>
+															</svg>
+														) : deleteLists.has(+member.id) ? (
+															<svg
+																className="text-green-600"
+																viewBox="0 0 15 15"
+																fill="none"
+																xmlns="http://www.w3.org/2000/svg"
+																width="20"
+																height="20">
+																<path
+																	d="M4 7.5L7 10l4-5m-3.5 9.5a7 7 0 110-14 7 7 0 010 14z"
+																	stroke="currentColor"></path>
+															</svg>
+														) : null}
 													</div>
 												</div>
 											</React.Fragment>
@@ -408,11 +435,13 @@ const ManageMember: NextPage = () => {
 											<select
 												className="w-full h-12 px-10 mt-1 bg-white border"
 												{...register('userCategoryId')}>
-												{data.userCategories.map((category: any) => (
-													<option key={category.id} value={category.id}>
-														{category.name}
-													</option>
-												))}
+												{data.trainer.userCategories.map(
+													(category: any) => (
+														<option key={category.id} value={category.id}>
+															{category.name}
+														</option>
+													)
+												)}
 											</select>
 										)}
 									</div>

@@ -90,3 +90,15 @@ export const CreateNonRegisteredUserDocument = gql`
 		}
 	}
 `
+
+export const UpdateUserDocument = gql`
+	mutation UpdateUser($updateUserInput: UpdateUserInput!) {
+		updateUser(updateUserInput: $updateUserInput) {
+			email
+			userName
+			phoneNumber
+			gender
+			loginType
+		}
+	}
+`

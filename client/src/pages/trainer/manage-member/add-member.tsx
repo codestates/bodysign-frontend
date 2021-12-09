@@ -23,7 +23,9 @@ const labelProperties =
 
 const AddMember: NextPage = () => {
 	const router = useRouter()
-	const { loading, data } = useQuery(TrainerDocument)
+	const { loading, data } = useQuery(TrainerDocument, {
+		variables: { id: 21 }
+	})
 	const [createNonRegisteredUser] = useMutation(
 		CreateNonRegisteredUserDocument
 	)
@@ -118,7 +120,7 @@ const AddMember: NextPage = () => {
 								<select
 									className="w-full h-12 p-3 mt-1 bg-white border"
 									{...register('userCategoryId')}>
-									{data.userCategories.map((category: any) => (
+									{data.trainer.userCategories.map((category: any) => (
 										<option key={category.id} value={category.id}>
 											{category.name}
 										</option>

@@ -1,10 +1,10 @@
 import { NextPage } from 'next'
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../../../../components/Layout'
 import dummydata from '../../../../../../../dummydata.json'
-import { deleteStateVar, modalVar } from '../../../../../../graphql/vars'
+import { modalVar } from '../../../../../../graphql/vars'
 import { useReactiveVar } from '@apollo/client'
 
 interface FormInput {
@@ -14,8 +14,8 @@ interface FormInput {
 }
 
 const Detail: NextPage = () => {
+	const [readyDelete, setReadyDelete] = useState(false)
 	const modal = useReactiveVar(modalVar)
-	const deleteState = useReactiveVar(deleteStateVar)
 
 	const exercises = [
 		{
@@ -136,7 +136,7 @@ const Detail: NextPage = () => {
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
+				<div className="flex flex-col justify-center mx-4 my-5 font-IBM">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[20px] font-bold">
 							<svg
@@ -155,7 +155,7 @@ const Detail: NextPage = () => {
 							<div className="font-bold">{dummydata[0].date}</div>
 						</span>
 						<span className="flex items-center">
-							{!deleteState ? (
+							{!readyDelete ? (
 								<>
 									{' '}
 									<span className="relative inline-block w-10 align-middle select-none">
@@ -181,7 +181,7 @@ const Detail: NextPage = () => {
 										fill="none"
 										viewBox="0 0 24 24"
 										stroke="currentColor"
-										onClick={() => deleteStateVar(true)}>
+										onClick={() => setReadyDelete(true)}>
 										<path
 											strokeLinecap="round"
 											strokeLinejoin="round"
@@ -199,7 +199,7 @@ const Detail: NextPage = () => {
 									stroke="currentColor"
 									onClick={() => {
 										// 3. 운동 종목 삭제 API
-										deleteStateVar(false)
+										setReadyDelete(false)
 									}}>
 									<path
 										strokeLinecap="round"
@@ -265,7 +265,7 @@ const Detail: NextPage = () => {
 					</Link>
 
 					<textarea
-						className="w-full px-10 py-3 mt-4 text-gray-400 font-IBM font-thin"
+						className="w-full px-10 py-3 mt-4 font-thin text-gray-400 font-IBM"
 						autoFocus
 						autoSave="true"
 						defaultValue={'피드백을 입력해주세요.'}

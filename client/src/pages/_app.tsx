@@ -10,6 +10,7 @@ import {
 	concat
 } from '@apollo/client'
 import '../components/loading.css'
+import { loginTypeVar } from '../graphql/vars'
 
 const httpLink = new HttpLink({ uri: 'http://localhost:4000/graphql' })
 
