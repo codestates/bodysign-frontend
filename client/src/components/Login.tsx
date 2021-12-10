@@ -7,6 +7,7 @@ import Layout from '../components/Layout'
 import Loading from './Loading'
 import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
 import { loginTypeVar } from '../graphql/vars'
+import Link from 'next/link'
 
 const googleCliendId =
 	'122713240467-oq4tee3gshbdfmodg5b20ljsb9ajfsoe.apps.googleusercontent.com'
@@ -96,10 +97,6 @@ const Login: NextPage = () => {
 		console.log(err)
 	}
 
-	const onSignup = () => {
-		// 회원가입 링크로 넘기기
-	}
-
     return <>
     <Layout variant="Web">
       <div className="flex flex-col mx-auto my-5 text-[12px]">
@@ -130,7 +127,9 @@ const Login: NextPage = () => {
                 카카오로 로그인
               </KaKaoLogin>
             </div>
-            <button onClick={onSignup} className="font-IBM font-thin m-1 w-4/5 py-1 rounded text-gray-500 transition-colors duration-150 border border-gray-300 focus:shadow-outline hover:bg-gray-300 hover:text-white">회원가입</button>
+			<Link href="/signup">
+            <button className="font-IBM font-thin m-1 w-4/5 py-1 rounded text-gray-500 transition-colors duration-150 border border-gray-300 focus:shadow-outline hover:bg-gray-300 hover:text-white">회원가입</button>
+			</Link>
           </div>
     
         </>}
