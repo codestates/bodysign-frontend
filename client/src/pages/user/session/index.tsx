@@ -2,28 +2,31 @@ import React, { useState } from 'react'
 import type { NextPage } from 'next'
 import Detail from '../../../components/Detail'
 import Layout from '../../../components/Layout'
+import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
 
 // TODO: 날짜, 요일, 시간 쪽을 클릭하면 e.target.children이 빈 배열로 나옴 -> 에러 발생
+// TODO: 세션 디테일 모달을 트레이너 참고해서 변경
+
+export const UserSession = gql`
+	query User {
+        sessionHistories
+    }
+`
 
 const Session: NextPage = () => {
 
-    const [ sessionList, setSessionList ] = useState([
-        {
-            date: "21/01/01",
-            day: "월",
-            time: "00:00"
-        },
-        {
-            date: "21/01/01",
-            day: "월",
-            time: "00:00"
-        },
-        {
-            date: "21/01/01",
-            day: "월",
-            time: "00:00"
-        }
-    ])
+    // const [ sessionList, setSessionList ] = useState([
+    //     {
+    //         date: "21/01/01",
+    //         day: "월",
+    //         time: "00:00"
+    //     }
+    // ])
+    
+    const [ sessionList, setSessionList ] = useState([])
+    const { loading, data } = useQuery(UserSession)
+
+    // TODO: setSessionList(받아온 데이터)
 
     const [ isDetailOpen, setIsDetailOpen ] = useState(false)
 
