@@ -168,13 +168,6 @@
 		"times": 12
 	},
 	{
-		"id": 24,
-		"name": "Alice",
-		"session_date": "2021.08.28",
-		"cost": 40000,
-		"times": 15
-	},
-	{
 		"id": 25,
 		"name": "Alice",
 		"session_date": "2021.03.28",

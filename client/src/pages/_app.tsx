@@ -10,10 +10,8 @@ import {
 	concat
 } from '@apollo/client'
 import '../components/loading.css'
-import { loginTypeVar } from '../graphql/vars'
 
 const httpLink = new HttpLink({ uri: 'http://localhost:4000/graphql' })
-
 const authMiddleware = new ApolloLink((operation, forward) => {
 	// add the authorization to the headers
 	operation.setContext(({ headers = {} }) => ({
@@ -29,7 +27,9 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 function MyApp({ Component, pageProps }: AppProps) {
 	const client = new ApolloClient({
 		link: concat(authMiddleware, httpLink),
-		cache: new InMemoryCache(),
+		cache: new InMemoryCache({
+			typePolicies: {}
+		}),
 		connectToDevTools: true
 	})
 

@@ -29,6 +29,7 @@ const AddMember: NextPage = () => {
 	const [createNonRegisteredUser] = useMutation(
 		CreateNonRegisteredUserDocument
 	)
+
 	const {
 		register,
 		formState: { errors },
@@ -59,6 +60,7 @@ const AddMember: NextPage = () => {
 		}
 	}
 
+	if (loading) return <Loading />
 	return (
 		<>
 			<Layout variant="Web">
@@ -113,7 +115,7 @@ const AddMember: NextPage = () => {
 						</div>
 
 						<div className="mt-4">
-							<label>카테고리</label>
+							<label>회원 카테고리</label>
 							{loading ? (
 								<Loading />
 							) : (

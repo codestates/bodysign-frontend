@@ -3,14 +3,15 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { modalVar } from '../../../graphql/vars'
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
+import { managedUserIdrVar, modalVar } from '../../../graphql/vars'
+import { gql, useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import Loading from '../../../components/Loading'
 import {
 	CreateUserCategoryDocument,
 	TrainerDocument,
 	UpdateUserDocument
 } from '../../../graphql/graphql'
+import { useRouter } from 'next/dist/client/router'
 
 interface Member {
 	id: string
@@ -26,11 +27,12 @@ interface FormInput {
 }
 
 const ManageMember: NextPage = () => {
+	const router = useRouter()
+	const modal = useReactiveVar(modalVar)
 	const [category, setCategory] = useState('관리')
 	const [checkModal, setCheckModal] = useState('addmember')
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
-	const modal = useReactiveVar(modalVar)
 	const { loading, data } = useQuery(TrainerDocument, {
 		variables: { id: 21 }
 	})
@@ -72,7 +74,13 @@ const ManageMember: NextPage = () => {
 							trainerId: 21,
 							name: data.userCategoryId
 						}
-					}
+					},
+					refetchQueries: [
+						{
+							query: TrainerDocument,
+							variables: { id: 21 }
+						}
+					]
 				})
 				modalVar(false)
 			} catch (error) {
@@ -90,8 +98,8 @@ const ManageMember: NextPage = () => {
 			}
 		}
 		data.trainer.users.forEach((el: any) => {
-			const userCategory = userCategories[el.userCategoryId - 1]?.name
-			sessionObject[userCategory].push({
+			const userCategoryName = userCategories[el.userCategoryId - 1]?.name
+			sessionObject[userCategoryName].push({
 				id: el.id,
 				email: el.email,
 				userName: el.userName,
@@ -108,6 +116,7 @@ const ManageMember: NextPage = () => {
 		}
 	}, [category])
 
+	if (loading) return <Loading />
 	return (
 		<>
 			<Layout variant="Web">
@@ -251,22 +260,19 @@ const ManageMember: NextPage = () => {
 																	d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
 																/>
 															</svg>
-															{!readyDelete ? (
-																<Link
-																	href={`/trainer/manage-member/${
-																		member.email.split('@')[0]
-																	}/info`}>
-																	<div className="ml-1 cursor-pointer">
-																		{member.userName} 회원님
-																	</div>
-																</Link>
-															) : (
+															{
 																<div
 																	className="ml-1 cursor-pointer"
 																	data-id={member.id}
 																	onClick={
 																		!readyDelete
-																			? undefined
+																			? () => {
+																					managedUserIdrVar(member.id)
+																					const url = `/trainer/manage-member/${
+																						member.email.split('@')[0]
+																					}/info`
+																					router.push(url)
+																			  }
 																			: e => {
 																					if (
 																						e !== null &&
@@ -297,7 +303,7 @@ const ManageMember: NextPage = () => {
 																	}>
 																	{member.userName} 회원님
 																</div>
-															)}
+															}
 														</div>
 														{!readyDelete ? (
 															<svg
