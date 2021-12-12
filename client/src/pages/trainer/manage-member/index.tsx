@@ -29,7 +29,7 @@ interface FormInput {
 const ManageMember: NextPage = () => {
 	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
-	const [category, setCategory] = useState('관리')
+	const [category, setCategory] = useState('관리중')
 	const [checkModal, setCheckModal] = useState('addmember')
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
@@ -124,14 +124,16 @@ const ManageMember: NextPage = () => {
 					<div className="flex items-center justify-between">
 						<span className="flex text-[25px]">
 							<div
-								className={`${category === '관리중' ? 'font-bold' : 'text-gray-400'}`}
+								className={`${
+									category === '관리중' ? 'font-bold' : 'text-gray-400'
+								} cursor-pointer`}
 								onClick={() => setCategory('관리중')}>
 								관리중
 							</div>
 							<div
 								className={`ml-3 ${
 									category === '졸업' ? 'font-bold' : 'text-gray-400'
-								}`}
+								} cursor-pointer`}
 								onClick={() => setCategory('졸업')}>
 								졸업
 							</div>
@@ -141,7 +143,7 @@ const ManageMember: NextPage = () => {
 								<>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
-										className="w-7 h-7"
+										className="w-7 h-7 cursor-pointer"
 										fill="none"
 										viewBox="0 0 24 24"
 										stroke="currentColor"
@@ -166,7 +168,7 @@ const ManageMember: NextPage = () => {
 									</svg>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
-										className="mx-3 w-7 h-7"
+										className="mx-3 w-7 h-7 cursor-pointer"
 										fill="none"
 										viewBox="0 0 24 24"
 										stroke="currentColor"
@@ -182,7 +184,7 @@ const ManageMember: NextPage = () => {
 							) : (
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
-									className="mx-3 w-7 h-7"
+									className="mx-3 w-7 h-7 cursor-pointer"
 									fill="none"
 									viewBox="0 0 24 24"
 									stroke="currentColor"
@@ -220,7 +222,7 @@ const ManageMember: NextPage = () => {
 							)}
 						</span>
 						<span
-							className="mr-3 text-gray-400"
+							className="mr-3 text-gray-400 cursor-pointer"
 							data-check-modal="addcategory"
 							onClick={e => {
 								if (e !== null && e.target instanceof HTMLElement) {
@@ -243,56 +245,67 @@ const ManageMember: NextPage = () => {
 												<div className="text-[16px] mt-1">
 													<div className="flex justify-between px-3 py-3 border rounded-3xl">
 														<div className="flex">
+															{member.gender === 'male' ? (
+																<img
+																	src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
+																	width="25"
+																	height="25"
+																/>
+															) : (
+																<img
+																	src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
+																	width="25"
+																	height="25"
+																/>
+															)}
 															{
-																member.gender === 'male'
-																? <img src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png" width="25" height="25" />
-																: <img src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png" width="25" height="25" />
-															}
-															{
-																<div
-																	className="ml-1 cursor-pointer flex flex-col h-1"
-																	data-id={member.id}
-																	onClick={
-																		!readyDelete
-																			? () => {
-																					managedUserIdrVar(member.id)
-																					const url = `/trainer/manage-member/${
-																						member.email.split('@')[0]
-																					}/info`
-																					router.push(url)
-																			  }
-																			: e => {
-																					if (
-																						e !== null &&
-																						e.target instanceof HTMLElement
-																					) {
-																						// 회원 삭제 API 1
-																						if (e.target.dataset.id) {
-																							const id =
-																								+e.target.dataset.id
-																							if (deleteLists.has(id)) {
-																								setDeleteLists(
-																									prev =>
-																										new Set(
-																											[...prev].filter(
-																												el => el !== id
+																<div className="flex flex-col h-1 ml-1 cursor-pointer">
+																	<div
+																		className="ml-2 hover:cursor-pointer font-thin h-[18px]"
+																		data-id={member.id}
+																		onClick={
+																			!readyDelete
+																				? () => {
+																						managedUserIdrVar(member.id)
+																						const url = `/trainer/manage-member/${
+																							member.email.split('@')[0]
+																						}/info`
+																						router.push(url)
+																				  }
+																				: e => {
+																						if (
+																							e !== null &&
+																							e.target instanceof
+																								HTMLElement
+																						) {
+																							// 회원 삭제 API 1
+																							if (e.target.dataset.id) {
+																								const id =
+																									+e.target.dataset.id
+																								if (deleteLists.has(id)) {
+																									setDeleteLists(
+																										prev =>
+																											new Set(
+																												[...prev].filter(
+																													el => el !== id
+																												)
 																											)
-																										)
-																								)
-																							} else {
-																								setDeleteLists(
-																									prev =>
-																										new Set(prev.add(id))
-																								)
+																									)
+																								} else {
+																									setDeleteLists(
+																										prev =>
+																											new Set(prev.add(id))
+																									)
+																								}
 																							}
 																						}
-																					}
-																			  }
-																	}>
-																	<div className="ml-2 hover:cursor-pointer font-thin h-[18px]">
-																		{member.name} 회원님
+																				  }
+																		}>
+																		{member.userName} 회원님
 																	</div>
-																	<div className="text-[5px] ml-2 font-thin">10 / 24회</div>
+																	<div className="text-[5px] ml-2 font-thin">
+																		10 / 24회
+																	</div>
 																</div>
 															}
 														</div>

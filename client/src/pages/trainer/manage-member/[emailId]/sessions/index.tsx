@@ -14,6 +14,9 @@ const Sessions: NextPage = () => {
 	const { loading, data } = useQuery(UserDocument, {
 		variables: { id: managedUserId }
 	})
+
+	console.log(data)
+
 	const member_dummy = {
 		id: '1',
 		email: 'jsmsumin1234@naver.com',

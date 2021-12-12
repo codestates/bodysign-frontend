@@ -3,7 +3,8 @@ import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
 import { modalVar } from '../../../graphql/vars'
-import { useReactiveVar } from '@apollo/client'
+import { useQuery, useReactiveVar } from '@apollo/client'
+import { TrainerDocument } from '../../../graphql/graphql'
 
 interface Exercise {
 	id: number
@@ -16,9 +17,12 @@ interface FormInput {
 }
 
 const Exercise: NextPage = () => {
+	const modal = useReactiveVar(modalVar)
 	const [checkModal, setCheckModal] = useState('addexercise')
 	const [readyDelete, setReadyDelete] = useState(false)
-	const modal = useReactiveVar(modalVar)
+	const { loading, data } = useQuery(TrainerDocument, {
+		variables: { id: 21 }
+	})
 
 	const exerciseCategory = [
 		{ id: 1, name: '케틀벨', exercise: { id: 1, name: '스윙' } },
@@ -47,8 +51,6 @@ const Exercise: NextPage = () => {
 		// 운동 추가 API
 		// 운동 카테고리 추가 API
 	}
-
-	// 카테고리 필터 및 정렬
 
 	return (
 		<>
