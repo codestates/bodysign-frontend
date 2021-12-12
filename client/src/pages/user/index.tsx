@@ -58,7 +58,7 @@ const main: NextPage = () => {
 				<img src={logo} width="50" alt="logo"/>
 			</div>
 
-			<div className="m-5 font-IBM font-thin">
+			<div className="m-5 font-IBM font-thin"></div>
 
 			<div className="font-IBM font-extrabold text-[25px]">
 				{/* 체중, 골격근량, 체지방 보여주기 */}
