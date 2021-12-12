@@ -6,6 +6,10 @@ import 'react-datepicker/dist/react-datepicker.css'
 import { gql, useMutation, useReactiveVar } from '@apollo/client'
 import { loginTypeVar, modalVar } from '../graphql/vars'
 import { useRouter } from 'next/dist/client/router'
+import {
+	CreateTrainerDocument,
+	CreateUserDocument
+} from '../graphql/graphql'
 
 interface FormInput {
 	email: string
@@ -16,32 +20,6 @@ interface FormInput {
 	loginType: string
 	gender: string
 }
-
-const CreateTrainerDocument = gql`
-	mutation CreateTrainer($createTrainerInput: CreateTrainerInput!) {
-		createTrainer(createTrainerInput: $createTrainerInput) {
-			email
-			userName
-			password
-			phoneNumber
-			gender
-			loginType
-		}
-	}
-`
-
-const CreateUserDocument = gql`
-	mutation CreateUser($createUserInput: CreateUserInput!) {
-		createUser(createUserInput: $createUserInput) {
-			email
-			userName
-			password
-			phoneNumber
-			gender
-			loginType
-		}
-	}
-`
 
 const labelProperties =
 	'after:absolute after:h-full after:bg-yellow-100 after:w-full after:top-0 after:z-[-1] after:transition-[left] after:duration-500 peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
@@ -58,11 +36,11 @@ const Signup: NextPage = () => {
 		{ id: 5, name: '기타', status: false }
 	])
 	const [checkedPersonalInfo, setCheckedPersonalInfo] = useState(false)
-	const [createTrainerUser, { loading, error }] = useMutation(
-		areYouTrainer ? CreateTrainerDocument : CreateUserDocument
-	)
 	const loginType = useReactiveVar(loginTypeVar)
 	const modal = useReactiveVar(modalVar)
+	const [createTrainerUser] = useMutation(
+		areYouTrainer ? CreateTrainerDocument : CreateUserDocument
+	)
 
 	const {
 		register,
@@ -77,7 +55,7 @@ const Signup: NextPage = () => {
 			password: data.password,
 			phoneNumber: data.phone,
 			gender: data.gender,
-			birthDate: new Date(data.birth),
+			// birthDate: new Date(data.birth),
 			loginType
 		}
 		try {

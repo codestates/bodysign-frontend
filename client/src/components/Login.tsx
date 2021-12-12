@@ -96,7 +96,6 @@ const Login: NextPage = () => {
 	const onFailureKakao = (err: any) => {
 		console.log(err)
 	}
-
     return <>
     <Layout variant="Web">
       <div className="flex flex-col mx-auto my-5 text-[12px]">

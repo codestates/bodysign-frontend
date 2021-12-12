@@ -3,34 +3,36 @@ import Link from 'next/link'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../../components/Layout'
-import { modalVar } from '../../../../graphql/vars'
-import { useReactiveVar } from '@apollo/client'
-import dummytotalsession from '../../../../../dummyTotalSession.json'
+import { managedUserIdrVar, modalVar } from '../../../../graphql/vars'
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
+import {
+	CreateSessionHistoryDocument,
+	TrainerDocument,
+	UpdateUserDocument,
+	UserDocument
+} from '../../../../graphql/graphql'
+import Loading from '../../../../components/Loading'
+import { useRouter } from 'next/dist/client/router'
 
 interface FormInput {
-	session_date: string
-	cost: string
-	times: number
-	permission: number
+	date: string
+	costPerSession: number
+	totalCount: number
+	commission: number
 }
 
 const Info: NextPage = () => {
+	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
-
-	const member_dummy = {
-		id: '1',
-		email: 'jsmsumin1234@naver.com',
-		name: 'Alice',
-		birth: '2020.11.13',
-		phone: '12345678',
-		gender: 'male',
-		graduate: 'false',
-		time: '14:00',
-		times: '8/10',
-		date: '2021-11-05',
-		membercategory: '바디프로필'
-	}
-	const member_category_dummy = ['다이어트', '바디프로필', '스트렝스']
+	const managedUserId = useReactiveVar(managedUserIdrVar)
+	const { loading, data } = useQuery(TrainerDocument, {
+		variables: { id: 21 }
+	})
+	const { loading: userLoading, data: userData } = useQuery(UserDocument, {
+		variables: { id: managedUserId }
+	})
+	const [updateUser] = useMutation(UpdateUserDocument)
+	const [createSessionHistory] = useMutation(CreateSessionHistoryDocument)
 
 	const {
 		register,
@@ -38,23 +40,38 @@ const Info: NextPage = () => {
 		handleSubmit
 	} = useForm<FormInput>()
 	const onSubmit: SubmitHandler<FormInput> = data => {
-		let test = { ...data }
-		console.log(test)
 		// 세션 추가 API
+		createSessionHistory({
+			variables: {
+				createSessionHistoryInput: {
+					userId: managedUserId,
+					date: data.date,
+					costPerSession: +data.costPerSession,
+					totalCount: +data.totalCount,
+					commission: +data.commission
+				}
+			},
+			refetchQueries: [
+				{ query: UserDocument, variables: { id: managedUserId } }
+			]
+		})
 	}
 
+	if (loading) return <Loading />
+	if (userLoading) return <Loading />
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
+				<div className="flex flex-col justify-center mx-4 my-5 font-IBM">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[25px]">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="self-center w-6 h-6"
+								className="self-center w-6 h-6 cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
-								stroke="currentColor">
+								stroke="currentColor"
+								onClick={() => router.push('/trainer/manage-member')}>
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -63,7 +80,7 @@ const Info: NextPage = () => {
 								/>
 							</svg>
 							<div className="font-bold">
-								{member_dummy.name} 회원님
+								{userData.user.userName} 회원님
 							</div>
 						</span>
 						<span className="flex">
@@ -83,10 +100,12 @@ const Info: NextPage = () => {
 						</span>
 					</div>
 
-					<div className="flex justify-between pr-3 mt-4 text-[18px]">
-						<span className="pb-1 ml-0 border-b border-black cursor-pointer">
-							회원정보
-						</span>
+					<div className="flex justify-between pr-3 mt-4 text-[12px]">
+						<Link href="/trainer/manage-member/emailId/info">
+							<span className="pb-1 ml-0 border-b border-black cursor-pointer">
+								회원정보
+							</span>
+						</Link>
 						<Link href="/trainer/manage-member/emailId/sessions">
 							<span className="ml-2 cursor-pointer">수업기록</span>
 						</Link>
@@ -99,55 +118,97 @@ const Info: NextPage = () => {
 						<div className="flex flex-col justify-between px-3 py-3 text-[15px]">
 							<div className="flex justify-between">
 								<span>이름</span>
-								<span>{member_dummy.name}</span>
+								<span>{userData.user.userName}</span>
 							</div>
 							<div className="flex justify-between mt-1">
 								<span>성별</span>
-								<span>{member_dummy.gender}</span>
+								<span>{userData.user.gender}</span>
 							</div>
 							<div className="flex justify-between mt-1">
 								<span>생년월일</span>
-								<span>{member_dummy.birth}</span>
+								<span>{userData.user.birthDate.split('T')[0]}</span>
 							</div>
 							<div className="flex justify-between mt-1">
 								<span>전화번호</span>
-								<span>{member_dummy.phone}</span>
+								<span>{userData.user.phoneNumber}</span>
 							</div>
-							<div className="mt-5">
-								<div className="flex justify-between mt-1">
-									<span>졸업유무</span>
-									<span className="relative inline-block w-10 align-middle select-none">
-										<input
-											className="absolute block w-6 h-6 bg-white border-4 rounded-full appearance-none cursor-pointer toggle-checkbox"
-											type="checkbox"
-											name="toggle"
-											id="toggle"
-											onChange={e => {
-												// 졸업 유무 변경 API
-												// 데이터를 받고 checked 상태를 변경한다.
-												// e.target.checked을 가지고 mutation
-											}}
-										/>
-										<label
-											className="block h-6 overflow-hidden bg-gray-300 rounded-full cursor-pointer toggle-label"
-											htmlFor="toggle"
-										/>
-									</span>
-								</div>
-								<div className="flex justify-between mt-1">
-									<span>카테고리</span>
+							<div className="flex justify-between mt-1">
+								<span>졸업유무</span>
+								<span className="relative inline-block w-10 align-middle select-none">
+									<input
+										className="absolute block w-6 h-6 bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#fde68a] peer"
+										type="checkbox"
+										name="toggle"
+										id="toggle"
+										checked={userData.user.graduate}
+										onChange={e => {
+											// 졸업 유무 변경 API
+											// 데이터를 받고 checked 상태를 변경한다.
+											// e.target.checked을 가지고 mutation
+											try {
+												updateUser({
+													variables: {
+														updateUserInput: {
+															id: managedUserId,
+															graduate: e.target.checked
+														}
+													}
+												})
+											} catch (error) {
+												console.log(error)
+											}
+										}}
+									/>
+									<label
+										className="block h-6 overflow-hidden bg-gray-300 rounded-full cursor-pointer peer peer-checked:bg-[#fde68a]"
+										htmlFor="toggle"
+									/>
+								</span>
+							</div>
+							<div className="flex justify-between mt-1">
+								<label>회원 카테고리</label>
+								{loading ? (
+									<Loading />
+								) : (
 									<select
 										className="bg-white border"
 										onChange={e => {
 											// 회원 카테고리 변경 API
 											// e.target.value
+											try {
+												updateUser({
+													variables: {
+														updateUserInput: {
+															id: managedUserId,
+															userCategoryId: +e.target.value
+														}
+													}
+												})
+											} catch (error) {
+												console.log(error)
+											}
 										}}>
-										<option value="">회원 카테고리</option>
-										{member_category_dummy.map((category, idx) => (
-											<option key={idx}>{category}</option>
-										))}
+										<option value={`${userData.user.userCategoryId}`}>
+											{
+												data.trainer.userCategories.filter(
+													(category: any) =>
+														category.id === userData.user.userCategoryId
+												)[0].name
+											}
+										</option>
+										{data.trainer.userCategories.map((category: any) => {
+											if (category.id !== userData.user.userCategoryId) {
+												return (
+													<option
+														key={category.id}
+														value={`${category.id}`}>
+														{category.name}
+													</option>
+												)
+											}
+										})}
 									</select>
-								</div>
+								)}
 							</div>
 						</div>
 					</div>
@@ -156,44 +217,38 @@ const Info: NextPage = () => {
 							<table className="min-w-full divide-y divide-gray-200">
 								<thead className="bg-gray-50">
 									<tr>
-										<th className="p-3 text-[12px] text-left text-gray-500">
-											날짜
-										</th>
-										<th className="p-3 text-[12px] text-left text-gray-500">
-											단가
-										</th>
-										<th className="p-3 text-[12px] text-left text-gray-500">
-											횟수
-										</th>
-										<th className="p-3 text-[12px] text-left text-gray-500">
-											총액
-										</th>
+										<th className="p-3 text-left text-gray-500">날짜</th>
+										<th className="p-3 text-left text-gray-500">단가</th>
+										<th className="p-3 text-left text-gray-500">횟수</th>
+										<th className="p-3 text-left text-gray-500">총액</th>
 									</tr>
 								</thead>
 								<tbody className="bg-white divide-y divide-gray-200">
-									{dummytotalsession
-										.sort((a, b): any => {
-											const dateA = new Date(a.session_date).getTime()
-											const dateB = new Date(b.session_date).getTime()
+									{[...userData.user.sessionHistories]
+										.sort((a: any, b: any) => {
+											const dateA = new Date(a.date).getTime()
+											const dateB = new Date(b.date).getTime()
 											if (dateA > dateB) return 1
 											if (dateA < dateB) return -1
 											return 0
 										})
-										.map(session => {
+										.map((sessionHistory: any) => {
 											return (
-												<React.Fragment key={session.id}>
+												<React.Fragment key={sessionHistory.id}>
 													<tr>
-														<td className="p-2 text-[12px] text-gray-500 font-thin">
-															{session.session_date}
+														<td className="p-3 font-thin text-gray-500">
+															{sessionHistory.date.split('T')[0]}
 														</td>
-														<td className="p-2 text-[12px] text-gray-500 font-thin">
-															{session.cost}원
+														<td className="p-3 font-thin text-gray-500">
+															{sessionHistory.costPerSession}원
 														</td>
-														<td className="p-2 text-[12px] text-gray-500 font-thin">
-															{session.times}회
+														<td className="p-3 font-thin text-gray-500">
+															{sessionHistory.totalCount}회
 														</td>
-														<td className="p-2 text-[12px] text-gray-500">
-															{session.cost * session.times}원
+														<td className="p-3 text-gray-500">
+															{sessionHistory.costPerSession *
+																sessionHistory.totalCount}
+															원
 														</td>
 													</tr>
 												</React.Fragment>
@@ -233,11 +288,11 @@ const Info: NextPage = () => {
 									className="w-full h-12 px-10 border"
 									type="date"
 									placeholder="날짜"
-									{...register('session_date', {
+									{...register('date', {
 										required: true
 									})}
 								/>
-								{errors.session_date && (
+								{errors.date && (
 									<div className="text-[16px] text-red-500 mt-1 text-center">
 										세션 날짜를 선택해주세요.
 									</div>
@@ -246,11 +301,11 @@ const Info: NextPage = () => {
 									className="w-full h-12 px-10 mt-1 border"
 									type="text"
 									placeholder="회당 수업 단가(원)"
-									{...register('cost', {
+									{...register('costPerSession', {
 										required: true
 									})}
 								/>
-								{errors.cost && (
+								{errors.costPerSession && (
 									<div className="text-[16px] text-red-500 mt-1 text-center">
 										세션 회당 수업 단가(원)를 입력해주세요.
 									</div>
@@ -259,12 +314,12 @@ const Info: NextPage = () => {
 									className="w-full h-12 px-10 mt-1 border"
 									type="text"
 									placeholder="세션 횟수"
-									{...register('times', {
+									{...register('totalCount', {
 										required: true,
 										minLength: 1
 									})}
 								/>
-								{errors.times && (
+								{errors.totalCount && (
 									<div className="text-[16px] text-red-500 mt-1 text-center">
 										세션 횟수를 입력해주세요.
 									</div>
@@ -273,11 +328,11 @@ const Info: NextPage = () => {
 									className="w-full h-12 px-10 mt-1 border"
 									type="text"
 									placeholder="정산 금액(원)"
-									{...register('permission', {
-										required: true
+									{...register('commission', {
+										required: false
 									})}
 								/>
-								{errors.permission && (
+								{errors.commission && (
 									<div className="text-[16px] text-red-500 mt-1 text-center">
 										정산 금액(원)을 입력해주세요.
 									</div>
