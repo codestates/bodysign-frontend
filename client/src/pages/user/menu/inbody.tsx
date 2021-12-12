@@ -6,32 +6,9 @@ import Layout from '../../../components/Layout'
 import Chart from 'chart.js/auto'
 import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
 
-export const UserDocument = gql`
+export const UserInbody = gql`
 	query User($id: Int!) {
 		user(id: $id) {
-			__typename
-			id
-			email
-			userName
-			birthDate
-			phoneNumber
-			gender
-			graduate
-			sessions {
-				id
-				userId
-				date
-				trainerId
-				feedback
-				sessionExercises {
-					id
-					name
-					reps
-					sets
-					weight
-					sessionId
-				}
-			}
 			inbodies {
 				id
 				bodyWeight
@@ -39,22 +16,12 @@ export const UserDocument = gql`
 				bodyFat
 				measuredDate
 			}
-			sessionHistories {
-				id
-				date
-				costPerSession
-				totalCount
-				usedCount
-				commission
-				userId
-			}
-			userCategoryId
 		}
 	}
 `
 
 const Inbody: NextPage = () => {
-	const { loading, data } = useQuery(UserDocument)
+	const { loading, data } = useQuery(UserInbody)
 	const [isInbodyModalOpen, setIsInbodyModalOpen] = useState(false)
 	const canvasRef = useRef(null)
 	const [inbodyDataList, setInbodyDataList] = useState([
