@@ -85,6 +85,7 @@ export const TrainerDocument = gql`
 				name
 				trainerId
 				exercises {
+					isChecked @client
 					id
 					name
 					exerciseCategoryId
