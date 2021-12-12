@@ -3,8 +3,29 @@ import { useState } from 'react'
 import ChangePasswordModal from '../../../components/changePasswordModal'
 import Layout from '../../../components/Layout'
 import Link from 'next/link'
+import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
+
+// TODO: 회원 탈퇴
+// TODO: 비밀번호 변경
+
+export const UserDocument = gql`
+	query User($id: Int!) {
+		user(id: $id) {
+			__typename
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+			graduate
+		}
+	}
+`
 
 const Info: NextPage = () => {
+	const { loading, data } = useQuery(UserDocument)
+	
 	const [userInfo, setUserInfo] = useState({
 		name: '홍길동',
 		gender: '남',
@@ -16,6 +37,7 @@ const Info: NextPage = () => {
 
 	const changePasswordModal = () => {
 		setIsPasswordModalOpen(!isPasswordModalOpen)
+
 	}
 
 	const deleteUserHandler = () => {

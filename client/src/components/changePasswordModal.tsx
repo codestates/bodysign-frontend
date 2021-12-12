@@ -1,7 +1,18 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
+import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
+
+export const UpdateUserPassword = gql`
+	mutation UpdateUser($updateUserInput: UpdateUserInput!) {
+		updateUser(updateUserInput: $updateUserInput) {
+			id
+			password
+		}
+	}
+`
 
 const ChangePasswordModal: NextPage = ({ passwordModalOpenhandler, isOpen }) => {
+    const [ updateUser ] = useMutation(UpdateUserPassword)
 
     const [ passwordData, setPasswordData ] = useState({
         oldPasswordInput: "",
@@ -43,9 +54,18 @@ const ChangePasswordModal: NextPage = ({ passwordModalOpenhandler, isOpen }) => 
 
     const savePasswordData = () => {
         // oldPasswordInput 데이터를 서버로 보내주기
-        // oldPasswordInput 정보가 맞는지 체크
+        // 액세스 토큰으로 인증
+        // TODO: oldPasswordInput 정보가 맞는지 체크
         // 맞으면? newPasswordInput 으로 패스워드 교체
         // 틀리면? 틀렸다 메시지 보내기
+        
+        updateUser({
+			variables: {
+				updateUserInput: {
+					password: passwordData.newPasswordInput
+				}
+		    }
+        })
     }
 
     const modalCloseHandler = () => {

@@ -2,8 +2,24 @@ import type { NextPage } from 'next'
 import { useState } from 'react'
 import Link from 'next/link'
 import Layout from '../../../components/Layout'
+import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
+
+export const UpdateUserDocument = gql`
+	mutation UpdateUser($updateUserInput: UpdateUserInput!) {
+		updateUser(updateUserInput: $updateUserInput) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+		}
+	}
+`
 
 const Modify: NextPage = () => {
+	const [ updateUser ] = useMutation(UpdateUserDocument)
+
 	const [userInfo, setUserInfo] = useState({
 		name: '홍길동',
 		sex: '남',
@@ -58,7 +74,17 @@ const Modify: NextPage = () => {
 	}
 
 	const saveInfo = () => {
-		// 서버로 저장된 정보 보내주기
+		updateUser({
+			variables: {
+				updateUserInput: {
+					email: userInfo.email,
+					userName: userInfo.name,
+					birthDate: userInfo.birth,
+					phoneNumber: userInfo.phone,
+					gender: userInfo.sex
+				}
+			}
+		})
 		alert('수정이 완료되었습니다.')
 		window.location.href = "/user/menu/info"
 	}
