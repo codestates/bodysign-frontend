@@ -55,7 +55,7 @@ const Exercise: NextPage = () => {
 			<Layout variant="Web">
 				<div className="flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
-						<span className="flex text-[20px] font-bold">
+						<span className="flex text-[25px] font-bold">
 							<div>운동</div>
 						</span>
 						<span className="flex">

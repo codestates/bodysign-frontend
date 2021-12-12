@@ -64,7 +64,7 @@ const Info: NextPage = () => {
 			<Layout variant="Web">
 				<div className="flex flex-col justify-center mx-4 my-5 font-IBM">
 					<div className="flex items-center justify-between">
-						<span className="flex text-[20px]">
+						<span className="flex text-[25px]">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6 cursor-pointer"
@@ -115,7 +115,7 @@ const Info: NextPage = () => {
 					</div>
 
 					<div className="mt-4">
-						<div className="flex flex-col justify-between px-3 py-3 text-[12px]">
+						<div className="flex flex-col justify-between px-3 py-3 text-[15px]">
 							<div className="flex justify-between">
 								<span>이름</span>
 								<span>{userData.user.userName}</span>

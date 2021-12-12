@@ -32,8 +32,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 		}),
 		connectToDevTools: true
 	})
-
-	return (
+	
+  return (
 		<ApolloProvider client={client}>
 			<Provider session={pageProps.session}>
 				<Component {...pageProps} />

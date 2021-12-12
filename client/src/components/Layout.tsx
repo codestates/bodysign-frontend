@@ -8,7 +8,7 @@ interface LayoutProps {
 const Layout = ({ children, variant = 'Web' }: LayoutProps) => {
 	return (
 		<div
-			className={`flex-col justify-center border m-auto ${
+			className={`flex-col justify-center m-auto ${
 				variant === 'Web' ? 'max-w-[450px]' : 'w-full'
 			}`}>
 			{children}
