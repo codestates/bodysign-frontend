@@ -11,7 +11,7 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 	const path = router.pathname
 
 	return variant === 'Trainer' ? (
-		<div className="flex justify-between px-8 py-2 text-gray-400 border-t bg-gray-50">
+		<div className="flex justify-between px-8 py-2 text-gray-400 border-t bg-gray-50 bottom-0 sticky">
 			<Link href="/trainer">
 				<span
 					className={`flex flex-col items-center ${
@@ -99,8 +99,8 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 						width="18"
 						height="18">
 						<path
-							fill-rule="evenodd"
-							clip-rule="evenodd"
+							fillRule="evenodd"
+							clipRule="evenodd"
 							d="M15 2H0V1h15v1zm0 4H0V5h15v1zm0 4H0V9h15v1zm0 4H0v-1h15v1z"
 							fill="currentColor"></path>
 					</svg>

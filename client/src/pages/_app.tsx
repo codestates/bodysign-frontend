@@ -28,12 +28,22 @@ function MyApp({ Component, pageProps }: AppProps) {
 	const client = new ApolloClient({
 		link: concat(authMiddleware, httpLink),
 		cache: new InMemoryCache({
-			typePolicies: {}
+			typePolicies: {
+				Exercise: {
+					fields: {
+						isChecked: {
+							read(_, {}) {
+								return 'heeeeeeeeeeeeeeeeeeeeeeeeeeeey'
+							}
+						}
+					}
+				}
+			}
 		}),
 		connectToDevTools: true
 	})
-	
-  return (
+
+	return (
 		<ApolloProvider client={client}>
 			<Provider session={pageProps.session}>
 				<Component {...pageProps} />

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
 import { managedUserIdrVar, modalVar } from '../../../graphql/vars'
-import { gql, useMutation, useQuery, useReactiveVar } from '@apollo/client'
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import Loading from '../../../components/Loading'
 import {
 	CreateUserCategoryDocument,
@@ -23,7 +23,8 @@ interface Member {
 
 interface FormInput {
 	phone: string
-	userCategoryId: string
+	userCategoryId: number
+	userCategoryName: string
 }
 
 const ManageMember: NextPage = () => {
@@ -38,7 +39,6 @@ const ManageMember: NextPage = () => {
 	})
 	const [createUserCategory] = useMutation(CreateUserCategoryDocument)
 	const [updateUser] = useMutation(UpdateUserDocument)
-
 	const {
 		register,
 		formState: { errors },
@@ -56,7 +56,8 @@ const ManageMember: NextPage = () => {
 					variables: {
 						updateUserInput: {
 							id: 2,
-							trainerId: 21
+							trainerId: 21,
+							userCategoryId: +data.userCategoryId
 						}
 					}
 				})
@@ -72,7 +73,7 @@ const ManageMember: NextPage = () => {
 					variables: {
 						createUserCategoryInput: {
 							trainerId: 21,
-							name: data.userCategoryId
+							name: data.userCategoryName
 						}
 					},
 					refetchQueries: [
@@ -89,17 +90,17 @@ const ManageMember: NextPage = () => {
 		}
 	}
 
-	const sessionObject: Record<string, Member[]> = {}
+	const manageMemberObject: Record<string, Member[]> = {}
 	if (!loading) {
 		const userCategories = data.trainer.userCategories
 		for (let i = 0; i < userCategories.length; i++) {
-			if (sessionObject[userCategories[i].name] === undefined) {
-				sessionObject[userCategories[i].name] = []
+			if (manageMemberObject[userCategories[i].name] === undefined) {
+				manageMemberObject[userCategories[i].name] = []
 			}
 		}
 		data.trainer.users.forEach((el: any) => {
 			const userCategoryName = userCategories[el.userCategoryId - 1]?.name
-			sessionObject[userCategoryName].push({
+			manageMemberObject[userCategoryName].push({
 				id: el.id,
 				email: el.email,
 				userName: el.userName,
@@ -207,19 +208,15 @@ const ManageMember: NextPage = () => {
 
 					<div className="flex justify-between mt-4">
 						<span>
-							{loading ? (
-								<Loading />
-							) : (
-								data.trainer.userCategories.map((category: any) => {
-									return (
-										<React.Fragment key={category.id}>
-											<span className="ml-2 first:ml-0">
-												{category.name}
-											</span>
-										</React.Fragment>
-									)
-								})
-							)}
+							{data.trainer.userCategories.map((category: any) => {
+								return (
+									<React.Fragment key={category.id}>
+										<span className="ml-2 first:ml-0 font-thin">
+											{category.name}
+										</span>
+									</React.Fragment>
+								)
+							})}
 						</span>
 						<span
 							className="mr-3 text-gray-400 cursor-pointer"
@@ -234,7 +231,7 @@ const ManageMember: NextPage = () => {
 						</span>
 					</div>
 
-					{Object.entries(sessionObject).map((entry, idx) => {
+					{Object.entries(manageMemberObject).map((entry, idx) => {
 						return (
 							<React.Fragment key={idx}>
 								<div className="mt-4">
@@ -387,7 +384,7 @@ const ManageMember: NextPage = () => {
 										className="w-full h-12 px-10 border"
 										type="text"
 										placeholder="새로운 카테고리 이름을 입력해주세요."
-										{...register('userCategoryId', {
+										{...register('userCategoryName', {
 											required: true
 										})}
 									/>
@@ -418,43 +415,33 @@ const ManageMember: NextPage = () => {
 								<form
 									className="flex flex-col mt-4 text-[12px]"
 									onSubmit={handleSubmit(onSubmit)}>
-									<div>
-										<label>이름</label>
-										<input
-											className="w-full h-12 px-10 mt-1 bg-white border"
-											type="text"
-											placeholder="휴대폰 번호 7자리 또는 8자리를 입력해주세요."
-											{...register('phone', {
-												required: true,
-												pattern:
-													/^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/
-											})}
-										/>
-										{errors.phone?.type === 'maxLength' && (
-											<div className="text-[16px] text-red-500 mt-1 text-center">
-												붙임표(-)를 제외한 휴대폰 번호 7~8자리를
-												입력해주세요.
-											</div>
-										)}
-									</div>
-									<div className="mt-4">
-										<label>휴대폰 번호</label>
-										{loading ? (
-											<Loading />
-										) : (
-											<select
-												className="w-full h-12 px-10 mt-1 bg-white border"
-												{...register('userCategoryId')}>
-												{data.trainer.userCategories.map(
-													(category: any) => (
-														<option key={category.id} value={category.id}>
-															{category.name}
-														</option>
-													)
-												)}
-											</select>
-										)}
-									</div>
+									<input
+										className="w-full h-12 px-10 border"
+										type="text"
+										placeholder="휴대폰 번호 7자리 또는 8자리를 입력해주세요."
+										{...register('phone', {
+											required: true,
+											pattern: /^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/
+										})}
+									/>
+									{errors.phone?.type === 'maxLength' && (
+										<div className="text-[16px] text-red-500 mt-1 text-center">
+											붙임표(-)를 제외한 휴대폰 번호 7~8자리를
+											입력해주세요.
+										</div>
+									)}
+									<select
+										className="w-full h-12 px-10 mt-1 bg-white border"
+										{...register('userCategoryId', {
+											required: true
+										})}>
+										<option value="">회원 카테고리를 선택해주세요.</option>
+										{data.trainer.userCategories.map((category: any) => (
+											<option value={category.id} key={category.id}>
+												{category.name}
+											</option>
+										))}
+									</select>
 
 									<div className="max-w-[450px] self-end mt-4">
 										<button
