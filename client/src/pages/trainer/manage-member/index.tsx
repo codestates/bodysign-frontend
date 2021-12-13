@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { managedUserIdrVar, modalVar } from '../../../graphql/vars'
+import { managedUserInfoVar, modalVar } from '../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import Loading from '../../../components/Loading'
 import {
@@ -12,6 +12,7 @@ import {
 	UpdateUserDocument
 } from '../../../graphql/graphql'
 import { useRouter } from 'next/dist/client/router'
+import BottomBar from '../../../components/BottomBar'
 
 interface Member {
 	id: string
@@ -259,11 +260,16 @@ const ManageMember: NextPage = () => {
 																<div className="flex flex-col h-1 ml-1 cursor-pointer">
 																	<div
 																		className="ml-2 hover:cursor-pointer font-thin h-[18px]"
-																		data-id={member.id}
 																		onClick={
 																			!readyDelete
 																				? () => {
-																						managedUserIdrVar(member.id)
+																						managedUserInfoVar({
+																							userId: +member.id,
+																							email:
+																								member.email.split('@')[0],
+																							userName: member.userName,
+																							gender: member.gender
+																						})
 																						const url = `/trainer/manage-member/${
 																							member.email.split('@')[0]
 																						}/info`
@@ -460,6 +466,7 @@ const ManageMember: NextPage = () => {
 						</div>
 					)
 				) : null}
+				<BottomBar variant="Trainer" />
 			</Layout>
 		</>
 	)

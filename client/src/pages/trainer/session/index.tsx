@@ -134,7 +134,9 @@ const Session: NextPage = () => {
 																{session.name} 회원님
 															</div>
 														</div>
-														<div className="ml-3 font-medium">{session.time}</div>
+														<div className="ml-3 font-medium">
+															{session.time}
+														</div>
 													</div>
 												</div>
 											</React.Fragment>
