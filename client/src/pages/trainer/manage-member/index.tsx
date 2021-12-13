@@ -98,14 +98,15 @@ const ManageMember: NextPage = () => {
 				manageMemberObject[userCategories[i].name] = []
 			}
 		}
-		data.trainer.users.forEach((el: any) => {
-			const userCategoryName = userCategories[el.userCategoryId - 1]?.name
+		data.trainer.users.forEach((user: any) => {
+			const userCategoryName =
+				userCategories[user.userCategoryId - 1]?.name
 			manageMemberObject[userCategoryName].push({
-				id: el.id,
-				email: el.email,
-				userName: el.userName,
-				phoneNumber: el.phoneNumber,
-				gender: el.gender
+				id: user.id,
+				email: user.email,
+				userName: user.userName,
+				phoneNumber: user.phoneNumber,
+				gender: user.gender
 			})
 		})
 	}
