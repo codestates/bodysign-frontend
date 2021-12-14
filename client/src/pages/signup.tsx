@@ -55,7 +55,7 @@ const Signup: NextPage = () => {
 			password: data.password,
 			phoneNumber: data.phone,
 			gender: data.gender,
-			// birthDate: new Date(data.birth),
+			birthDate: new Date(data.birth),
 			loginType
 		}
 		try {

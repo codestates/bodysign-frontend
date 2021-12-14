@@ -28,7 +28,7 @@ const Menu: NextPage = () => {
 									<path
 										d="M6.5 10.5l3-3-3-3"
 										stroke="currentColor"
-										stroke-linecap="square"></path>
+										strokeLinecap="square"></path>
 								</svg>
 							</div>
 						</Link>
@@ -51,7 +51,9 @@ const Menu: NextPage = () => {
 						</Link>
 						<Link href="/trainer/menu/ledger">
 							<div className="flex justify-between mt-1 cursor-pointer hover:bg-gray-100 items-center">
-								<li className="m-1 text-gray-400 list-none">수업료 정산</li>
+								<li className="m-1 text-gray-400 list-none">
+									수업료 정산
+								</li>
 								<svg
 									className="m-2 text-gray-400"
 									viewBox="0 0 15 15"
@@ -62,7 +64,7 @@ const Menu: NextPage = () => {
 									<path
 										d="M6.5 10.5l3-3-3-3"
 										stroke="currentColor"
-										stroke-linecap="square"></path>
+										strokeLinecap="square"></path>
 								</svg>
 							</div>
 						</Link>

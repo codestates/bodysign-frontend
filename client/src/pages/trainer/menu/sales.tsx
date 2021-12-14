@@ -2,41 +2,64 @@ import { NextPage } from 'next'
 import React, { useEffect, useRef, useState } from 'react'
 import Layout from '../../../components/Layout'
 import { modalVar } from '../../../graphql/vars'
-import { useReactiveVar } from '@apollo/client'
+import { useQuery, useReactiveVar } from '@apollo/client'
 import Chart from 'chart.js/auto'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import dummytotalsession from '../../../../dummyTotalSession.json'
+import { useRouter } from 'next/dist/client/router'
+import { TrainerDocument } from '../../../graphql/graphql'
+import Loading from '../../../components/Loading'
 
 const Sales: NextPage = () => {
+	const router = useRouter()
+	const modal = useReactiveVar(modalVar)
 	const [startDate, setStartDate] = useState(new Date())
 	const [endDate, setEndDate] = useState(new Date())
 	const [rangeFilterResult, setRangeFilterResult] = useState(0)
-	const [month, setMonth] = useState('')
-	const modal = useReactiveVar(modalVar)
+	const [date, setDate] = useState('')
 	const canvasRef = useRef(null)
-
-	const totalSessionObject: Record<string, number[]> = {}
-	dummytotalsession.forEach(session => {
-		const year = session.session_date.split('.')[0]
-		const month = session.session_date.split('.')[1]
-		if (totalSessionObject[`${year}.${month}`] === undefined) {
-			totalSessionObject[`${year}.${month}`] = []
-		}
-		totalSessionObject[`${year}.${month}`].push(
-			session.cost * session.times
-		)
+	const { loading, data } = useQuery(TrainerDocument, {
+		variables: { id: 21 }
 	})
 
-	const sortedTotalSession = Object.entries(totalSessionObject).sort(
-		(a, b): any => {
-			const dateA = new Date(a[0]).getTime()
-			const dateB = new Date(b[0]).getTime()
+	let sessionHistories: any[] = []
+	if (!loading && data) {
+		let users = [...data.trainer.users]
+		users.forEach(user => {
+			const userSessionHistories = user.sessionHistories
+			sessionHistories.push(...userSessionHistories)
+		})
+		sessionHistories.sort((a, b): any => {
+			const dateA = new Date(a.date).getTime()
+			const dateB = new Date(b.date).getTime()
 			if (dateA > dateB) return 1
 			if (dateA < dateB) return -1
 			return 0
+		})
+	}
+
+	const sessionHistoriesObject: Record<string, number[]> = {}
+	sessionHistories.forEach(session => {
+		const date = session.date.split('T')[0].split('-')
+		const year = date[0]
+		const month = date[1]
+		if (sessionHistoriesObject[`${year}.${month}`] === undefined) {
+			sessionHistoriesObject[`${year}.${month}`] = []
 		}
-	)
+		sessionHistoriesObject[`${year}.${month}`].push(
+			session.costPerSession * session.totalCount
+		)
+	})
+
+	const sortedSessionHistories = Object.entries(
+		sessionHistoriesObject
+	).sort((a, b): any => {
+		const dateA = new Date(a[0]).getTime()
+		const dateB = new Date(b[0]).getTime()
+		if (dateA > dateB) return 1
+		if (dateA < dateB) return -1
+		return 0
+	})
 
 	useEffect(() => {
 		if (canvasRef.current) {
@@ -60,7 +83,7 @@ const Sales: NextPage = () => {
 					datasets: [
 						{
 							label: '월별 수업료',
-							data: sortedTotalSession.map(el =>
+							data: sortedSessionHistories.map(el =>
 								el[1].reduce((acc, cur) => acc + cur)
 							),
 							backgroundColor: [
@@ -88,9 +111,9 @@ const Sales: NextPage = () => {
 
 			return () => {
 				chart.destroy()
-			 }
+			}
 		}
-	}, [])
+	})
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
@@ -98,27 +121,30 @@ const Sales: NextPage = () => {
 			const year = new Date(KST).getFullYear()
 			const month = new Date(KST).getMonth() + 1
 			const day = new Date(KST).getDate()
+			console.log(year, month, day)
+
 			return `${year} ${month} ${day}`
 		}
 		const getTimeStartDate = new Date(getYearMonthDay(startDate)).getTime()
 		const getTimeEndDate = new Date(getYearMonthDay(endDate)).getTime()
 
-		const result = dummytotalsession
-			.filter(totalSession => {
+		const result = sessionHistories
+			.filter(sessionHistory => {
 				const totalSessionGetTime = new Date(
-					totalSession.session_date
+					getYearMonthDay(sessionHistory.date)
 				).getTime()
 				if (
 					getTimeStartDate <= totalSessionGetTime &&
 					totalSessionGetTime <= getTimeEndDate
 				) {
-					return totalSession
+					return sessionHistory
 				} else return
 			})
-			.reduce((acc, cur) => acc + cur.cost * cur.times, 0)
+			.reduce((acc, cur) => acc + cur.costPerSession * cur.totalCount, 0)
 		setRangeFilterResult(result)
 	}
 
+	if (loading) return <Loading />
 	return (
 		<>
 			<Layout variant="Web">
@@ -130,7 +156,8 @@ const Sales: NextPage = () => {
 								className="self-center cursor-pointer w-7 h-7"
 								fill="none"
 								viewBox="0 0 24 24"
-								stroke="currentColor">
+								stroke="currentColor"
+								onClick={() => router.back()}>
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -144,7 +171,9 @@ const Sales: NextPage = () => {
 					</div>
 
 					<div className="mt-4 text-[12px]">
-						<div className="py-3 font-thin text-center">기간별 매출 조회</div>
+						<div className="py-3 font-thin text-center">
+							기간별 매출 조회
+						</div>
 						<div className="flex flex-col p-3 border">
 							<form
 								className="flex flex-col"
@@ -169,9 +198,7 @@ const Sales: NextPage = () => {
 										minDate={startDate}
 									/>
 									<button
-
 										className="h-7 px-1 ml-auto bg-yellow-100 border w-[85px]"
-
 										type="submit">
 										조회
 									</button>
@@ -204,16 +231,17 @@ const Sales: NextPage = () => {
 									</tr>
 								</thead>
 								<tbody className="bg-white divide-y divide-gray-200">
-									{sortedTotalSession.map((totalSession, idx) => {
+									{sortedSessionHistories.map((sessionHistory, idx) => {
 										return (
 											<React.Fragment key={idx}>
 												<tr>
 													<td className="p-3 text-[12px] text-gray-500">
-														{totalSession[0].split('.')[0]}년{' '}
-														{totalSession[0].split('.')[1]}월
+														{`${sessionHistory[0].split('.')[0]}년 ${
+															sessionHistory[0].split('.')[1]
+														}월`}
 													</td>
 													<td className="p-3 text-[12px] text-gray-500">
-														{totalSession[1].reduce(
+														{sessionHistory[1].reduce(
 															(acc, cur) => acc + cur
 														)}
 														원
@@ -222,7 +250,7 @@ const Sales: NextPage = () => {
 														<span
 															className="flex items-center cursor-pointer"
 															onClick={() => {
-																setMonth(totalSession[0].split('.')[1])
+																setDate(sessionHistory[0])
 																modalVar(true)
 															}}>
 															<span>상세 정보</span>
@@ -236,7 +264,7 @@ const Sales: NextPage = () => {
 																<path
 																	d="M6.5 10.5l3-3-3-3"
 																	stroke="currentColor"
-																	stroke-linecap="square"></path>
+																	strokeLinecap="square"></path>
 															</svg>
 														</span>
 													</td>
@@ -257,7 +285,7 @@ const Sales: NextPage = () => {
 							onClick={() => modalVar(false)}></div>
 						<div className="bg-white flex z-[50] h-full flex-col py-10">
 							<div className="p-3 text-center text-[20px] font-bold">
-								{month.replace(/^0/, '')}월 매출
+								{date.split('.')[1].replace(/^0/, '')}월 매출
 							</div>
 							<div className="mt-4 border-b border-gray-200">
 								<table className="min-w-full divide-y divide-gray-200">
@@ -275,29 +303,29 @@ const Sales: NextPage = () => {
 										</tr>
 									</thead>
 									<tbody className="bg-white divide-y divide-gray-200">
-										{dummytotalsession
-											.filter(
-												el => el.session_date.split('.')[1] === month
-											)
-											.sort((a, b): any => {
-												const dateA = new Date(a.session_date).getTime()
-												const dateB = new Date(b.session_date).getTime()
-												if (dateA > dateB) return 1
-												if (dateA < dateB) return -1
-												return 0
+										{sessionHistories
+											.filter(sessionHistory => {
+												const $date = sessionHistory.date.split('-')
+												if (`${$date[0]}.${$date[1]}` === date) {
+													return sessionHistory
+												}
 											})
-											.map((totalSession, idx) => {
+											.map(sessionHistory => {
+												console.log(sessionHistory)
+
 												return (
-													<React.Fragment key={idx}>
+													<React.Fragment key={sessionHistory.id}>
 														<tr>
 															<td className="p-3 text-[12px] text-gray-500">
-																{totalSession.session_date}
+																{sessionHistory.date.split('T')[0]}
 															</td>
 															<td className="p-3 text-[12px] text-gray-500">
-																{totalSession.name}
+																{sessionHistory.user.userName}
 															</td>
 															<td className="p-3 text-[12px] text-gray-500">
-																{totalSession.cost * totalSession.times}원
+																{sessionHistory.costPerSession *
+																	sessionHistory.totalCount}
+																원
 															</td>
 														</tr>
 													</React.Fragment>
