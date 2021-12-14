@@ -16,9 +16,7 @@ const kakaoAppKey = '6e971578908fd66a46f5962ba278215a'
 const LOGIN = gql`
 	mutation LoginAuth($loginUserInput: LoginUserInput!) {
 		loginAuth(loginUserInput: $loginUserInput) {
-			email
-			password
-			loginType
+			accessToken
 		}
   }
 `;
@@ -27,7 +25,8 @@ const Login: NextPage = () => {
 
 	const [form, setForm] = useState({
 		email: '',
-		password: ''
+		password: '',
+		type: 'local'
 	})
 
 	const [ loginAuth, { loading, error }] = useMutation(LOGIN);
@@ -43,7 +42,6 @@ const Login: NextPage = () => {
 
 	const onChangeId = (e: any) => {
 		const email = e.target.value
-		console.log(email)
 		setForm({
 			...form,
 			email: email
@@ -61,9 +59,9 @@ const Login: NextPage = () => {
 	const onSubmit = (e: any) => {
 		loginAuth({
 			variables: {
-				email: form.email,
-				password: form.password,
-				loginType: 'local'
+				loginUserInput: {
+					...form
+				}
 			}
 		})
 	}
