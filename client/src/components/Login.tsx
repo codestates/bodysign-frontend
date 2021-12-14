@@ -15,10 +15,10 @@ const kakaoAppKey = '6e971578908fd66a46f5962ba278215a'
 
 const LOGIN = gql`
 	mutation LoginAuth($loginUserInput: LoginUserInput!) {
-		loginUser(loginUserInput: $loginUserInput) {
+		loginAuth(loginUserInput: $loginUserInput) {
 			email
 			password
-			type
+			loginType
 		}
   }
 `;
@@ -48,7 +48,6 @@ const Login: NextPage = () => {
 			...form,
 			email: email
 		})
-		console.log(form)
 	}
 
 	const onChangePassword = (e: any) => {
@@ -62,14 +61,11 @@ const Login: NextPage = () => {
 	const onSubmit = (e: any) => {
 		loginAuth({
 			variables: {
-				createTrainerInput: {
-					email: form.email,
-					password: form.password,
-					loginType
-				}
+				email: form.email,
+				password: form.password,
+				loginType: 'local'
 			}
 		})
-		console.log(form)
 	}
 
 	const onSuccessGoogle = (response: any) => {

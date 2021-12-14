@@ -80,6 +80,7 @@ const main: NextPage = () => {
 
 				</div>
 			</div>
+			</div>
 		</Layout>
 	)
 }
