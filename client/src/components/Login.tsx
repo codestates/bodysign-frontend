@@ -15,10 +15,8 @@ const kakaoAppKey = '6e971578908fd66a46f5962ba278215a'
 
 const LOGIN = gql`
 	mutation LoginAuth($loginUserInput: LoginUserInput!) {
-		loginUser(loginUserInput: $loginUserInput) {
-			email
-			password
-			type
+		loginAuth(loginUserInput: $loginUserInput) {
+			accessToken
 		}
   }
 `;
@@ -27,7 +25,8 @@ const Login: NextPage = () => {
 
 	const [form, setForm] = useState({
 		email: '',
-		password: ''
+		password: '',
+		type: 'user'
 	})
 
 	const [ loginAuth, { loading, error }] = useMutation(LOGIN);
@@ -62,14 +61,13 @@ const Login: NextPage = () => {
 	const onSubmit = (e: any) => {
 		loginAuth({
 			variables: {
-				createTrainerInput: {
-					email: form.email,
-					password: form.password,
-					loginType
+				loginUserInput: {
+					...form
 				}
 			}
 		})
-		console.log(form)
+		// TODO: 로그인이 완료 되면 액세스 토큰을 받아와서 쿠키에 저장해서 요청할 때 마다 토큰 보내주기
+		// TODO: 토큰이 필요한 요청들을 리스트업
 	}
 
 	const onSuccessGoogle = (response: any) => {

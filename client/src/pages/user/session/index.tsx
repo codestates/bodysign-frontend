@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
-import Detail from '../../../components/Detail'
 import Layout from '../../../components/Layout'
 import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
-import UserSession from '../../../../src/graphql/graphql';
 import Link from 'next/link'
 
 // TODO: 날짜, 요일, 시간 쪽을 클릭하면 e.target.children이 빈 배열로 나옴 -> 에러 발생
@@ -34,7 +32,9 @@ const Session: NextPage = () => {
     ])
 
     // const [ sessionList, setSessionList ] = useState([])
-    const { loading, data } = useQuery(UserSession)
+    const { loading, data } = useQuery(UserSession, {
+        variables: { id : 1 }
+    })
 
     console.log(data)
 
@@ -42,9 +42,9 @@ const Session: NextPage = () => {
 
 	return (
         <Layout variant="Web">
-		<div className="flex flex-col m-5 mx-4 my-5 font-IBM text-[12px]">
+		<div className="flex flex-col m-5 mx-4 my-5 font-IBM text-[15px]">
                 <>
-                <div className="text-[20px] mb-3 font-IBM font-bold">수업 기록</div>
+                <div className="text-[25px] mb-3 font-IBM font-bold">수업 기록</div>
                 {
                     sessionList.map((session) => (
                         <Link href='/user/session/date'>
