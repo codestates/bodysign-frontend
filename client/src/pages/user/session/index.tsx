@@ -9,14 +9,16 @@ import Link from 'next/link'
 
 export const UserSession = gql`
 	query User($id: Int!) {
-        sessionHistories {
-            id
-  			date
- 			costPerSession
- 			totalCount
- 			usedCount
- 			commission
- 			userId
+        user (id: $id) {
+            sessionHistories {
+                id
+                date
+                costPerSession
+                totalCount
+                usedCount
+                commission
+                userId
+            }
         }
     }
 `
@@ -33,13 +35,17 @@ const Session: NextPage = () => {
 
     // const [ sessionList, setSessionList ] = useState([])
     const { loading, data } = useQuery(UserSession, {
-        variables: { id : 1 }
+        variables: { id: 2 }
     })
 
-    console.log(data)
+    if(loading) {
+        console.log('기다려')
+    } else {
+        console.log(data.user.sessionHistories)
+    }
 
     // TODO: setSessionList(받아온 데이터)
-
+    // TODO: 여기 로딩 컴포넌트 넣기
 	return (
         <Layout variant="Web">
 		<div className="flex flex-col m-5 mx-4 my-5 font-IBM text-[15px]">

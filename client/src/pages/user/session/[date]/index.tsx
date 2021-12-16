@@ -16,28 +16,39 @@ interface FormInput {
 
 export const UserSessionDetail = gql`
 	query User($id: Int!) {
-        sessions(id: $id) {
-            id
-            userId
-            date
-            trainerId
-            feedback
-            sessionExercises {
-                id
-                name
-                reps
-                sets
-                weight
-                sessionId
-            }
-        }
+		user(id: $id) {
+			sessions {
+				id
+				userId
+				date
+				trainerId
+				feedback
+				sessionExercises {
+					id
+					name
+					sessionExerciseVolumes {
+						reps
+						sets
+						weight
+					}
+				}
+			}
+		}
     }
 `
 
 const Detail: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
 	const deleteState = useReactiveVar(deleteStateVar)
-    const { loading, data } = useQuery(UserSessionDetail)
+    const { loading, data } = useQuery(UserSessionDetail, {
+        variables: { id: 1 }
+    })
+
+	if(loading) {
+		
+	} else {
+		console.log(data.user.sessions[0].sessionExercises[0])
+	}
 
 	const exercises = [
 		{
