@@ -13,6 +13,7 @@ import {
 } from '../../../graphql/graphql'
 import { useRouter } from 'next/dist/client/router'
 import BottomBar from '../../../components/BottomBar'
+import { io } from 'socket.io-client'
 
 interface Member {
 	id: string
@@ -28,6 +29,7 @@ interface FormInput {
 	userCategoryName: string
 }
 
+const socket = io('localhost:5000')
 const ManageMember: NextPage = () => {
 	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
@@ -117,6 +119,14 @@ const ManageMember: NextPage = () => {
 		} else if (category === '관리') {
 		}
 	}, [category])
+
+	useEffect(() => {
+		socket.emit('joinLounge', 21)
+		socket.on('joinedLounge', data => {
+			console.log(data)
+		})
+		// 회원 추가 기능 구현하고 다시 데이터를 봐야 한다.
+	}, [])
 
 	if (loading) return <Loading />
 	return (
