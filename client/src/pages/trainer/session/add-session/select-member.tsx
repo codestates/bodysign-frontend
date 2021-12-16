@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import Layout from '../../../../components/Layout'
 import session_dummy from '../../../../../session_dummy.json'
-import { selectedMemberVar } from '../../../../graphql/vars'
+import { selectedUserVar } from '../../../../graphql/vars'
 
 interface MemberSession {
 	id: string
@@ -31,7 +31,7 @@ const SelectMember: NextPage = () => {
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
+				<div className="flex flex-col justify-center mx-4 my-5 font-IBM">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[20px] font-bold">
 							<svg
@@ -56,7 +56,9 @@ const SelectMember: NextPage = () => {
 							{Object.keys(sessionObject).map((category, idx) => {
 								return (
 									<React.Fragment key={idx}>
-										<span className="ml-2 first:ml-0 font-thin">{category}</span>
+										<span className="ml-2 font-thin first:ml-0">
+											{category}
+										</span>
 									</React.Fragment>
 								)
 							})}
@@ -93,7 +95,7 @@ const SelectMember: NextPage = () => {
 															</svg>
 															<Link href="/trainer/session/add-session">
 																<div
-																	className="ml-1 hover:cursor-pointer font-thin"
+																	className="ml-1 font-thin hover:cursor-pointer"
 																	data-id={member.id}
 																	onClick={e => {
 																		if (
@@ -104,14 +106,16 @@ const SelectMember: NextPage = () => {
 																			const target = session_dummy.filter(
 																				member => member.id === id
 																			)
-																			selectedMemberVar(target[0].name)
+																			selectedUserVar(target[0].name)
 																		}
 																	}}>
 																	{member.name} 회원님
 																</div>
 															</Link>
 														</div>
-														<div className="ml-3 font-medium">{member.times}</div>
+														<div className="ml-3 font-medium">
+															{member.times}
+														</div>
 													</div>
 												</div>
 											</React.Fragment>

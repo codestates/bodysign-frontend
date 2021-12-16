@@ -43,7 +43,6 @@ const Login: NextPage = () => {
 
 	const onChangeId = (e: any) => {
 		const email = e.target.value
-		console.log(email)
 		setForm({
 			...form,
 			email: email
@@ -74,6 +73,7 @@ const Login: NextPage = () => {
 		} else {
 			console.log(data)
 		}
+
 	}
 
 	// if(loading) {
@@ -95,6 +95,17 @@ const Login: NextPage = () => {
 		console.log(response, 'failed')
 	}
 
+	const onSuccessKakao = (res: any) => {
+		console.log(res)
+		//? 1. 여기서 받아온 액세스토큰을 서버로 넘겨주기
+		//? 2. 서버에서 카카오 oauth로 요청
+		//? 3. 서버나 클라에서 로그인된 화면으로 리디렉션
+		//? 휴대폰 번호를 받아야 해서 회원가입 모달창 띄워야 함
+	}
+
+	const onFailureKakao = (err: any) => {
+		console.log(err)
+	}
     return <>
     <Layout variant="Web">
       <div className="flex flex-col mx-auto my-5 text-[12px]">

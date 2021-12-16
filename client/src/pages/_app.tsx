@@ -12,7 +12,6 @@ import {
 import '../components/loading.css'
 
 const httpLink = new HttpLink({ uri: 'http://localhost:4000/graphql' })
-
 const authMiddleware = new ApolloLink((operation, forward) => {
 	// add the authorization to the headers
 
@@ -30,11 +29,24 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 
 function MyApp({ Component, pageProps }: AppProps) {
 	const client = new ApolloClient({
-		uri: 'http://localhost:4000/graphql',
-		cache: new InMemoryCache()
+		link: concat(authMiddleware, httpLink),
+		cache: new InMemoryCache({
+			typePolicies: {
+				Exercise: {
+					fields: {
+						isChecked: {
+							read(_, {}) {
+								return 'heeeeeeeeeeeeeeeeeeeeeeeeeeeey'
+							}
+						}
+					}
+				}
+			}
+		}),
+		connectToDevTools: true
 	})
-	
-  return (
+
+	return (
 		<ApolloProvider client={client}>
 			<Provider session={pageProps.session}>
 				<Component {...pageProps} />
