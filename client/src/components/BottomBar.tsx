@@ -33,7 +33,7 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 			<Link href="/trainer/manage-member">
 				<span
 					className={`flex flex-col items-center ${
-						path.includes('manage-member') ? 'text-black' : ''
+						path.includes('/trainer/manage-member') ? 'text-black' : ''
 					}`}>
 					<svg
 						viewBox="0 0 15 15"
@@ -51,10 +51,10 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 					<div className="text-[12px] mt-1">회원</div>
 				</span>
 			</Link>
-			<Link href="/trainer/session">
+			<Link href="/trainer/exercise">
 				<span
 					className={`flex flex-col items-center ${
-						path.includes('exercise') ? 'text-black' : ''
+						path.includes('/trainer/exercise') ? 'text-black' : ''
 					}`}>
 					<svg
 						viewBox="0 0 15 15"
@@ -72,7 +72,7 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 			<Link href="/trainer/session">
 				<span
 					className={`flex flex-col items-center ${
-						path.includes('session') ? 'text-black' : ''
+						path.includes('/trainer/session') ? 'text-black' : ''
 					}`}>
 					<svg
 						viewBox="0 0 15 15"
@@ -90,7 +90,7 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 			<Link href="/trainer/menu">
 				<span
 					className={`flex flex-col items-center ${
-						path.includes('menu') ? 'text-black' : ''
+						path.includes('/trainer/menu') ? 'text-black' : ''
 					}`}>
 					<svg
 						viewBox="0 0 15 15"

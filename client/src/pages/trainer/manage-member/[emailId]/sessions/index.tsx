@@ -2,34 +2,24 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import React from 'react'
 import Layout from '../../../../../components/Layout'
-import dummydata from '../../../../../../dummydata.json'
 import { useRouter } from 'next/dist/client/router'
 import { useQuery, useReactiveVar } from '@apollo/client'
 import { UserDocument } from '../../../../../graphql/graphql'
-import { managedUserIdrVar } from '../../../../../graphql/vars'
+import {
+	managedUserInfoVar,
+	sessionExerciseInputVar
+} from '../../../../../graphql/vars'
+import Loading from '../../../../../components/Loading'
+import BottomBar from '../../../../../components/BottomBar'
 
 const Sessions: NextPage = () => {
 	const router = useRouter()
-	const managedUserId = useReactiveVar(managedUserIdrVar)
+	const managedUserInfo = useReactiveVar(managedUserInfoVar)
+	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
 	const { loading, data } = useQuery(UserDocument, {
-		variables: { id: managedUserId }
+		variables: { id: managedUserInfo.userId }
 	})
 
-	console.log(data)
-
-	const member_dummy = {
-		id: '1',
-		email: 'jsmsumin1234@naver.com',
-		name: 'Alice',
-		birth: '2020.11.13',
-		phone: '12345678',
-		gender: 'male',
-		graduate: 'false',
-		time: '14:00',
-		times: '8/10',
-		date: '2021-11-05',
-		membercategory: '바디프로필'
-	}
 	const week = [
 		'일요일',
 		'월요일',
@@ -40,6 +30,7 @@ const Sessions: NextPage = () => {
 		'토요일'
 	]
 
+	if (loading) return <Loading />
 	return (
 		<>
 			<Layout variant="Web">
@@ -60,7 +51,7 @@ const Sessions: NextPage = () => {
 									d="M15 19l-7-7 7-7"
 								/>
 							</svg>
-							<div className="font-bold">{member_dummy.name} 회원님</div>
+							<div className="font-bold">{data.user.userName} 회원님</div>
 						</span>
 						<span className="flex">
 							<svg
@@ -80,38 +71,51 @@ const Sessions: NextPage = () => {
 					</div>
 
 					<div className="flex justify-between pr-3 mt-4 text-[18px]">
-						<Link href="/trainer/manage-member/emailId/info">
+						<Link
+							href={`/trainer/manage-member/${managedUserInfo.email}/info`}>
 							<span className="ml-0 cursor-pointer">회원정보</span>
 						</Link>
-						<Link href="/trainer/manage-member/emailId/sessions">
+						<Link
+							href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}>
 							<span className="pb-1 ml-2 border-b border-black cursor-pointer">
 								수업기록
 							</span>
 						</Link>
-						<Link href="/trainer/manage-member/emailId/inbody">
+						<Link
+							href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}>
 							<span className="ml-2 cursor-pointer">인바디</span>
 						</Link>
 					</div>
 
 					<div className="flex flex-col mt-4 text-[12px]">
-						{dummydata.map(session => {
+						{data.user.sessions.map((session: any) => {
+							const date = session.date.split('T')[0]
 							return (
 								<React.Fragment key={session.id}>
-									<Link
-										href={`/trainer/manage-member/${
-											session.email.split('@')[0]
-										}/sessions/${session.date}`}>
-										<div className="flex px-3 py-3 mt-1 border rounded-3xl first:mt-0 text-[12px] justify-around items-center relative cursor-pointer font-thin">
-											<span>{session.date}</span>
-											<span>{week[new Date(session.date).getDay()]}</span>
-											<span>{session.time}</span>
-											{session.feedback ? (
-												<span className="w-3 h-3 bg-green-300 rounded-full"></span>
-											) : (
-												<span className="w-3 h-3 bg-gray-300 rounded-full"></span>
-											)}
-										</div>
-									</Link>
+									<div
+										className="flex px-3 py-3 mt-1 border rounded-3xl first:mt-0 text-[12px] justify-around items-center relative cursor-pointer font-thin"
+										onClick={e => {
+											if (e !== null && e.target instanceof HTMLElement) {
+												sessionExerciseInputVar({
+													...sessionExerciseInput,
+													sessionId: session.id
+												})
+												router.push(
+													`/trainer/manage-member/${
+														data.user.email.split('@')[0]
+													}/sessions/${date}`
+												)
+											}
+										}}>
+										<span>{date}</span>
+										<span>{week[new Date(session.date).getDay()]}</span>
+										<span>{session.time}</span>
+										{session.feedback !== '' ? (
+											<span className="w-3 h-3 bg-green-300 rounded-full"></span>
+										) : (
+											<span className="w-3 h-3 bg-gray-300 rounded-full"></span>
+										)}
+									</div>
 								</React.Fragment>
 							)
 						})}
@@ -133,6 +137,7 @@ const Sessions: NextPage = () => {
 						</svg>
 					</Link>
 				</div>
+				<BottomBar variant="Trainer" />
 			</Layout>
 		</>
 	)

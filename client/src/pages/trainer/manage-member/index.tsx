@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { managedUserIdrVar, modalVar } from '../../../graphql/vars'
+import { managedUserInfoVar, modalVar } from '../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import Loading from '../../../components/Loading'
 import {
@@ -12,6 +12,8 @@ import {
 	UpdateUserDocument
 } from '../../../graphql/graphql'
 import { useRouter } from 'next/dist/client/router'
+import BottomBar from '../../../components/BottomBar'
+import { io } from 'socket.io-client'
 
 interface Member {
 	id: string
@@ -27,6 +29,7 @@ interface FormInput {
 	userCategoryName: string
 }
 
+const socket = io('localhost:5000')
 const ManageMember: NextPage = () => {
 	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
@@ -117,6 +120,14 @@ const ManageMember: NextPage = () => {
 		} else if (category === '관리') {
 		}
 	}, [category])
+
+	useEffect(() => {
+		socket.emit('joinLounge', 21)
+		socket.on('joinedLounge', data => {
+			console.log(data)
+		})
+		// 회원 추가 기능 구현하고 다시 데이터를 봐야 한다.
+	}, [])
 
 	if (loading) return <Loading />
 	return (
@@ -260,11 +271,16 @@ const ManageMember: NextPage = () => {
 																<div className="flex flex-col h-1 ml-1 cursor-pointer">
 																	<div
 																		className="ml-2 hover:cursor-pointer font-thin h-[18px]"
-																		data-id={member.id}
 																		onClick={
 																			!readyDelete
 																				? () => {
-																						managedUserIdrVar(member.id)
+																						managedUserInfoVar({
+																							userId: +member.id,
+																							email:
+																								member.email.split('@')[0],
+																							userName: member.userName,
+																							gender: member.gender
+																						})
 																						const url = `/trainer/manage-member/${
 																							member.email.split('@')[0]
 																						}/info`
@@ -461,6 +477,7 @@ const ManageMember: NextPage = () => {
 						</div>
 					)
 				) : null}
+				<BottomBar variant="Trainer" />
 			</Layout>
 		</>
 	)

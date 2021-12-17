@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../../components/Layout'
-import { managedUserIdrVar, modalVar } from '../../../../graphql/vars'
+import { managedUserInfoVar, modalVar } from '../../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import {
 	CreateSessionHistoryDocument,
@@ -13,6 +13,7 @@ import {
 } from '../../../../graphql/graphql'
 import Loading from '../../../../components/Loading'
 import { useRouter } from 'next/dist/client/router'
+import BottomBar from '../../../../components/BottomBar'
 
 interface FormInput {
 	date: string
@@ -24,12 +25,12 @@ interface FormInput {
 const Info: NextPage = () => {
 	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
-	const managedUserId = useReactiveVar(managedUserIdrVar)
+	const managedUserInfo = useReactiveVar(managedUserInfoVar)
 	const { loading, data } = useQuery(TrainerDocument, {
 		variables: { id: 21 }
 	})
 	const { loading: userLoading, data: userData } = useQuery(UserDocument, {
-		variables: { id: managedUserId }
+		variables: { id: managedUserInfo.userId }
 	})
 	const [updateUser] = useMutation(UpdateUserDocument)
 	const [createSessionHistory] = useMutation(CreateSessionHistoryDocument)
@@ -44,7 +45,7 @@ const Info: NextPage = () => {
 		createSessionHistory({
 			variables: {
 				createSessionHistoryInput: {
-					userId: managedUserId,
+					userId: managedUserInfo.userId,
 					date: data.date,
 					costPerSession: +data.costPerSession,
 					totalCount: +data.totalCount,
@@ -52,7 +53,7 @@ const Info: NextPage = () => {
 				}
 			},
 			refetchQueries: [
-				{ query: UserDocument, variables: { id: managedUserId } }
+				{ query: UserDocument, variables: { id: managedUserInfo.userId } }
 			]
 		})
 	}
@@ -101,15 +102,18 @@ const Info: NextPage = () => {
 					</div>
 
 					<div className="flex justify-between pr-3 mt-4 text-[12px]">
-						<Link href="/trainer/manage-member/emailId/info">
+						<Link
+							href={`/trainer/manage-member/${managedUserInfo.email}/info`}>
 							<span className="pb-1 ml-0 border-b border-black cursor-pointer">
 								회원정보
 							</span>
 						</Link>
-						<Link href="/trainer/manage-member/emailId/sessions">
+						<Link
+							href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}>
 							<span className="ml-2 cursor-pointer">수업기록</span>
 						</Link>
-						<Link href="/trainer/manage-member/emailId/inbody">
+						<Link
+							href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}>
 							<span className="ml-2 cursor-pointer">인바디</span>
 						</Link>
 					</div>
@@ -149,7 +153,7 @@ const Info: NextPage = () => {
 												updateUser({
 													variables: {
 														updateUserInput: {
-															id: managedUserId,
+															id: managedUserInfo.userId,
 															graduate: e.target.checked
 														}
 													}
@@ -179,7 +183,7 @@ const Info: NextPage = () => {
 												updateUser({
 													variables: {
 														updateUserInput: {
-															id: managedUserId,
+															id: managedUserInfo.userId,
 															userCategoryId: +e.target.value
 														}
 													}
@@ -354,6 +358,7 @@ const Info: NextPage = () => {
 						</div>
 					</div>
 				) : null}
+				<BottomBar variant="Trainer" />
 			</Layout>
 		</>
 	)

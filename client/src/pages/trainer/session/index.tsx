@@ -144,7 +144,7 @@ const Session: NextPage = () => {
 															</div>
 														</div>
 														<div className="ml-3 font-medium">
-															{member.date.split('T')[0]}
+															{session.time}
 														</div>
 													</div>
 												</div>
