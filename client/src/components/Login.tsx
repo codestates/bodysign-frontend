@@ -1,18 +1,20 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
 import { signIn, signOut, useSession } from 'next-auth/client'
-import GoogleLogin from 'react-google-login'
+// import GoogleLogin from 'react-google-login'
 import Layout from '../components/Layout'
 import Loading from './Loading'
 import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client'
 import { loginTypeVar } from '../graphql/vars'
 import Link from 'next/link'
 
+const GOOGLE_CLIENT_ID =
+	'228447519514-17eoff0h38vfipbkd7ata2gtt7e2bbo7.apps.googleusercontent.com'
+
 // TODO : 유저/트레이너 타입을 받아서 각각 페이지로 라우팅하기
 // TODO : 구글 로그인 클릭하면 Redirect URL 을 서버 쪽으로 돌리기
 
-const googleCliendId =
-	'122713240467-oq4tee3gshbdfmodg5b20ljsb9ajfsoe.apps.googleusercontent.com'
+//* 리디렉션 오는 요청에 의해서 type을 google local 나눠서 보내기?
 
 const LOGIN = gql`
 	mutation LoginAuth($loginUserInput: LoginUserInput!) {
@@ -78,30 +80,17 @@ const Login: NextPage = () => {
 	// 	console.log(data.loginAuth.accessToken)
 	// }
 
-	const onSuccessGoogle = (response: any) => {
-		console.log(response, 'success')
-		console.log(response.accessToken)
-		//? 1. 여기서 받아온 액세스토큰을 서버로 넘겨주기
-		//? 2. 서버에서 구글 oauth로 요청
-		//? 3. 서버나 클라에서 로그인된 화면으로 리디렉션
+	const onGoogleLogin = () => {
+		//? 서버로 바로 리다이렉션
 		//? 휴대폰 번호를 받아야 해서 회원가입 모달창 띄워야 함
+		window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=http://localhost:4000/auth/google&response_type=token&scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&
+		include_granted_scopes=true`
 	}
 
 	const onFailureGoogle = (response: any) => {
 		console.log(response, 'failed')
 	}
 
-	const onSuccessKakao = (res: any) => {
-		console.log(res)
-		//? 1. 여기서 받아온 액세스토큰을 서버로 넘겨주기
-		//? 2. 서버에서 카카오 oauth로 요청
-		//? 3. 서버나 클라에서 로그인된 화면으로 리디렉션
-		//? 휴대폰 번호를 받아야 해서 회원가입 모달창 띄워야 함
-	}
-
-	const onFailureKakao = (err: any) => {
-		console.log(err)
-	}
 	return (
 		<>
 			<Layout>
@@ -126,16 +115,20 @@ const Login: NextPage = () => {
 									className="font-IBM font-thin py-1 rounded text-gray-800 bg-gray-300 hover:bg-gray-400 hover:text-white m-1 w-4/5 ">
 									로그인
 								</button>
+								<button
+									onClick={onGoogleLogin}
+									className="font-IBM font-thin py-1 rounded text-gray-800 bg-gray-300 hover:bg-gray-400 hover:text-white m-1 w-4/5 ">
+									GOOGLE로 로그인
+								</button>
 								<div className="flex w-4/5 border-0">
-									<GoogleLogin
-										className="m-1 w-4/5 font-IBM font-thin text-center"
-										clientId={googleCliendId}
-										buttonText="Login"
-										onSuccess={onSuccessGoogle}
-										onFailure={onFailureGoogle}
-										cookiePolicy={'single_host_origin'}>
-										구글로 로그인
-									</GoogleLogin>
+									{/* <GoogleLogin
+                className="m-1 w-4/5 font-IBM font-thin text-center"
+                clientId={GOOGLE_CLIENT_ID}
+                buttonText="Login"
+                cookiePolicy={"single_host_origin"}
+              >
+                구글로 로그인
+              </GoogleLogin> */}
 								</div>
 								<Link href="/signup">
 									<button className="font-IBM font-thin m-1 w-4/5 py-1 rounded text-gray-500 transition-colors duration-150 border border-gray-300 focus:shadow-outline hover:bg-gray-300 hover:text-white">
