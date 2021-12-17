@@ -11,6 +11,7 @@ export const UserDocument = gql`
 			phoneNumber
 			gender
 			graduate
+			trainerId
 			sessions {
 				id
 				userId
@@ -52,6 +53,8 @@ export const TrainerDocument = gql`
 		trainer(id: $id) {
 			id
 			email
+			userName
+			birthDate
 			phoneNumber
 			gender
 			users {
@@ -70,6 +73,9 @@ export const TrainerDocument = gql`
 					usedCount
 					commission
 					userId
+					user {
+						userName
+					}
 				}
 				userCategoryId
 			}
@@ -79,6 +85,11 @@ export const TrainerDocument = gql`
 				date
 				trainerId
 				feedback
+				# user {
+				# 	id
+				# 	userName
+				# 	gender
+				# }
 			}
 			exerciseCategories {
 				id
@@ -176,14 +187,28 @@ export const CreateTrainerDocument = gql`
 	}
 `
 
-export const CreateSessionDocument = gql`
-	mutation CreateSession($createSessionInput: CreateSessionInput!) {
-		createSession(createSessionInput: $createSessionInput) {
+export const UpdateTrainerDocument = gql`
+	mutation UpdateTrainer($updateTrainerInput: UpdateTrainerInput!) {
+		updateTrainer(updateTrainerInput: $updateTrainerInput) {
 			id
-			userId
-			date
-			trainerId
-			feedback
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+		}
+	}
+`
+
+export const RemoveTrainerDocument = gql`
+	mutation RemoveTrainer($id: Int!) {
+		removeTrainer(id: $id) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
 		}
 	}
 `

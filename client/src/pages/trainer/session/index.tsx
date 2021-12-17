@@ -4,41 +4,53 @@ import React, { useEffect, useState } from 'react'
 import Layout from '../../../components/Layout'
 import session_dummy from '../../../../session_dummy.json'
 import { modalVar } from '../../../graphql/vars'
-import { useReactiveVar } from '@apollo/client'
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
+import BottomBar from '../../../components/BottomBar'
+import {
+	TrainerDocument,
+	UpdateSessionDocument,
+	RemoveSessionDocument
+} from '../../../graphql/graphql'
+import Loading from '../../../components/Loading'
 
 interface MemberSession {
-	id: string
-	name: string
+	id: number
+	userId: string
 	gender: string
-	time: string
+	date: string
 }
 
 const Session: NextPage = () => {
-	const [category, setCategory] = useState('일정')
 	const modal = useReactiveVar(modalVar)
+	const [category, setCategory] = useState('일정')
+	const { loading, data } = useQuery(TrainerDocument, {
+		variables: { id: 21 }
+	})
+	const [updateSession] = useMutation(UpdateSessionDocument)
+	const [removeSession] = useMutation(RemoveSessionDocument)
 
 	const sessionObject: Record<string, MemberSession[]> = {}
-	session_dummy
-		.sort((a, b) => {
-			const aDate = new Date(`${a.date} ${a.time}`).getTime()
-			const bDate = new Date(`${b.date} ${b.time}`).getTime()
-			return aDate > bDate ? -1 : 1
-		})
-		.forEach(el => {
-			if (sessionObject[el.date] === undefined) {
-				sessionObject[el.date] = []
-			}
-			sessionObject[el.date].push({
-				id: el.id,
-				name: el.name,
-				gender: el.gender,
-				time: el.time
+	if (!loading && data) {
+		let $Data = [...data.trainer.sessions]
+		$Data
+			.sort((a, b) => {
+				const aDate = new Date(a.date).getTime()
+				const bDate = new Date(b.date).getTime()
+				return aDate > bDate ? 1 : -1
 			})
-		})
-
-	// 카테고리 필터 및 정렬
-	// 수업 완료 API
-	// 수업 삭제 API
+			.forEach(session => {
+				const date = session.date.split('T')[0]
+				if (sessionObject[date] === undefined) {
+					sessionObject[date] = []
+				}
+				sessionObject[date].push({
+					id: session.id,
+					userId: session.userId,
+					gender: session.gender,
+					date: session.date
+				})
+			})
+	}
 
 	useEffect(() => {
 		if (category === '피드백') {
@@ -47,6 +59,7 @@ const Session: NextPage = () => {
 		}
 	}, [category])
 
+	if (loading) return <Loading />
 	return (
 		<>
 			<Layout variant="Web">
@@ -102,39 +115,37 @@ const Session: NextPage = () => {
 						return (
 							<React.Fragment key={idx}>
 								<div
-									className="mt-4 font-thin font-medium"
+									className="mt-4"
 									onClick={() => {
 										modalVar(true)
 									}}>
 									<div className="text-[16px]">{entry[0]}</div>
-									{entry[1].reverse().map((session, idx2) => {
+									{entry[1].map((member, idx2) => {
 										return (
 											<React.Fragment key={idx2}>
 												<div className="text-[16px] mt-2">
 													<div className="flex justify-between p-3 border font-thin rounded-3xl">
 														<div className="flex">
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																className={`w-6 h-6 ${
-																	session.gender === 'male'
-																		? 'text-blue-300'
-																		: 'text-pink-300'
-																}`}
-																fill="none"
-																viewBox="0 0 24 24"
-																stroke="currentColor">
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	strokeWidth={1.5}
-																	d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+															{member.gender === 'male' ? (
+																<img
+																	src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
+																	width="25"
+																	height="25"
 																/>
-															</svg>
+															) : (
+																<img
+																	src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
+																	width="25"
+																	height="25"
+																/>
+															)}
 															<div className="ml-1">
-																{session.name} 회원님
+																{member.userId} 회원님
 															</div>
 														</div>
-														<div className="ml-3 font-medium">{session.time}</div>
+														<div className="ml-3 font-medium">
+															{session.time}
+														</div>
 													</div>
 												</div>
 											</React.Fragment>
@@ -161,13 +172,29 @@ const Session: NextPage = () => {
 									onClick={() => modalVar(false)}>
 									취소
 								</button>
-								<button className="px-4 py-3 mx-3 bg-yellow-100 border">
+								<button
+									className="px-4 py-3 mx-3 bg-yellow-100 border"
+									onClick={async () => {
+										try {
+											await updateSession({
+												variables: {
+													updateSessionInput: {
+														// ...inputs
+													}
+												}
+											})
+											modalVar(false)
+										} catch (error) {
+											console.log(error)
+										}
+									}}>
 									완료
 								</button>
 							</div>
 						</div>
 					</div>
 				) : null}
+				<BottomBar variant="Trainer" />
 			</Layout>
 		</>
 	)

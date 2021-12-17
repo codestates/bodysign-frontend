@@ -1,12 +1,13 @@
 import { NextPage } from 'next'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../../../../components/Layout'
 import dummydata from '../../../../../../../dummydata.json'
 import {
-	managedUserIdrVar,
-	modalVar
+	managedUserInfoVar,
+	modalVar,
+	sessionExerciseInputVar
 } from '../../../../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import { useRouter } from 'next/dist/client/router'
@@ -16,6 +17,7 @@ import {
 	UpdateSessionExerciseDocument,
 	UserDocument
 } from '../../../../../../graphql/graphql'
+import Loading from '../../../../../../components/Loading'
 
 interface FormInput {
 	weight: string
@@ -25,12 +27,14 @@ interface FormInput {
 
 const Detail: NextPage = () => {
 	const router = useRouter()
-	const managedUserId = useReactiveVar(managedUserIdrVar)
 	const modal = useReactiveVar(modalVar)
+	const managedUserInfo = useReactiveVar(managedUserInfoVar)
+	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
+	const [feedback, setFeeback] = useState('')
 	const { loading, data } = useQuery(UserDocument, {
-		variables: { id: managedUserId }
+		variables: { id: managedUserInfo.userId }
 	})
 	const [updateSessionExercise] = useMutation(
 		UpdateSessionExerciseDocument
@@ -39,113 +43,6 @@ const Detail: NextPage = () => {
 		RemoveSessionExerciseDocument
 	)
 	const [updateSession] = useMutation(UpdateSessionDocument)
-
-	const exercises = [
-		{
-			id: 1,
-			name: '스쿼트',
-			volumes: [
-				{
-					id: 1,
-					weight: 85,
-					reps: 5,
-					sets: 1
-				}
-			]
-		},
-		{
-			id: 2,
-			name: '데드리프트',
-			volumes: [
-				{
-					id: 1,
-					weight: 85,
-					reps: 3,
-					sets: 1
-				},
-				{
-					id: 2,
-					weight: 90,
-					reps: 1,
-					sets: 1
-				}
-			]
-		},
-		{
-			id: 3,
-			name: '벤치프레스',
-			volumes: [
-				{
-					id: 1,
-					weight: 55,
-					reps: 3,
-					sets: 1
-				},
-				{
-					id: 2,
-					weight: 60,
-					reps: 1,
-					sets: 1
-				}
-			]
-		}
-		// {
-		// 	id: 4,
-		// 	name: '오버헤드프레스',
-		// 	volumes: [
-		// 		{ id: 1, weight: 30, reps: 5, sets: 1 },
-		// 		{
-		// 			id: 2,
-		// 			weight: 32.5,
-		// 			reps: 3,
-		// 			sets: 1
-		// 		},
-		// 		{
-		// 			id: 3,
-		// 			weight: 35,
-		// 			reps: 1,
-		// 			sets: 1
-		// 		}
-		// 	]
-		// },
-		// {
-		// 	id: 5,
-		// 	name: '친업',
-		// 	volumes: [
-		// 		{
-		// 			id: 1,
-		// 			weight: 30,
-		// 			reps: 5,
-		// 			sets: 1
-		// 		},
-		// 		{
-		// 			id: 2,
-		// 			weight: 32.5,
-		// 			reps: 3,
-		// 			sets: 1
-		// 		},
-		// 		{
-		// 			id: 3,
-		// 			weight: 35,
-		// 			reps: 1,
-		// 			sets: 1
-		// 		}
-		// 	]
-		// },
-		// {
-		// 	id: 6,
-		// 	name: '풀업',
-		// 	volumes: [
-		// 		{
-		// 			id: 1,
-		// 			weight: 55,
-		// 			reps: 5,
-		// 			sets: 3
-		// 		}
-		// 	]
-		// }
-	]
-
 	const {
 		register,
 		formState: { errors },
@@ -153,20 +50,47 @@ const Detail: NextPage = () => {
 	} = useForm<FormInput>()
 	const onSubmit: SubmitHandler<FormInput> = data => {
 		// 볼륨 작성 API
-		// try {
-		// 	updateSessionExercise({
-		// 		variables: {
-		// 			updateSessionExerciseInput: {
-		// 				id: 2,
-		// 				trainerId: 21
-		// 			}
-		// 		}
-		// 	})
-		// } catch (error) {
-		// 	console.log(error)
-		// }
+		try {
+			updateSessionExercise({
+				variables: {
+					updateSessionExerciseInput: {
+						name: sessionExerciseInput.name,
+						reps: +data.reps,
+						sets: +data.sets,
+						weight: +data.weight,
+						id: sessionExerciseInput.sessionExerciseId
+					}
+				},
+				refetchQueries: [
+					{
+						query: UserDocument,
+						variables: { id: managedUserInfo.userId }
+					}
+				]
+			})
+			sessionExerciseInputVar({
+				...sessionExerciseInput,
+				reps: 0,
+				sets: 0,
+				weight: 0,
+				sessionExerciseId: 0
+			})
+			modalVar(false)
+		} catch (error) {
+			console.log(error)
+		}
 	}
 
+	let sessionExercises
+	if (!loading && data) {
+		sessionExercises = data.user.sessions.filter(
+			(session: any) => session.id === sessionExerciseInput.sessionId
+		)[0].sessionExercises
+	}
+
+	useEffect(() => {}, [feedback])
+
+	if (loading) return <Loading />
 	return (
 		<>
 			<Layout variant="Web">
@@ -187,7 +111,7 @@ const Detail: NextPage = () => {
 									d="M15 19l-7-7 7-7"
 								/>
 							</svg>
-							<div className="font-bold">{dummydata[0].date}</div>
+							<div className="font-bold">{router.query.date}</div>
 						</span>
 						<span className="flex items-center">
 							{!readyDelete ? (
@@ -203,18 +127,17 @@ const Detail: NextPage = () => {
 												// 피드백 완료 여부 API
 												// 데이터를 받고 checked 상태를 변경한다.
 												// e.target.checked을 가지고 mutation
-												// try {
-												// 	updateSession({
-												// 		variables: {
-												// 			updateSessionInput: {
-												// 				id: managedUserId,
-												// 				graduate: e.target.checked
-												// 			}
-												// 		}
-												// 	})
-												// } catch (error) {
-												// 	console.log(error)
-												// }
+												try {
+													updateSession({
+														variables: {
+															updateSessionInput: {
+																// ...inpusts
+															}
+														}
+													})
+												} catch (error) {
+													console.log(error)
+												}
 											}}
 										/>
 										<label
@@ -261,7 +184,7 @@ const Detail: NextPage = () => {
 					</div>
 
 					<div className="flex flex-col mt-4">
-						{exercises.map(exercise => {
+						{sessionExercises.map((exercise: any) => {
 							return (
 								<React.Fragment key={exercise.id}>
 									<div className="font-thin flex px-3 py-3 mt-1 border first:mt-0 text-[16px] flex-col items-center">
@@ -269,7 +192,14 @@ const Detail: NextPage = () => {
 											className="w-full p-3 text-center border bg-gray-50 cursor-pointer"
 											onClick={
 												!readyDelete
-													? () => modalVar(true)
+													? () => {
+															sessionExerciseInputVar({
+																...sessionExerciseInput,
+																name: exercise.name,
+																sessionExerciseId: exercise.id
+															})
+															modalVar(true)
+													  }
 													: e => {
 															if (
 																e !== null &&
@@ -297,23 +227,19 @@ const Detail: NextPage = () => {
 											}>
 											{exercise.name}
 										</div>
-										{exercise.volumes.map(volume => {
-											return (
-												<React.Fragment key={volume.id}>
-													<div className="flex justify-around w-full py-1 border-b last:border-b-0">
-														<span className="w-full text-center">
-															{volume.weight}kg
-														</span>
-														<span className="w-full text-center">
-															{volume.reps}회
-														</span>
-														<span className="w-full text-center">
-															{volume.sets}세트
-														</span>
-													</div>
-												</React.Fragment>
-											)
-										})}
+										<React.Fragment key={exercise.id}>
+											<div className="flex justify-around w-full py-1 border-b last:border-b-0">
+												<span className="w-full text-center">
+													{exercise.weight}kg
+												</span>
+												<span className="w-full text-center">
+													{exercise.reps}회
+												</span>
+												<span className="w-full text-center">
+													{exercise.sets}세트
+												</span>
+											</div>
+										</React.Fragment>
 									</div>
 								</React.Fragment>
 							)
@@ -344,21 +270,22 @@ const Detail: NextPage = () => {
 						autoFocus
 						autoSave="true"
 						defaultValue={'피드백을 입력해주세요.'}
-						onChange={e => {
+						onBlur={e => {
 							// 피드백 작성 API
 							// e.target.value
-							// try {
-							// 	updateSession({
-							// 		variables: {
-							// 			updateSessionInput: {
-							// 				id: managedUserId,
-							// 				feedback: e.target.value
-							// 			}
-							// 		}
-							// 	})
-							// } catch (error) {
-							// 	console.log(error)
-							// }
+							try {
+								updateSession({
+									variables: {
+										updateSessionInput: {
+											id: sessionExerciseInput.sessionId,
+											status: 'active',
+											feedback: e.target.value
+										}
+									}
+								})
+							} catch (error) {
+								console.log(error)
+							}
 						}}></textarea>
 				</div>
 

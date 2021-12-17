@@ -5,15 +5,16 @@ import Layout from '../../../../components/Layout'
 import Chart from 'chart.js/auto'
 import { useReactiveVar, useQuery } from '@apollo/client'
 import { UserDocument } from '../../../../graphql/graphql'
-import { managedUserIdrVar } from '../../../../graphql/vars'
+import { managedUserInfoVar } from '../../../../graphql/vars'
 import Loading from '../../../../components/Loading'
 import { useRouter } from 'next/dist/client/router'
+import BottomBar from '../../../../components/BottomBar'
 
 const Inbody: NextPage = () => {
 	const router = useRouter()
-	const managedUserId = useReactiveVar(managedUserIdrVar)
+	const managedUserInfo = useReactiveVar(managedUserInfoVar)
 	const { loading, data } = useQuery(UserDocument, {
-		variables: { id: managedUserId }
+		variables: { id: managedUserInfo.userId }
 	})
 	const canvasRef = useRef(null)
 
@@ -104,13 +105,16 @@ const Inbody: NextPage = () => {
 					</div>
 
 					<div className="flex justify-between pr-3 mt-4 text-[18px]">
-						<Link href="/trainer/manage-member/emailId/info">
+						<Link
+							href={`/trainer/manage-member/${managedUserInfo.email}/info`}>
 							<span className="ml-0 cursor-pointer">회원정보</span>
 						</Link>
-						<Link href="/trainer/manage-member/emailId/sessions">
+						<Link
+							href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}>
 							<span className="ml-2 cursor-pointer">수업기록</span>
 						</Link>
-						<Link href="/trainer/manage-member/emailId/inbody">
+						<Link
+							href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}>
 							<span className="pb-1 ml-2 border-b border-black cursor-pointer">
 								인바디
 							</span>
@@ -156,6 +160,7 @@ const Inbody: NextPage = () => {
 						</table>
 					</div>
 				</div>
+				<BottomBar variant="Trainer" />
 			</Layout>
 		</>
 	)

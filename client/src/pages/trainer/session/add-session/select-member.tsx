@@ -4,30 +4,50 @@ import React from 'react'
 import Layout from '../../../../components/Layout'
 import session_dummy from '../../../../../session_dummy.json'
 import { selectedUserVar } from '../../../../graphql/vars'
+import { useQuery } from '@apollo/client'
+import { TrainerDocument } from '../../../../graphql/graphql'
+import Loading from '../../../../components/Loading'
+import { useRouter } from 'next/dist/client/router'
 
 interface MemberSession {
-	id: string
-	name: string
+	id: number
+	userName: string
 	gender: string
-	times: string
+	usedCount: number
+	totalCount: number
 }
 
 const SelectMember: NextPage = () => {
-	const sessionObject: Record<string, MemberSession[]> = {}
-	session_dummy.forEach(el => {
-		if (sessionObject[el.membercategory] === undefined) {
-			sessionObject[el.membercategory] = []
-		}
-		sessionObject[el.membercategory].push({
-			id: el.id,
-			name: el.name,
-			gender: el.gender,
-			times: el.times
-		})
+	const router = useRouter()
+	const { loading, data } = useQuery(TrainerDocument, {
+		variables: { id: 21 }
 	})
 
-	// 카테고리 필터 및 정렬
+	const selectMemberObject: Record<string, MemberSession[]> = {}
+	if (!loading) {
+		const userCategories = data.trainer.userCategories
+		for (let i = 0; i < userCategories.length; i++) {
+			if (selectMemberObject[userCategories[i].name] === undefined) {
+				selectMemberObject[userCategories[i].name] = []
+			}
+		}
+		data.trainer.users.forEach((user: any) => {
+			const userCategoryName =
+				userCategories[user.userCategoryId - 1]?.name
+			const userSessionHistory = user.sessionHistories[0]
+			// 식별이 필요하다. 진행중, 완료, 취소 등
 
+			selectMemberObject[userCategoryName].push({
+				id: user.id,
+				userName: user.userName,
+				gender: user.gender,
+				usedCount: userSessionHistory.usedCount,
+				totalCount: userSessionHistory.totalCount
+			})
+		})
+	}
+
+	if (loading) return <Loading />
 	return (
 		<>
 			<Layout variant="Web">
@@ -36,10 +56,11 @@ const SelectMember: NextPage = () => {
 						<span className="flex text-[20px] font-bold">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="w-7 h-7"
+								className="w-7 h-7 cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
-								stroke="currentColor">
+								stroke="currentColor"
+								onClick={() => router.back()}>
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -53,11 +74,11 @@ const SelectMember: NextPage = () => {
 
 					<div className="flex justify-between mt-4">
 						<span>
-							{Object.keys(sessionObject).map((category, idx) => {
+							{data.trainer.userCategories.map((category: any) => {
 								return (
-									<React.Fragment key={idx}>
-										<span className="ml-2 font-thin first:ml-0">
-											{category}
+									<React.Fragment key={category.id}>
+										<span className="ml-2 first:ml-0 font-thin">
+											{category.name}
 										</span>
 									</React.Fragment>
 								)
@@ -65,7 +86,7 @@ const SelectMember: NextPage = () => {
 						</span>
 					</div>
 
-					{Object.entries(sessionObject).map((entry, idx) => {
+					{Object.entries(selectMemberObject).map((entry, idx) => {
 						return (
 							<React.Fragment key={idx}>
 								<div className="mt-4">
@@ -76,23 +97,19 @@ const SelectMember: NextPage = () => {
 												<div className="text-[16px] mt-1">
 													<div className="flex justify-between px-3 py-3 border rounded-3xl">
 														<div className="flex">
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																className={`w-6 h-6 ${
-																	member.gender === 'male'
-																		? 'text-blue-300'
-																		: 'text-pink-300'
-																}`}
-																fill="none"
-																viewBox="0 0 24 24"
-																stroke="currentColor">
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	strokeWidth={1.5}
-																	d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+															{member.gender === 'male' ? (
+																<img
+																	src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
+																	width="25"
+																	height="25"
 																/>
-															</svg>
+															) : (
+																<img
+																	src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
+																	width="25"
+																	height="25"
+																/>
+															)}
 															<Link href="/trainer/session/add-session">
 																<div
 																	className="ml-1 font-thin hover:cursor-pointer"
@@ -102,19 +119,21 @@ const SelectMember: NextPage = () => {
 																			e !== null &&
 																			e.target instanceof HTMLElement
 																		) {
-																			let id = e.target.dataset.id
-																			const target = session_dummy.filter(
-																				member => member.id === id
-																			)
-																			selectedUserVar(target[0].name)
+																			const userId = e.target.dataset
+																				.id as string
+																			selectedUserVar({
+																				userId: +userId,
+																				userName: member.userName,
+																				gender: member.gender
+																			})
 																		}
 																	}}>
-																	{member.name} 회원님
+																	{member.userName} 회원님
 																</div>
 															</Link>
 														</div>
-														<div className="ml-3 font-medium">
-															{member.times}
+														<div className="font-thin">
+															{`${member.usedCount} / ${member.totalCount}`}
 														</div>
 													</div>
 												</div>

@@ -1,12 +1,14 @@
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import React from 'react'
 import Layout from '../../../../../../components/Layout'
+import Loading from '../../../../../../components/Loading'
 import {
 	CreateSessionExerciseDocument,
 	TrainerDocument
 } from '../../../../../../graphql/graphql'
+import { sessionExerciseInputVar } from '../../../../../../graphql/vars'
 
 interface Exercise {
 	id: number
@@ -15,6 +17,7 @@ interface Exercise {
 
 const Exercise: NextPage = () => {
 	const router = useRouter()
+	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
 	const { loading, data } = useQuery(TrainerDocument, {
 		variables: { id: 21 }
 	})
@@ -22,27 +25,19 @@ const Exercise: NextPage = () => {
 		CreateSessionExerciseDocument
 	)
 
-	const exerciseCategory = [
-		{ id: 1, name: '케틀벨', exercise: { id: 1, name: '스윙' } },
-		{ id: 1, name: '케틀벨', exercise: { id: 2, name: '프레스' } },
-		{ id: 2, name: '바벨', exercise: { id: 3, name: '데드리프트' } },
-		{ id: 2, name: '바벨', exercise: { id: 4, name: '스쿼트' } },
-		{ id: 2, name: '바벨', exercise: { id: 5, name: '벤치프레스' } },
-		{ id: 2, name: '바벨', exercise: { id: 6, name: '오버헤드프레스' } },
-		{ id: 2, name: '유산소', exercise: { id: 7, name: '런닝머신' } },
-		{ id: 2, name: '유산소', exercise: { id: 8, name: '사이클' } }
-	]
-
-	const categoryObeject: Record<string, Exercise[]> = {}
-	for (let i = 0; i < exerciseCategory.length; i++) {
-		if (categoryObeject[exerciseCategory[i].name] === undefined) {
-			categoryObeject[exerciseCategory[i].name] = []
+	const selectExerciseObject: Record<string, Exercise[]> = {}
+	if (!loading) {
+		const exerciseCategories = data.trainer.exerciseCategories
+		for (let i = 0; i < exerciseCategories.length; i++) {
+			if (selectExerciseObject[exerciseCategories[i].name] === undefined) {
+				selectExerciseObject[exerciseCategories[i].name] = [
+					...exerciseCategories[i].exercises
+				]
+			}
 		}
-		categoryObeject[exerciseCategory[i].name].push(
-			exerciseCategory[i].exercise
-		)
 	}
 
+	if (loading) return <Loading />
 	return (
 		<>
 			<Layout variant="Web">
@@ -51,10 +46,11 @@ const Exercise: NextPage = () => {
 						<span className="flex text-[20px] font-bold">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="self-center w-6 h-6"
+								className="self-center w-6 h-6 cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
-								stroke="currentColor">
+								stroke="currentColor"
+								onClick={() => router.back()}>
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -74,6 +70,21 @@ const Exercise: NextPage = () => {
 								onClick={() => {
 									// 운동 종목 추가 API
 									// 어떤 사람의, 어떤 세션의, 어떤 운동의, 어떤 볼륨을 update한다.
+									try {
+										createSessionExercise({
+											variables: {
+												createSessionExerciseInput: {
+													name: sessionExerciseInput.name,
+													reps: sessionExerciseInput.reps,
+													sets: sessionExerciseInput.sets,
+													weight: sessionExerciseInput.weight,
+													sessionId: sessionExerciseInput.sessionId
+												}
+											}
+										})
+									} catch (error) {
+										console.log(error)
+									}
 								}}>
 								<path
 									strokeLinecap="round"
@@ -87,17 +98,19 @@ const Exercise: NextPage = () => {
 
 					<div className="flex justify-between mt-4 font-thin">
 						<span>
-							{Object.keys(categoryObeject).map((category, idx) => {
+							{data.trainer.exerciseCategories.map((category: any) => {
 								return (
-									<React.Fragment key={idx}>
-										<span className="ml-2 first:ml-0">{category}</span>
+									<React.Fragment key={category.id}>
+										<span className="ml-2 font-thin first:ml-0">
+											{category.name}
+										</span>
 									</React.Fragment>
 								)
 							})}
 						</span>
 					</div>
 
-					{Object.entries(categoryObeject).map((category, idx) => {
+					{Object.entries(selectExerciseObject).map((category, idx) => {
 						return (
 							<React.Fragment key={idx}>
 								<div className="mt-4">
@@ -110,7 +123,21 @@ const Exercise: NextPage = () => {
 												<div className="text-[12px] mt-1">
 													<div className="flex justify-center px-3 py-3 border">
 														<div className="flex">
-															<div className="ml-1">{exercise.name}</div>
+															<div
+																className="cursor-pointer"
+																onClick={e => {
+																	if (
+																		e !== null &&
+																		e.target instanceof HTMLElement
+																	) {
+																		sessionExerciseInputVar({
+																			...sessionExerciseInput,
+																			name: exercise.name
+																		})
+																	}
+																}}>
+																{exercise.name}
+															</div>
 														</div>
 													</div>
 												</div>
