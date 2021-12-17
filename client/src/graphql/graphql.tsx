@@ -212,6 +212,17 @@ export const RemoveTrainerDocument = gql`
 		}
 	}
 `
+export const CreateSessionDocument = gql`
+	mutation CreateSession($createSessionInput: CreateSessionInput!) {
+		createSession(createSessionInput: $createSessionInput) {
+			id
+			userId
+			date
+			trainerId
+			feedback
+		}
+	}
+`
 
 export const UpdateSessionDocument = gql`
 	mutation UpdateSession($updateSessionInput: UpdateSessionInput!) {

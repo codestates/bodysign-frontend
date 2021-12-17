@@ -63,152 +63,150 @@ const AddMember: NextPage = () => {
 	if (loading) return <Loading />
 	return (
 		<>
-			<Layout variant="Web">
-				<div className="flex flex-col justify-center mx-4 my-5 font-IBM text-[12px]">
-					<div className="flex items-center justify-between">
-						<span className="flex text-[20px] font-bold">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								className="w-7 h-7"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={1.5}
-									d="M15 19l-7-7 7-7"
-								/>
-							</svg>
-							<div>회원정보등록</div>
-						</span>
-						<span className="flex"></span>
+			<Layout>
+				<div className="flex items-center justify-between">
+					<span className="flex text-[20px] font-bold">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="w-7 h-7"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={1.5}
+								d="M15 19l-7-7 7-7"
+							/>
+						</svg>
+						<div>회원정보등록</div>
+					</span>
+					<span className="flex"></span>
+				</div>
+
+				<form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+					<div>
+						<label>이름</label>
+						<input
+							className="w-full h-12 p-3 mt-1 border"
+							type="text"
+							{...register('name', {
+								required: true
+							})}
+						/>
 					</div>
 
-					<form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
-						<div>
-							<label>이름</label>
+					<div className="mt-4">
+						<label>휴대폰 번호</label>
+						<input
+							className="w-full h-12 p-3 mt-1 border"
+							type="text"
+							{...register('phone', {
+								required: true,
+								pattern: /^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/
+							})}
+						/>
+						{errors.phone && (
+							<div className="text-[16px] text-red-500 mt-1 text-center">
+								붙임표(-)는 제외하고 입력해주세요.
+							</div>
+						)}
+					</div>
+
+					<div className="mt-4">
+						<label>회원 카테고리</label>
+						{loading ? (
+							<Loading />
+						) : (
+							<select
+								className="w-full h-12 p-3 mt-1 bg-white border"
+								{...register('userCategoryId')}>
+								{data.trainer.userCategories.map((category: any) => (
+									<option key={category.id} value={category.id}>
+										{category.name}
+									</option>
+								))}
+							</select>
+						)}
+					</div>
+
+					<div className="mt-4">
+						<span>
 							<input
-								className="w-full h-12 p-3 mt-1 border"
-								type="text"
-								{...register('name', {
+								className="hidden peer"
+								type="radio"
+								id="male"
+								value="male"
+								defaultChecked
+								{...register('gender', {
 									required: true
 								})}
 							/>
-						</div>
-
-						<div className="mt-4">
-							<label>휴대폰 번호</label>
+							<label
+								className={`${labelProperties} w-1/2 text-center p-3 inline-block relative border border-r-0 cursor-pointer after:left-full`}
+								htmlFor="male">
+								남성
+							</label>
+						</span>
+						<span>
 							<input
-								className="w-full h-12 p-3 mt-1 border"
-								type="text"
-								{...register('phone', {
-									required: true,
-									pattern: /^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/
+								className="hidden peer"
+								type="radio"
+								id="female"
+								value="female"
+								{...register('gender', {
+									required: true
 								})}
 							/>
-							{errors.phone && (
-								<div className="text-[16px] text-red-500 mt-1 text-center">
-									붙임표(-)는 제외하고 입력해주세요.
-								</div>
-							)}
-						</div>
+							<label
+								className={`${labelProperties} w-1/2 text-center p-3 inline-block relative border border-l-0 cursor-pointer after:-left-full`}
+								htmlFor="female">
+								여성
+							</label>
+						</span>
+					</div>
 
-						<div className="mt-4">
-							<label>회원 카테고리</label>
-							{loading ? (
-								<Loading />
-							) : (
-								<select
-									className="w-full h-12 p-3 mt-1 bg-white border"
-									{...register('userCategoryId')}>
-									{data.trainer.userCategories.map((category: any) => (
-										<option key={category.id} value={category.id}>
-											{category.name}
-										</option>
-									))}
-								</select>
-							)}
-						</div>
+					<div className="mt-4">
+						<span>
+							<input
+								className="hidden peer"
+								type="radio"
+								id="management"
+								value="false"
+								defaultChecked
+								{...register('graduate', {
+									required: true
+								})}
+							/>
+							<label
+								className={`${labelProperties} w-1/2 text-center p-3 inline-block relative border border-r-0 cursor-pointer after:left-full`}
+								htmlFor="management">
+								관리중
+							</label>
+						</span>
+						<span>
+							<input
+								className="hidden peer"
+								type="radio"
+								id="graduate"
+								value="true"
+								{...register('graduate', {
+									required: true
+								})}
+							/>
+							<label
+								className={`${labelProperties} w-1/2 text-center p-3 inline-block relative border border-l-0 cursor-pointer after:-left-full`}
+								htmlFor="graduate">
+								졸업
+							</label>
+						</span>
+					</div>
 
-						<div className="mt-4">
-							<span>
-								<input
-									className="hidden peer"
-									type="radio"
-									id="male"
-									value="male"
-									defaultChecked
-									{...register('gender', {
-										required: true
-									})}
-								/>
-								<label
-									className={`${labelProperties} w-[208px] text-center p-3 inline-block relative border border-r-0 cursor-pointer after:left-full`}
-									htmlFor="male">
-									남성
-								</label>
-							</span>
-							<span>
-								<input
-									className="hidden peer"
-									type="radio"
-									id="female"
-									value="female"
-									{...register('gender', {
-										required: true
-									})}
-								/>
-								<label
-									className={`${labelProperties} w-[208px] text-center p-3 inline-block relative border border-l-0 cursor-pointer after:-left-full`}
-									htmlFor="female">
-									여성
-								</label>
-							</span>
-						</div>
-
-						<div className="mt-4">
-							<span>
-								<input
-									className="hidden peer"
-									type="radio"
-									id="management"
-									value="false"
-									defaultChecked
-									{...register('graduate', {
-										required: true
-									})}
-								/>
-								<label
-									className={`${labelProperties} w-[208px] text-center p-3 inline-block relative border border-r-0 cursor-pointer after:left-full`}
-									htmlFor="management">
-									관리중
-								</label>
-							</span>
-							<span>
-								<input
-									className="hidden peer"
-									type="radio"
-									id="graduate"
-									value="true"
-									{...register('graduate', {
-										required: true
-									})}
-								/>
-								<label
-									className={`${labelProperties} w-[208px] text-center p-3 inline-block relative border border-l-0 cursor-pointer after:-left-full`}
-									htmlFor="graduate">
-									졸업
-								</label>
-							</span>
-						</div>
-
-						<input
-							className={`w-full h-12 mt-4 text-black bg-yellow-200 cursor-pointer disabled:opacity-50`}
-							type="submit"
-						/>
-					</form>
-				</div>
+					<input
+						className={`w-full h-12 mt-4 text-black bg-yellow-200 cursor-pointer disabled:opacity-50`}
+						type="submit"
+					/>
+				</form>
 			</Layout>
 		</>
 	)

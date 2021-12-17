@@ -78,7 +78,7 @@ const Signup: NextPage = () => {
 
 	return (
 		<>
-			<Layout variant="Web">
+			<Layout>
 				<div className="flex flex-col mx-4 my-5 text-[12px]">
 					<div className="text-[20px] text-center">회원가입</div>
 
@@ -170,7 +170,7 @@ const Signup: NextPage = () => {
 									})}
 								/>
 								<label
-									className={`${labelProperties} w-[208px] text-center p-3 inline-block relative border border-r-0 cursor-pointer after:left-full`}
+									className={`${labelProperties} w-1/2 text-center p-3 inline-block relative border border-r-0 cursor-pointer after:left-full`}
 									htmlFor="male">
 									남성
 								</label>
@@ -186,7 +186,7 @@ const Signup: NextPage = () => {
 									})}
 								/>
 								<label
-									className={`${labelProperties} w-[208px] text-center p-3 inline-block relative border border-l-0 cursor-pointer after:-left-full`}
+									className={`${labelProperties} w-1/2 text-center p-3 inline-block relative border border-l-0 cursor-pointer after:-left-full`}
 									htmlFor="female">
 									여성
 								</label>
@@ -207,7 +207,7 @@ const Signup: NextPage = () => {
 									onClick={() => setAreYouTrainer(true)}
 								/>
 								<label
-									className={`${labelProperties} w-[208px] text-center p-3 inline-block relative border border-r-0 cursor-pointer after:left-full`}
+									className={`${labelProperties} w-1/2 text-center p-3 inline-block relative border border-r-0 cursor-pointer after:left-full`}
 									htmlFor="trainer">
 									트레이너
 								</label>
@@ -224,7 +224,7 @@ const Signup: NextPage = () => {
 									onClick={() => setAreYouTrainer(false)}
 								/>
 								<label
-									className={`${labelProperties} w-[208px] text-center p-3 inline-block relative border border-l-0 cursor-pointer after:-left-full`}
+									className={`${labelProperties} w-1/2 text-center p-3 inline-block relative border border-l-0 cursor-pointer after:-left-full`}
 									htmlFor="user">
 									회원
 								</label>

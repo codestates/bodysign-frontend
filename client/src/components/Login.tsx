@@ -4,7 +4,7 @@ import { signIn, signOut, useSession } from 'next-auth/client'
 import GoogleLogin from 'react-google-login'
 import Layout from '../components/Layout'
 import Loading from './Loading'
-import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
+import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client'
 import { loginTypeVar } from '../graphql/vars'
 import Link from 'next/link'
 
@@ -19,27 +19,24 @@ const LOGIN = gql`
 		loginAuth(loginUserInput: $loginUserInput) {
 			accessToken
 		}
-  }
-`;
+	}
+`
 
 const Login: NextPage = () => {
-
 	const [form, setForm] = useState({
 		email: '',
 		password: '',
 		type: 'user'
 	})
 
-	const [ loginAuth, { data, loading, error }] = useMutation(LOGIN);
+	const [loginAuth, { data, loading, error }] = useMutation(LOGIN)
 	const loginType = useReactiveVar(loginTypeVar)
 
-	const [session, pageLoading] = useSession() 
+	const [session, pageLoading] = useSession()
 
-    if(pageLoading) {
-        return (
-          <Loading />
-        )
-    }
+	if (pageLoading) {
+		return <Loading />
+	}
 
 	const onChangeId = (e: any) => {
 		const email = e.target.value
@@ -68,12 +65,11 @@ const Login: NextPage = () => {
 		// TODO: 로그인이 완료 되면 액세스 토큰을 받아와서 쿠키에 저장해서 요청할 때 마다 토큰 보내주기
 		// TODO: 토큰이 필요한 요청들을 리스트업
 		// TODO: 필요한 요청의 HEADER에 토큰이 들어갈 수 있게 구현
-		if(loading) {
+		if (loading) {
 			console.log('기다려')
 		} else {
 			console.log(data)
 		}
-
 	}
 
 	// if(loading) {
@@ -106,41 +102,59 @@ const Login: NextPage = () => {
 	const onFailureKakao = (err: any) => {
 		console.log(err)
 	}
-    return <>
-    <Layout variant="Web">
-      <div className="flex flex-col mx-auto my-5 text-[12px]">
-        {!session && <>
-          <div className="max-w-screen-md">
-            <input className="font-IBM font-thin rounded-xl border p-1 m-1 w-4/5" type="text" placeholder="이메일" onChange={onChangeId} />
-            <input className="font-IBM font-thin rounded-xl border p-1 m-1 w-4/5" type="password" placeholder="비밀번호" onChange={onChangePassword}/>
-            <button onClick={onSubmit} className="font-IBM font-thin py-1 rounded text-gray-800 bg-gray-300 hover:bg-gray-400 hover:text-white m-1 w-4/5 ">
-              로그인
-            </button>
-            <div className="flex w-4/5 border-0">
-              <GoogleLogin
-                className="m-1 w-4/5 font-IBM font-thin text-center"
-                clientId={googleCliendId}
-                buttonText="Login"
-                onSuccess={onSuccessGoogle}
-                onFailure={onFailureGoogle}
-                cookiePolicy={"single_host_origin"}
-              >
-                구글로 로그인
-              </GoogleLogin>
-            </div>
-			<Link href="/signup">
-            <button className="font-IBM font-thin m-1 w-4/5 py-1 rounded text-gray-500 transition-colors duration-150 border border-gray-300 focus:shadow-outline hover:bg-gray-300 hover:text-white">회원가입</button>
-			</Link>
-          </div>
-    
-        </>}
-        {session && <>
-          로그인 되었습니다. <br/>
-          <button onClick={() => signOut()}>Sign out</button>
-        </>}
-      </div>
-    </Layout>
-  </>
+	return (
+		<>
+			<Layout>
+				<div className="flex flex-col mx-auto my-5 text-[12px]">
+					{!session && (
+						<>
+							<div className="max-w-screen-md">
+								<input
+									className="font-IBM font-thin rounded-xl border p-1 m-1 w-4/5"
+									type="text"
+									placeholder="이메일"
+									onChange={onChangeId}
+								/>
+								<input
+									className="font-IBM font-thin rounded-xl border p-1 m-1 w-4/5"
+									type="password"
+									placeholder="비밀번호"
+									onChange={onChangePassword}
+								/>
+								<button
+									onClick={onSubmit}
+									className="font-IBM font-thin py-1 rounded text-gray-800 bg-gray-300 hover:bg-gray-400 hover:text-white m-1 w-4/5 ">
+									로그인
+								</button>
+								<div className="flex w-4/5 border-0">
+									<GoogleLogin
+										className="m-1 w-4/5 font-IBM font-thin text-center"
+										clientId={googleCliendId}
+										buttonText="Login"
+										onSuccess={onSuccessGoogle}
+										onFailure={onFailureGoogle}
+										cookiePolicy={'single_host_origin'}>
+										구글로 로그인
+									</GoogleLogin>
+								</div>
+								<Link href="/signup">
+									<button className="font-IBM font-thin m-1 w-4/5 py-1 rounded text-gray-500 transition-colors duration-150 border border-gray-300 focus:shadow-outline hover:bg-gray-300 hover:text-white">
+										회원가입
+									</button>
+								</Link>
+							</div>
+						</>
+					)}
+					{session && (
+						<>
+							로그인 되었습니다. <br />
+							<button onClick={() => signOut()}>Sign out</button>
+						</>
+					)}
+				</div>
+			</Layout>
+		</>
+	)
 }
 
 export default Login
