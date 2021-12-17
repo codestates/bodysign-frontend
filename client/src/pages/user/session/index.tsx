@@ -39,7 +39,6 @@ const Session: NextPage = () => {
     })
 
     if(loading) {
-        console.log('기다려')
     } else {
         console.log(data.user.sessionHistories)
     }
