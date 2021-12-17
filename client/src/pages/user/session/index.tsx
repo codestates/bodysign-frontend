@@ -1,9 +1,27 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
-import Detail from '../../../components/Detail'
 import Layout from '../../../components/Layout'
+import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
+import Link from 'next/link'
 
 // TODO: 날짜, 요일, 시간 쪽을 클릭하면 e.target.children이 빈 배열로 나옴 -> 에러 발생
+// TODO: 세션 디테일 모달을 트레이너 참고해서 변경
+
+export const UserSession = gql`
+	query User($id: Int!) {
+        user (id: $id) {
+            sessionHistories {
+                id
+                date
+                costPerSession
+                totalCount
+                usedCount
+                commission
+                userId
+            }
+        }
+    }
+`
 
 const Session: NextPage = () => {
 
@@ -12,56 +30,39 @@ const Session: NextPage = () => {
             date: "21/01/01",
             day: "월",
             time: "00:00"
-        },
-        {
-            date: "21/01/01",
-            day: "월",
-            time: "00:00"
-        },
-        {
-            date: "21/01/01",
-            day: "월",
-            time: "00:00"
         }
     ])
 
-    const [ isDetailOpen, setIsDetailOpen ] = useState(false)
-
-    const [ clickedSession, setClickedSession ] = useState({
-        date: "",
-        day: ""
+    // const [ sessionList, setSessionList ] = useState([])
+    const { loading, data } = useQuery(UserSession, {
+        variables: { id: 2 }
     })
 
-    const directSessionDetail = (e: any) => {
-        let date = e.target.children[0].textContent
-        let day = e.target.children[1].textContent
-
-        setClickedSession({
-            date: date,
-            day: day
-        })
-        setIsDetailOpen(!isDetailOpen)
+    if(loading) {
+        console.log('기다려')
+    } else {
+        console.log(data.user.sessionHistories)
     }
 
+    // TODO: setSessionList(받아온 데이터)
+    // TODO: 여기 로딩 컴포넌트 넣기
 	return (
         <Layout variant="Web">
-		<div className="flex flex-col m-5 mx-4 my-5 font-IBM text-[12px]">
-                {isDetailOpen === true ? 
-                    <Detail date={clickedSession.date} day={clickedSession.day} isOpen={isDetailOpen} changeOpen={setIsDetailOpen} /> 
-                : 
+		<div className="flex flex-col m-5 mx-4 my-5 font-IBM text-[15px]">
                 <>
-                <div className="text-[20px] mb-3 font-IBM font-bold">수업 기록</div>
+                <div className="text-[25px] mb-3 font-IBM font-bold">수업 기록</div>
                 {
                     sessionList.map((session) => (
-                        <div onClick={directSessionDetail} className="border border-gray-300 rounded-2xl mb-2 hover:bg-gray-100 hover:cursor-pointer">
-                            <div className="inline-block p-1 mx-1 font-IBM font-medium">{session.date}</div>
-                            <div className="inline-block p-1 mx-1 font-IBM font-medium">{`${session.day}요일`}</div>
-                            <div className="inline-block p-1 mx-1 font-IBM font-medium float-right">{session.time}</div>
-                        </div>
+                        <Link href='/user/session/date'>
+                            <div className="border border-gray-300 rounded-2xl mb-2 hover:bg-gray-100 hover:cursor-pointer">
+                                <div className="inline-block p-1 mx-1 font-IBM font-medium">{session.date}</div>
+                                <div className="inline-block p-1 mx-1 font-IBM font-medium">{`${session.day}요일`}</div>
+                                <div className="inline-block p-1 mx-1 font-IBM font-medium float-right">{session.time}</div>
+                            </div>
+                        </Link>
                     ))
                 }
                 </>
-                }
 		</div>
         </Layout>
 	)

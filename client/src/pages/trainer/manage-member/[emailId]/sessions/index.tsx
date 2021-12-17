@@ -3,8 +3,20 @@ import Link from 'next/link'
 import React from 'react'
 import Layout from '../../../../../components/Layout'
 import dummydata from '../../../../../../dummydata.json'
+import { useRouter } from 'next/dist/client/router'
+import { useQuery, useReactiveVar } from '@apollo/client'
+import { UserDocument } from '../../../../../graphql/graphql'
+import { managedUserIdrVar } from '../../../../../graphql/vars'
 
 const Sessions: NextPage = () => {
+	const router = useRouter()
+	const managedUserId = useReactiveVar(managedUserIdrVar)
+	const { loading, data } = useQuery(UserDocument, {
+		variables: { id: managedUserId }
+	})
+
+	console.log(data)
+
 	const member_dummy = {
 		id: '1',
 		email: 'jsmsumin1234@naver.com',
@@ -31,15 +43,16 @@ const Sessions: NextPage = () => {
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
+				<div className="flex flex-col justify-center mx-4 my-5 font-IBM">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[25px]">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="self-center w-6 h-6"
+								className="self-center w-6 h-6 cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
-								stroke="currentColor">
+								stroke="currentColor"
+								onClick={() => router.push('/trainer/manage-member')}>
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -47,9 +60,7 @@ const Sessions: NextPage = () => {
 									d="M15 19l-7-7 7-7"
 								/>
 							</svg>
-							<div className="font-bold">
-								{member_dummy.name} 회원님
-							</div>
+							<div className="font-bold">{member_dummy.name} 회원님</div>
 						</span>
 						<span className="flex">
 							<svg

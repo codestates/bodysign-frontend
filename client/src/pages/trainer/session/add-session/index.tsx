@@ -3,13 +3,13 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import Layout from '../../../../components/Layout'
 import { useReactiveVar } from '@apollo/client'
-import { selectedMemberVar } from '../../../../graphql/vars'
+import { selectedUserVar } from '../../../../graphql/vars'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
 const AddSession: NextPage = () => {
 	const [startDate, setStartDate] = useState(new Date())
-	const selectedMember = useReactiveVar(selectedMemberVar)
+	const selectedUser = useReactiveVar(selectedUserVar)
 
 	// 수업 추가 API
 	// console.log(selectedMember, startDate)
@@ -54,15 +54,15 @@ const AddSession: NextPage = () => {
 
 					<div className="mt-4">
 						<div className="text-[12px] font-medium">회원</div>
-						{selectedMember === '' ? (
+						{selectedUser === '' ? (
 							<Link href="/trainer/session/add-session/select-member">
 								<button className="text-[12px] w-full p-2 mt-1 border font-thin rounded-3xl">
 									회원 선택
 								</button>
 							</Link>
 						) : (
-							<div className="w-full p-3 mt-1 border font-thin">
-								{selectedMemberVar()} 회원님
+							<div className="w-full p-3 mt-1 font-thin border">
+								{selectedUserVar()} 회원님
 							</div>
 						)}
 					</div>

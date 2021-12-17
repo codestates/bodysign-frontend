@@ -1,6 +1,12 @@
+import { useMutation, useQuery } from '@apollo/client'
 import { NextPage } from 'next'
+import { useRouter } from 'next/dist/client/router'
 import React from 'react'
 import Layout from '../../../../../../components/Layout'
+import {
+	CreateSessionExerciseDocument,
+	TrainerDocument
+} from '../../../../../../graphql/graphql'
 
 interface Exercise {
 	id: number
@@ -8,6 +14,14 @@ interface Exercise {
 }
 
 const Exercise: NextPage = () => {
+	const router = useRouter()
+	const { loading, data } = useQuery(TrainerDocument, {
+		variables: { id: 21 }
+	})
+	const [createSessionExercise] = useMutation(
+		CreateSessionExerciseDocument
+	)
+
 	const exerciseCategory = [
 		{ id: 1, name: '케틀벨', exercise: { id: 1, name: '스윙' } },
 		{ id: 1, name: '케틀벨', exercise: { id: 2, name: '프레스' } },
@@ -32,7 +46,7 @@ const Exercise: NextPage = () => {
 	return (
 		<>
 			<Layout variant="Web">
-				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
+				<div className="flex flex-col justify-center mx-4 my-5 font-IBM">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[20px] font-bold">
 							<svg
@@ -87,7 +101,9 @@ const Exercise: NextPage = () => {
 						return (
 							<React.Fragment key={idx}>
 								<div className="mt-4">
-									<div className="text-[12px] font-bold">{category[0]}</div>
+									<div className="text-[12px] font-bold">
+										{category[0]}
+									</div>
 									{category[1].map(exercise => {
 										return (
 											<React.Fragment key={exercise.id}>

@@ -2,54 +2,103 @@ import { NextPage } from 'next'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { deleteStateVar, modalVar } from '../../../graphql/vars'
-import { useReactiveVar } from '@apollo/client'
+import { modalVar } from '../../../graphql/vars'
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
+import {
+	CreateExerciseCategoryDocument,
+	CreateExerciseDocument,
+	RemoveExerciseDocument,
+	TrainerDocument
+} from '../../../graphql/graphql'
+import Loading from '../../../components/Loading'
+import BottomBar from '../../../components/BottomBar'
 
 interface Exercise {
 	id: number
 	name: string
+	isChecked: boolean
 }
 
 interface FormInput {
-	exercise: string
-	category: string
+	exerciseName: string
+	exerciseCategoryId: number
+	exerciseCategoryName: string
 }
 
 const Exercise: NextPage = () => {
-	const [checkModal, setCheckModal] = useState('addexercise')
 	const modal = useReactiveVar(modalVar)
-	const deleteState = useReactiveVar(deleteStateVar)
-
-	const exerciseCategory = [
-		{ id: 1, name: '케틀벨', exercise: { id: 1, name: '스윙' } },
-		{ id: 1, name: '케틀벨', exercise: { id: 2, name: '프레스' } },
-		{ id: 2, name: '바벨', exercise: { id: 3, name: '데드리프트' } },
-		{ id: 2, name: '바벨', exercise: { id: 4, name: '스쿼트' } },
-		{ id: 2, name: '바벨', exercise: { id: 5, name: '벤치프레스' } },
-		{ id: 2, name: '바벨', exercise: { id: 6, name: '오버헤드프레스' } },
-		{ id: 2, name: '유산소', exercise: { id: 7, name: '런닝머신' } },
-		{ id: 2, name: '유산소', exercise: { id: 8, name: '사이클' } }
-	]
-
-	const categoryObeject: Record<string, Exercise[]> = {}
-	for (let i = 0; i < exerciseCategory.length; i++) {
-		if (categoryObeject[exerciseCategory[i].name] === undefined) {
-			categoryObeject[exerciseCategory[i].name] = []
-		}
-		categoryObeject[exerciseCategory[i].name].push(
-			exerciseCategory[i].exercise
-		)
-	}
-
+	const [checkModal, setCheckModal] = useState('addexercise')
+	const [readyDelete, setReadyDelete] = useState(false)
+	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
+	const { loading, data } = useQuery(TrainerDocument, {
+		variables: { id: 21 }
+	})
+	const [createExerciseCategory] = useMutation(
+		CreateExerciseCategoryDocument
+	)
+	const [createExercise] = useMutation(CreateExerciseDocument)
+	const [removeExercise] = useMutation(RemoveExerciseDocument)
 	const { register, handleSubmit } = useForm<FormInput>()
-	const onSubmit: SubmitHandler<FormInput> = data => {
-		let test = { ...data }
+	const onSubmit: SubmitHandler<FormInput> = async data => {
 		// 운동 추가 API
+		if (checkModal === 'addexercise') {
+			try {
+				createExercise({
+					variables: {
+						createExerciseInput: {
+							name: data.exerciseName,
+							exerciseCategoryId: +data.exerciseCategoryId
+						}
+					},
+					refetchQueries: [
+						{
+							query: TrainerDocument,
+							variables: { id: 21 }
+						}
+					]
+				})
+				modalVar(false)
+			} catch (error) {
+				console.log(error)
+			}
+		}
 		// 운동 카테고리 추가 API
+		else if (checkModal === 'addcategory') {
+			try {
+				await createExerciseCategory({
+					variables: {
+						createExerciseCategoryInput: {
+							trainerId: 21,
+							name: data.exerciseCategoryName
+						}
+					},
+					refetchQueries: [
+						{
+							query: TrainerDocument,
+							variables: { id: 21 }
+						}
+					]
+				})
+				modalVar(false)
+			} catch (error) {
+				console.log(error)
+			}
+		}
 	}
 
-	// 카테고리 필터 및 정렬
+	const exerciseObject: Record<string, Exercise[]> = {}
+	if (!loading) {
+		const exerciseCategories = data.trainer.exerciseCategories
+		for (let i = 0; i < exerciseCategories.length; i++) {
+			if (exerciseObject[exerciseCategories[i].name] === undefined) {
+				exerciseObject[exerciseCategories[i].name] = [
+					...exerciseCategories[i].exercises
+				]
+			}
+		}
+	}
 
+	if (loading) return <Loading />
 	return (
 		<>
 			<Layout variant="Web">
@@ -59,7 +108,7 @@ const Exercise: NextPage = () => {
 							<div>운동</div>
 						</span>
 						<span className="flex">
-							{!deleteState ? (
+							{!readyDelete ? (
 								<>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -94,7 +143,7 @@ const Exercise: NextPage = () => {
 										fill="none"
 										viewBox="0 0 24 24"
 										stroke="currentColor"
-										onClick={() => deleteStateVar(true)}>
+										onClick={() => setReadyDelete(true)}>
 										<path
 											strokeLinecap="round"
 											strokeLinejoin="round"
@@ -111,8 +160,10 @@ const Exercise: NextPage = () => {
 									viewBox="0 0 24 24"
 									stroke="currentColor"
 									onClick={() => {
-										// 운동 삭제 API
-										deleteStateVar(false)
+										// 운동 삭제 API 2
+										console.log(...deleteLists)
+										setReadyDelete(false)
+										deleteLists.clear()
 									}}>
 									<path
 										strokeLinecap="round"
@@ -127,10 +178,12 @@ const Exercise: NextPage = () => {
 
 					<div className="flex justify-between mt-4">
 						<span>
-							{Object.keys(categoryObeject).map((category, idx) => {
+							{data.trainer.exerciseCategories.map((category: any) => {
 								return (
-									<React.Fragment key={idx}>
-										<span className="ml-2 first:ml-0 font-thin">{category}</span>
+									<React.Fragment key={category.id}>
+										<span className="ml-2 font-thin first:ml-0">
+											{category.name}
+										</span>
 									</React.Fragment>
 								)
 							})}
@@ -150,16 +203,52 @@ const Exercise: NextPage = () => {
 						</span>
 					</div>
 
-					{Object.entries(categoryObeject).map((category, idx) => {
+					{Object.entries(exerciseObject).map((category, idx) => {
 						return (
 							<React.Fragment key={idx}>
 								<div className="mt-4">
-									<div className="text-[15px] font-bold">{category[0]}</div>
+									<div className="text-[12px] font-bold">
+										{category[0]}
+									</div>
 									{category[1].map(exercise => {
+										// console.log(exercise.isChecked)
 										return (
 											<React.Fragment key={exercise.id}>
-												<div className="text-[15px] mt-1">
-													<div className="flex justify-center px-3 py-3 border rounded-3xl font-thin">
+												<div className="text-[12px] mt-1">
+													<div
+														className={`flex justify-center px-3 py-3 font-thin border rounded-3xl ${
+															!readyDelete ? null : 'cursor-pointer'
+														}`}
+														data-id={exercise.id}
+														onClick={
+															!readyDelete
+																? undefined
+																: e => {
+																		if (
+																			e !== null &&
+																			e.target instanceof HTMLElement
+																		) {
+																			// 운동 삭제 API 1
+																			if (e.target.dataset.id) {
+																				const id = +e.target.dataset.id
+																				if (deleteLists.has(id)) {
+																					setDeleteLists(
+																						prev =>
+																							new Set(
+																								[...prev].filter(
+																									el => el !== id
+																								)
+																							)
+																					)
+																				} else {
+																					setDeleteLists(
+																						prev => new Set(prev.add(id))
+																					)
+																				}
+																			}
+																		}
+																  }
+														}>
 														<div className="flex">
 															<div className="ml-1">{exercise.name}</div>
 														</div>
@@ -185,27 +274,29 @@ const Exercise: NextPage = () => {
 									운동 추가
 								</div>
 								<form
-									className="flex flex-col mt-4"
+									className="flex flex-col mt-4 text-[12px]"
 									onSubmit={handleSubmit(onSubmit)}>
 									<input
 										className="w-full h-12 px-10 border"
 										type="text"
 										placeholder="운동 이름을 입력해주세요."
-										{...register('exercise', {
+										{...register('exerciseName', {
 											required: true
 										})}
 									/>
 									<select
 										className="w-full h-12 px-10 mt-1 bg-white border"
-										{...register('category', {
+										{...register('exerciseCategoryId', {
 											required: true
 										})}>
 										<option value="">운동 카테고리를 선택해주세요.</option>
-										{Object.keys(categoryObeject).map((category, idx) => (
-											<option value={category} key={idx}>
-												{category}
-											</option>
-										))}
+										{data.trainer.exerciseCategories.map(
+											(category: any) => (
+												<option value={category.id} key={category.id}>
+													{category.name}
+												</option>
+											)
+										)}
 									</select>
 
 									<div className="max-w-[450px] self-end mt-4">
@@ -239,7 +330,7 @@ const Exercise: NextPage = () => {
 										className="w-full h-12 px-10 border"
 										type="text"
 										placeholder="새로운 카테고리 이름을 입력해주세요."
-										{...register('category', {
+										{...register('exerciseCategoryName', {
 											required: true
 										})}
 									/>
@@ -260,6 +351,7 @@ const Exercise: NextPage = () => {
 						</div>
 					)
 				) : null}
+				<BottomBar variant="Trainer" />
 			</Layout>
 		</>
 	)
