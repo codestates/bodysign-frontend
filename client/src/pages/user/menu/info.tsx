@@ -5,7 +5,6 @@ import Layout from '../../../components/Layout'
 import Link from 'next/link'
 import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
 
-// TODO: 회원 탈퇴
 // TODO: 비밀번호 변경
 
 export const UserDocument = gql`
@@ -36,6 +35,14 @@ export const RemoveUserDocument = gql`
 		}
 	}
 `
+
+// export const UpdatePasswordUser = gql`
+// 	mutation UpdatePasswordUser($updatePasswordUser: UpdatePasswordTrainerInput!) {
+// 		updatePasswordUser(updatePasswordUser: $updatePasswordUser) {
+
+// 		}
+// 	}
+// `
 
 const Info: NextPage = () => {
 	const { loading, data } = useQuery(UserDocument, {
