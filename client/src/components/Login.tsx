@@ -2,23 +2,22 @@ import React, { useState } from 'react'
 import type { NextPage } from 'next'
 import { signIn, signOut, useSession } from 'next-auth/client'
 import GoogleLogin from 'react-google-login'
-import KaKaoLogin from 'react-kakao-login'
 import Layout from '../components/Layout'
 import Loading from './Loading'
 import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
 import { loginTypeVar } from '../graphql/vars'
 import Link from 'next/link'
 
+// TODO : 유저/트레이너 타입을 받아서 각각 페이지로 라우팅하기
+// TODO : 구글 로그인 클릭하면 Redirect URL 을 서버 쪽으로 돌리기
+
 const googleCliendId =
 	'122713240467-oq4tee3gshbdfmodg5b20ljsb9ajfsoe.apps.googleusercontent.com'
-const kakaoAppKey = '6e971578908fd66a46f5962ba278215a'
 
 const LOGIN = gql`
 	mutation LoginAuth($loginUserInput: LoginUserInput!) {
-		loginUser(loginUserInput: $loginUserInput) {
-			email
-			password
-			type
+		loginAuth(loginUserInput: $loginUserInput) {
+			accessToken
 		}
   }
 `;
@@ -27,10 +26,11 @@ const Login: NextPage = () => {
 
 	const [form, setForm] = useState({
 		email: '',
-		password: ''
+		password: '',
+		type: 'user'
 	})
 
-	const [ loginAuth, { loading, error }] = useMutation(LOGIN);
+	const [ loginAuth, { data, loading, error }] = useMutation(LOGIN);
 	const loginType = useReactiveVar(loginTypeVar)
 
 	const [session, pageLoading] = useSession() 
@@ -43,12 +43,10 @@ const Login: NextPage = () => {
 
 	const onChangeId = (e: any) => {
 		const email = e.target.value
-		console.log(email)
 		setForm({
 			...form,
 			email: email
 		})
-		console.log(form)
 	}
 
 	const onChangePassword = (e: any) => {
@@ -62,15 +60,27 @@ const Login: NextPage = () => {
 	const onSubmit = (e: any) => {
 		loginAuth({
 			variables: {
-				createTrainerInput: {
-					email: form.email,
-					password: form.password,
-					loginType
+				loginUserInput: {
+					...form
 				}
 			}
 		})
-		console.log(form)
+		// TODO: 로그인이 완료 되면 액세스 토큰을 받아와서 쿠키에 저장해서 요청할 때 마다 토큰 보내주기
+		// TODO: 토큰이 필요한 요청들을 리스트업
+		// TODO: 필요한 요청의 HEADER에 토큰이 들어갈 수 있게 구현
+		if(loading) {
+			console.log('기다려')
+		} else {
+			console.log(data)
+		}
+
 	}
+
+	// if(loading) {
+	// 	console.log('기다려')
+	// } else {
+	// 	console.log(data.loginAuth.accessToken)
+	// }
 
 	const onSuccessGoogle = (response: any) => {
 		console.log(response, 'success')
@@ -108,7 +118,7 @@ const Login: NextPage = () => {
             </button>
             <div className="flex w-4/5 border-0">
               <GoogleLogin
-                className="m-1 w-1/2 font-IBM font-thin"
+                className="m-1 w-4/5 font-IBM font-thin text-center"
                 clientId={googleCliendId}
                 buttonText="Login"
                 onSuccess={onSuccessGoogle}
@@ -117,14 +127,6 @@ const Login: NextPage = () => {
               >
                 구글로 로그인
               </GoogleLogin>
-              <KaKaoLogin
-                className="m-1 w-1/2 font-IBM font-thin"
-                token={kakaoAppKey}
-                onSuccess={onSuccessKakao}
-                onFail={onFailureKakao}
-              >
-                카카오로 로그인
-              </KaKaoLogin>
             </div>
 			<Link href="/signup">
             <button className="font-IBM font-thin m-1 w-4/5 py-1 rounded text-gray-500 transition-colors duration-150 border border-gray-300 focus:shadow-outline hover:bg-gray-300 hover:text-white">회원가입</button>

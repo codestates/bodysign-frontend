@@ -79,6 +79,11 @@ export const TrainerDocument = gql`
 				date
 				trainerId
 				feedback
+				# user {
+				# 	id
+				# 	userName
+				# 	gender
+				# }
 			}
 			exerciseCategories {
 				id

@@ -2,6 +2,35 @@ import React, { useState } from 'react'
 import type { NextPage } from 'next'
 import Layout from '../../components/Layout'
 import logo from '../../../public/logo3.svg'
+import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
+
+export const UserDocument = gql`
+	query User($id: Int!) {
+		user(id: $id) {
+			__typename
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+			graduate
+			inbodies {
+				id
+				bodyWeight
+				muscleWeight
+				bodyFat
+				measuredDate
+			}
+			sessionHistories {
+				id
+				date
+				status
+			}
+			userCategoryId
+		}
+	}
+`
 
 // TODO: CSS 애니메이션 꾸미기
 // https://codepen.io/Tbgse/pen/dYaJyJ
@@ -9,6 +38,13 @@ import logo from '../../../public/logo3.svg'
 
 // TODO : 이름 받아오기
 const main: NextPage = () => {
+
+	const { loading, data: userData } = useQuery(UserDocument, {
+		variables: { id: 1 }
+	})
+
+	console.log(userData)
+
 	const [inbodyList, setInbodyList] = useState([
 		{
 			date: '21/01/01',
@@ -58,7 +94,7 @@ const main: NextPage = () => {
 				<img src={logo} width="50" alt="logo"/>
 			</div>
 
-			<div className="m-5 font-IBM font-thin">
+			<div className="m-5 font-IBM font-thin"></div>
 
 			<div className="font-IBM font-extrabold text-[25px]">
 				{/* 체중, 골격근량, 체지방 보여주기 */}
