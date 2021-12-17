@@ -11,6 +11,7 @@ export const UserDocument = gql`
 			phoneNumber
 			gender
 			graduate
+			trainerId
 			sessions {
 				id
 				userId
