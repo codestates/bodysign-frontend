@@ -90,16 +90,9 @@ const Signup: NextPage = () => {
 
 	return (
 		<>
-<<<<<<< HEAD
 			<Layout variant="Web">
 				<div className="font-IBM flex flex-col mx-4 my-5 text-[12px]">
 					<div className="text-[25px] text-center font-bold">회원가입</div>
-=======
-			<Layout>
-				<div className="flex flex-col mx-4 my-5 text-[12px]">
-					<div className="text-[20px] text-center">회원가입</div>
-
->>>>>>> a320da87c8a3faef311995a95f113a20aaa33f13
 					<form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
 						{ logintype === "google" ?
 						<div>
