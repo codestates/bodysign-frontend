@@ -33,7 +33,7 @@ const Sessions: NextPage = () => {
 	if (loading) return <Loading />
 	return (
 		<>
-			<Layout variant="Web">
+			<Layout>
 				<div className="flex flex-col justify-center mx-4 my-5 font-IBM">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[25px]">
@@ -137,7 +137,6 @@ const Sessions: NextPage = () => {
 						</svg>
 					</Link>
 				</div>
-				<BottomBar variant="Trainer" />
 			</Layout>
 		</>
 	)

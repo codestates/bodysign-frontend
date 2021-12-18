@@ -60,58 +60,99 @@ const Modify: NextPage = () => {
 	const saveInfo = () => {
 		// 서버로 저장된 정보 보내주기
 		alert('수정이 완료되었습니다.')
-		window.location.href = "/user/menu/info"
+		window.location.href = '/user/menu/info'
 	}
 
 	return (
-		<Layout variant="Web">
-		<div className="font-IBM flex flex-col m-5 mx-4 my-5 text-[12px]">
-			<div className="flex items-center mb-10">
-				<Link href="/user/menu/info">
-				<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-				</svg>
-				</Link>
-				<div className="font-bold text-[20px]">정보 수정</div>
-				<svg onClick={saveInfo} xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-				</svg>
+		<Layout>
+			<div className="font-IBM flex flex-col m-5 mx-4 my-5 text-[12px]">
+				<div className="flex items-center mb-10">
+					<Link href="/user/menu/info">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="h-6 w-6"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M15 19l-7-7 7-7"
+							/>
+						</svg>
+					</Link>
+					<div className="font-bold text-[20px]">정보 수정</div>
+					<svg
+						onClick={saveInfo}
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M5 13l4 4L19 7"
+						/>
+					</svg>
+				</div>
+				<table>
+					<tbody>
+						<tr className="flex">
+							<td className="flex-auto font-bold">이름</td>
+							<td>
+								<input
+									className="font-thin text-right"
+									value={userInfo.name}
+									onChange={getNewName}
+								/>
+							</td>
+						</tr>
+						<tr className="flex">
+							<td className="flex-auto font-bold">성별</td>
+							<td>
+								<input
+									className="font-thin text-right"
+									value={userInfo.sex}
+									onChange={getNewSex}
+								/>
+							</td>
+						</tr>
+						<tr className="flex">
+							<td className="flex-auto font-bold">이메일</td>
+							<td>
+								<input
+									className="font-thin text-right"
+									value={userInfo.email}
+									onChange={getNewEmail}
+								/>
+							</td>
+						</tr>
+						<tr className="flex">
+							<td className="flex-auto font-bold">생년월일</td>
+							<td>
+								<input
+									className="font-thin text-right"
+									value={userInfo.birth}
+									onChange={getNewBirth}
+								/>
+							</td>
+						</tr>
+						<tr className="flex">
+							<td className="flex-auto font-bold">전화번호</td>
+							<td>
+								<input
+									className="font-thin text-right"
+									value={userInfo.phone}
+									onChange={getNewPhone}
+								/>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
-			<table>
-				<tbody>
-					<tr className="flex">
-						<td className="flex-auto font-bold">이름</td>
-						<td>
-							<input className="font-thin text-right" value={userInfo.name} onChange={getNewName} />
-						</td>
-					</tr>
-					<tr className="flex">
-						<td className="flex-auto font-bold">성별</td>
-						<td>
-							<input className="font-thin text-right" value={userInfo.sex} onChange={getNewSex} />
-						</td>
-					</tr>
-					<tr className="flex">
-						<td className="flex-auto font-bold">이메일</td>
-						<td>
-							<input className="font-thin text-right" value={userInfo.email} onChange={getNewEmail} />
-						</td>
-					</tr>
-					<tr className="flex">
-						<td className="flex-auto font-bold">생년월일</td>
-						<td>
-							<input className="font-thin text-right" value={userInfo.birth} onChange={getNewBirth} />
-						</td>
-					</tr>
-					<tr className="flex">
-						<td className="flex-auto font-bold">전화번호</td>
-						<td>
-							<input className="font-thin text-right" value={userInfo.phone} onChange={getNewPhone} />
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
 		</Layout>
 	)
 }

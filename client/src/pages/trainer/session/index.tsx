@@ -62,42 +62,27 @@ const Session: NextPage = () => {
 	if (loading) return <Loading />
 	return (
 		<>
-			<Layout variant="Web">
-				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
-					<div className="flex items-center justify-between">
-						<span className="flex text-[25px]">
-							<div
-								className={`${category === '일정' ? 'font-bold' : ''}`}
-								onClick={() => setCategory('일정')}>
-								일정
-							</div>
-							<div
-								className={`ml-3 ${
-									category === '피드백' ? 'font-bold' : ''
-								}`}
-								onClick={() => setCategory('피드백')}>
-								피드백
-							</div>
-						</span>
-						<span className="flex">
-							<Link href="/trainer/session/add-session">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="w-7 h-7"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor">
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={1.5}
-										d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-									/>
-								</svg>
-							</Link>
+			<Layout>
+				<div className="flex items-center justify-between">
+					<span className="flex text-[25px]">
+						<div
+							className={`${category === '일정' ? 'font-bold' : ''}`}
+							onClick={() => setCategory('일정')}>
+							일정
+						</div>
+						<div
+							className={`ml-2 ${
+								category === '피드백' ? 'font-bold' : ''
+							}`}
+							onClick={() => setCategory('피드백')}>
+							피드백
+						</div>
+					</span>
+					<span className="flex">
+						<Link href="/trainer/session/add-session">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="mx-2 w-7 h-7"
+								className="w-7 h-7"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor">
@@ -105,57 +90,76 @@ const Session: NextPage = () => {
 									strokeLinecap="round"
 									strokeLinejoin="round"
 									strokeWidth={1.5}
-									d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+									d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
 								/>
 							</svg>
-						</span>
-					</div>
+						</Link>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="ml-2 w-7 h-7"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={1.5}
+								d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+							/>
+						</svg>
+					</span>
+				</div>
 
-					{Object.entries(sessionObject).map((entry, idx) => {
-						return (
-							<React.Fragment key={idx}>
-								<div
-									className="mt-4"
-									onClick={() => {
-										modalVar(true)
-									}}>
-									<div className="text-[16px]">{entry[0]}</div>
-									{entry[1].map((member, idx2) => {
-										return (
-											<React.Fragment key={idx2}>
-												<div className="text-[16px] mt-2">
-													<div className="flex justify-between p-3 border font-thin rounded-3xl">
-														<div className="flex">
-															{member.gender === 'male' ? (
-																<img
-																	src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
-																	width="25"
-																	height="25"
-																/>
-															) : (
-																<img
-																	src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
-																	width="25"
-																	height="25"
-																/>
-															)}
-															<div className="ml-1">
-																{member.userId} 회원님
-															</div>
-														</div>
-														<div className="ml-3 font-medium">
-															{session.time}
+				{Object.entries(sessionObject).map((entry, idx) => {
+					return (
+						<React.Fragment key={idx}>
+							<div
+								className="mt-4"
+								onClick={() => {
+									modalVar(true)
+								}}>
+								<div className="text-[16px]">{entry[0]}</div>
+								{entry[1].map((member, idx2) => {
+									const date = new Date(member.date)
+									let hours = date.getHours() + ''
+									if (hours.length === 1) {
+										hours = 0 + hours
+									}
+									const minutes = date.getMinutes()
+									return (
+										<React.Fragment key={idx2}>
+											<div className="text-[16px] mt-2">
+												<div className="flex justify-between p-3 border font-thin rounded-3xl">
+													<div className="flex">
+														{member.gender === 'male' ? (
+															<img
+																src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
+																width="25"
+																height="25"
+															/>
+														) : (
+															<img
+																src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
+																width="25"
+																height="25"
+															/>
+														)}
+														<div className="ml-1">
+															{member.userId} 회원님
 														</div>
 													</div>
+													<div className="ml-3 font-medium">
+														{`${hours}시 ${minutes}분`}
+													</div>
 												</div>
-											</React.Fragment>
-										)
-									})}
-								</div>
-							</React.Fragment>
-						)
-					})}
-				</div>
+											</div>
+										</React.Fragment>
+									)
+								})}
+							</div>
+						</React.Fragment>
+					)
+				})}
 
 				{modal ? (
 					<div className="font-IBM font-thin fixed max-w-[450px] w-full bottom-0">

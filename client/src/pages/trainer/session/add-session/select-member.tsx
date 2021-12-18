@@ -2,8 +2,7 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import React from 'react'
 import Layout from '../../../../components/Layout'
-import session_dummy from '../../../../../session_dummy.json'
-import { selectedUserVar } from '../../../../graphql/vars'
+import { managedUserInfoVar } from '../../../../graphql/vars'
 import { useQuery } from '@apollo/client'
 import { TrainerDocument } from '../../../../graphql/graphql'
 import Loading from '../../../../components/Loading'
@@ -11,6 +10,7 @@ import { useRouter } from 'next/dist/client/router'
 
 interface MemberSession {
 	id: number
+	email: string
 	userName: string
 	gender: string
 	usedCount: number
@@ -39,6 +39,7 @@ const SelectMember: NextPage = () => {
 
 			selectMemberObject[userCategoryName].push({
 				id: user.id,
+				email: user.email,
 				userName: user.userName,
 				gender: user.gender,
 				usedCount: userSessionHistory.usedCount,
@@ -50,101 +51,100 @@ const SelectMember: NextPage = () => {
 	if (loading) return <Loading />
 	return (
 		<>
-			<Layout variant="Web">
-				<div className="flex flex-col justify-center mx-4 my-5 font-IBM">
-					<div className="flex items-center justify-between">
-						<span className="flex text-[20px] font-bold">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								className="w-7 h-7 cursor-pointer"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
-								onClick={() => router.back()}>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={1.5}
-									d="M15 19l-7-7 7-7"
-								/>
-							</svg>
-							<div>회원선택</div>
-						</span>
-					</div>
+			<Layout>
+				<div className="flex items-center justify-between">
+					<span className="flex text-[20px] font-bold">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="w-7 h-7 cursor-pointer"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+							onClick={() => router.back()}>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={1.5}
+								d="M15 19l-7-7 7-7"
+							/>
+						</svg>
+						<div>회원선택</div>
+					</span>
+				</div>
 
-					<div className="flex justify-between mt-4">
-						<span>
-							{data.trainer.userCategories.map((category: any) => {
-								return (
-									<React.Fragment key={category.id}>
-										<span className="ml-2 first:ml-0 font-thin">
-											{category.name}
-										</span>
-									</React.Fragment>
-								)
-							})}
-						</span>
-					</div>
+				<div className="flex justify-between mt-4">
+					<span>
+						{data.trainer.userCategories.map((category: any) => {
+							return (
+								<React.Fragment key={category.id}>
+									<span className="ml-2 first:ml-0 font-thin">
+										{category.name}
+									</span>
+								</React.Fragment>
+							)
+						})}
+					</span>
+				</div>
 
-					{Object.entries(selectMemberObject).map((entry, idx) => {
-						return (
-							<React.Fragment key={idx}>
-								<div className="mt-4">
-									<div className="text-[16px] font-bold">{entry[0]}</div>
-									{entry[1].map((member, idx2) => {
-										return (
-											<React.Fragment key={idx2}>
-												<div className="text-[16px] mt-1">
-													<div className="flex justify-between px-3 py-3 border rounded-3xl">
-														<div className="flex">
-															{member.gender === 'male' ? (
-																<img
-																	src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
-																	width="25"
-																	height="25"
-																/>
-															) : (
-																<img
-																	src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
-																	width="25"
-																	height="25"
-																/>
-															)}
-															<Link href="/trainer/session/add-session">
-																<div
-																	className="ml-1 font-thin hover:cursor-pointer"
-																	data-id={member.id}
-																	onClick={e => {
-																		if (
-																			e !== null &&
-																			e.target instanceof HTMLElement
-																		) {
-																			const userId = e.target.dataset
-																				.id as string
-																			selectedUserVar({
-																				userId: +userId,
-																				userName: member.userName,
-																				gender: member.gender
-																			})
-																		}
-																	}}>
-																	{member.userName} 회원님
-																</div>
-															</Link>
-														</div>
-														<div className="font-thin">
-															{`${member.usedCount} / ${member.totalCount}`}
-														</div>
+				{Object.entries(selectMemberObject).map((entry, idx) => {
+					return (
+						<React.Fragment key={idx}>
+							<div className="mt-4">
+								<div className="text-[16px] font-bold">{entry[0]}</div>
+								{entry[1].map((member, idx2) => {
+									return (
+										<React.Fragment key={idx2}>
+											<div className="text-[16px] mt-1">
+												<div className="flex justify-between px-3 py-3 border rounded-3xl">
+													<div className="flex">
+														{member.gender === 'male' ? (
+															<img
+																src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
+																width="25"
+																height="25"
+															/>
+														) : (
+															<img
+																src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
+																width="25"
+																height="25"
+															/>
+														)}
+														<Link href="/trainer/session/add-session">
+															<div
+																className="ml-1 font-thin hover:cursor-pointer"
+																data-id={member.id}
+																onClick={e => {
+																	if (
+																		e !== null &&
+																		e.target instanceof HTMLElement
+																	) {
+																		const userId = e.target.dataset
+																			.id as string
+																		managedUserInfoVar({
+																			userId: +userId,
+																			email: member.email,
+																			userName: member.userName,
+																			gender: member.gender
+																		})
+																	}
+																}}>
+																{member.userName} 회원님
+															</div>
+														</Link>
+													</div>
+													<div className="font-thin">
+														{`${member.usedCount} / ${member.totalCount}`}
 													</div>
 												</div>
-											</React.Fragment>
-										)
-									})}
-								</div>
-							</React.Fragment>
-						)
-					})}
-				</div>
+											</div>
+										</React.Fragment>
+									)
+								})}
+							</div>
+						</React.Fragment>
+					)
+				})}
 			</Layout>
 		</>
 	)

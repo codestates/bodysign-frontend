@@ -62,7 +62,7 @@ const Info: NextPage = () => {
 	if (userLoading) return <Loading />
 	return (
 		<>
-			<Layout variant="Web">
+			<Layout>
 				<div className="flex flex-col justify-center mx-4 my-5 font-IBM">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[25px]">
@@ -358,7 +358,6 @@ const Info: NextPage = () => {
 						</div>
 					</div>
 				) : null}
-				<BottomBar variant="Trainer" />
 			</Layout>
 		</>
 	)

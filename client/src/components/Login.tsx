@@ -3,11 +3,12 @@ import type { NextPage } from 'next'
 import { signIn, signOut, useSession } from 'next-auth/client'
 import Layout from '../components/Layout'
 import Loading from './Loading'
-import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
+import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client'
 import { loginTypeVar } from '../graphql/vars'
 import Link from 'next/link'
 
-const GOOGLE_CLIENT_ID = "228447519514-17eoff0h38vfipbkd7ata2gtt7e2bbo7.apps.googleusercontent.com" 
+const GOOGLE_CLIENT_ID =
+	'228447519514-17eoff0h38vfipbkd7ata2gtt7e2bbo7.apps.googleusercontent.com'
 
 // TODO : 유저/트레이너 타입을 받아서 각각 페이지로 라우팅하기
 
@@ -16,27 +17,24 @@ const LOGIN = gql`
 		loginAuth(loginUserInput: $loginUserInput) {
 			accessToken
 		}
-  	}
-`;
+	}
+`
 
 const Login: NextPage = () => {
-
 	const [form, setForm] = useState({
 		email: '',
 		password: '',
 		type: 'user'
 	})
 
-	const [ loginAuth, { data, loading, error }] = useMutation(LOGIN);
+	const [loginAuth, { data, loading, error }] = useMutation(LOGIN)
 	const loginType = useReactiveVar(loginTypeVar)
 
-	const [session, pageLoading] = useSession() 
+	const [session, pageLoading] = useSession()
 
-    if(pageLoading) {
-        return (
-          <Loading />
-        )
-    }
+	if (pageLoading) {
+		return <Loading />
+	}
 
 	const onChangeId = (e: any) => {
 		const email = e.target.value
@@ -65,7 +63,7 @@ const Login: NextPage = () => {
 		// TODO: 로그인이 완료 되면 액세스 토큰을 받아와서 쿠키에 저장해서 요청할 때 마다 토큰 보내주기
 		// TODO: 토큰이 필요한 요청들을 리스트업
 		// TODO: 필요한 요청의 HEADER에 토큰이 들어갈 수 있게 구현
-		if(loading) {
+		if (loading) {
 			console.log('기다려')
 		} else {
 			console.log(data)

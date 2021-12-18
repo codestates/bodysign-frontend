@@ -132,234 +132,226 @@ const ManageMember: NextPage = () => {
 	if (loading) return <Loading />
 	return (
 		<>
-			<Layout variant="Web">
-				<div className="flex flex-col justify-center mx-4 my-5">
-					<div className="flex items-center justify-between">
-						<span className="flex text-[25px]">
-							<div
-								className={`${
-									category === '관리중' ? 'font-bold' : 'text-gray-400'
-								} cursor-pointer`}
-								onClick={() => setCategory('관리중')}>
-								관리중
-							</div>
-							<div
-								className={`ml-3 ${
-									category === '졸업' ? 'font-bold' : 'text-gray-400'
-								} cursor-pointer`}
-								onClick={() => setCategory('졸업')}>
-								졸업
-							</div>
-						</span>
-						<span className="flex">
-							{!readyDelete ? (
-								<>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										className="w-7 h-7 cursor-pointer"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
-										data-check-modal="addmember"
-										onClick={e => {
-											if (
-												e !== null &&
-												e.target instanceof SVGSVGElement
-											) {
-												setCheckModal(
-													e.target.dataset.checkModal as string
-												)
-												modalVar(true)
-											}
-										}}>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={1.5}
-											d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-										/>
-									</svg>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										className="mx-3 w-7 h-7 cursor-pointer"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
-										onClick={() => setReadyDelete(true)}>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={1.5}
-											d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-										/>
-									</svg>
-								</>
-							) : (
+			<Layout>
+				<div className="flex items-center justify-between">
+					<span className="flex text-[25px]">
+						<div
+							className={`${
+								category === '관리중' ? 'font-bold' : 'text-gray-400'
+							} cursor-pointer`}
+							onClick={() => setCategory('관리중')}>
+							관리중
+						</div>
+						<div
+							className={`ml-2 ${
+								category === '졸업' ? 'font-bold' : 'text-gray-400'
+							} cursor-pointer`}
+							onClick={() => setCategory('졸업')}>
+							졸업
+						</div>
+					</span>
+					<span className="flex">
+						{!readyDelete ? (
+							<>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
-									className="mx-3 w-7 h-7 cursor-pointer"
+									className="w-7 h-7 cursor-pointer"
 									fill="none"
 									viewBox="0 0 24 24"
 									stroke="currentColor"
-									onClick={() => {
-										// 회원 삭제 API 2
-										// update API 추가 예정
-										setReadyDelete(false)
-										deleteLists.clear()
+									data-check-modal="addmember"
+									onClick={e => {
+										if (e !== null && e.target instanceof SVGSVGElement) {
+											setCheckModal(e.target.dataset.checkModal as string)
+											modalVar(true)
+										}
 									}}>
 									<path
 										strokeLinecap="round"
 										strokeLinejoin="round"
 										strokeWidth={1.5}
-										d="M5 13l4 4L19 7"
+										d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
 									/>
 								</svg>
-							)}
-						</span>
-					</div>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									className="ml-2 w-7 h-7 cursor-pointer"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+									onClick={() => setReadyDelete(true)}>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={1.5}
+										d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+									/>
+								</svg>
+							</>
+						) : (
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="w-7 h-7 cursor-pointer"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								onClick={() => {
+									// 회원 삭제 API 2
+									// update API 추가 예정
+									setReadyDelete(false)
+									deleteLists.clear()
+								}}>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={1.5}
+									d="M5 13l4 4L19 7"
+								/>
+							</svg>
+						)}
+					</span>
+				</div>
 
-					<div className="flex justify-between mt-4">
-						<span>
-							{data.trainer.userCategories.map((category: any) => {
-								return (
-									<React.Fragment key={category.id}>
-										<span className="ml-2 first:ml-0 font-thin">
-											{category.name}
-										</span>
-									</React.Fragment>
-								)
-							})}
-						</span>
-						<span
-							className="mr-3 text-gray-400 cursor-pointer"
-							data-check-modal="addcategory"
-							onClick={e => {
-								if (e !== null && e.target instanceof HTMLElement) {
-									setCheckModal(e.target.dataset.checkModal as string)
-									modalVar(true)
-								}
-							}}>
-							+카테고리
-						</span>
-					</div>
+				<div className="flex justify-between mt-4">
+					<span>
+						{data.trainer.userCategories.map((category: any) => {
+							return (
+								<React.Fragment key={category.id}>
+									<span className="ml-2 first:ml-0 font-thin">
+										{category.name}
+									</span>
+								</React.Fragment>
+							)
+						})}
+					</span>
+					<span
+						className="mr-3 text-gray-400 cursor-pointer"
+						data-check-modal="addcategory"
+						onClick={e => {
+							if (e !== null && e.target instanceof HTMLElement) {
+								setCheckModal(e.target.dataset.checkModal as string)
+								modalVar(true)
+							}
+						}}>
+						+카테고리
+					</span>
+				</div>
 
-					{Object.entries(manageMemberObject).map((entry, idx) => {
-						return (
-							<React.Fragment key={idx}>
-								<div className="mt-4">
-									<div className="text-[16px]">{entry[0]}</div>
-									{entry[1].map(member => {
-										return (
-											<React.Fragment key={member.id}>
-												<div className="text-[16px] mt-1">
-													<div className="flex justify-between px-3 py-3 border rounded-3xl">
-														<div className="flex">
-															{member.gender === 'male' ? (
-																<img
-																	src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
-																	width="25"
-																	height="25"
-																/>
-															) : (
-																<img
-																	src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
-																	width="25"
-																	height="25"
-																/>
-															)}
-															{
-																<div className="flex flex-col h-1 ml-1 cursor-pointer">
-																	<div
-																		className="ml-2 hover:cursor-pointer font-thin h-[18px]"
-																		onClick={
-																			!readyDelete
-																				? () => {
-																						managedUserInfoVar({
-																							userId: +member.id,
-																							email:
-																								member.email.split('@')[0],
-																							userName: member.userName,
-																							gender: member.gender
-																						})
-																						const url = `/trainer/manage-member/${
-																							member.email.split('@')[0]
-																						}/info`
-																						router.push(url)
-																				  }
-																				: e => {
-																						if (
-																							e !== null &&
-																							e.target instanceof
-																								HTMLElement
-																						) {
-																							// 회원 삭제 API 1
-																							if (e.target.dataset.id) {
-																								const id =
-																									+e.target.dataset.id
-																								if (deleteLists.has(id)) {
-																									setDeleteLists(
-																										prev =>
-																											new Set(
-																												[...prev].filter(
-																													el => el !== id
-																												)
+				{Object.entries(manageMemberObject).map((entry, idx) => {
+					return (
+						<React.Fragment key={idx}>
+							<div className="mt-4">
+								<div className="text-[16px]">{entry[0]}</div>
+								{entry[1].map(member => {
+									return (
+										<React.Fragment key={member.id}>
+											<div className="text-[16px] mt-1">
+												<div className="flex justify-between px-3 py-3 border rounded-3xl">
+													<div className="flex">
+														{member.gender === 'male' ? (
+															<img
+																src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
+																width="25"
+																height="25"
+															/>
+														) : (
+															<img
+																src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
+																width="25"
+																height="25"
+															/>
+														)}
+														{
+															<div className="flex flex-col h-1 ml-1 cursor-pointer">
+																<div
+																	className="ml-2 hover:cursor-pointer font-thin h-[18px]"
+																	onClick={
+																		!readyDelete
+																			? () => {
+																					managedUserInfoVar({
+																						userId: +member.id,
+																						email:
+																							member.email.split('@')[0],
+																						userName: member.userName,
+																						gender: member.gender
+																					})
+																					const url = `/trainer/manage-member/${
+																						member.email.split('@')[0]
+																					}/info`
+																					router.push(url)
+																			  }
+																			: e => {
+																					if (
+																						e !== null &&
+																						e.target instanceof HTMLElement
+																					) {
+																						// 회원 삭제 API 1
+																						if (e.target.dataset.id) {
+																							const id =
+																								+e.target.dataset.id
+																							if (deleteLists.has(id)) {
+																								setDeleteLists(
+																									prev =>
+																										new Set(
+																											[...prev].filter(
+																												el => el !== id
 																											)
-																									)
-																								} else {
-																									setDeleteLists(
-																										prev =>
-																											new Set(prev.add(id))
-																									)
-																								}
+																										)
+																								)
+																							} else {
+																								setDeleteLists(
+																									prev =>
+																										new Set(prev.add(id))
+																								)
 																							}
 																						}
-																				  }
-																		}>
-																		{member.userName} 회원님
-																	</div>
-																	<div className="text-[5px] ml-2 font-thin">
-																		10 / 24회
-																	</div>
+																					}
+																			  }
+																	}>
+																	{member.userName} 회원님
 																</div>
-															}
-														</div>
-														{!readyDelete ? (
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																className="w-6 h-6"
-																fill="none"
-																viewBox="0 0 24 24"
-																stroke="currentColor">
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	strokeWidth={1.5}
-																	d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
-																/>
-															</svg>
-														) : deleteLists.has(+member.id) ? (
-															<svg
-																className="text-green-600"
-																viewBox="0 0 15 15"
-																fill="none"
-																xmlns="http://www.w3.org/2000/svg"
-																width="20"
-																height="20">
-																<path
-																	d="M4 7.5L7 10l4-5m-3.5 9.5a7 7 0 110-14 7 7 0 010 14z"
-																	stroke="currentColor"></path>
-															</svg>
-														) : null}
+																<div className="text-[5px] ml-2 font-thin">
+																	10 / 24회
+																</div>
+															</div>
+														}
 													</div>
+													{!readyDelete ? (
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															className="w-6 h-6"
+															fill="none"
+															viewBox="0 0 24 24"
+															stroke="currentColor">
+															<path
+																strokeLinecap="round"
+																strokeLinejoin="round"
+																strokeWidth={1.5}
+																d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+															/>
+														</svg>
+													) : deleteLists.has(+member.id) ? (
+														<svg
+															className="text-green-600"
+															viewBox="0 0 15 15"
+															fill="none"
+															xmlns="http://www.w3.org/2000/svg"
+															width="20"
+															height="20">
+															<path
+																d="M4 7.5L7 10l4-5m-3.5 9.5a7 7 0 110-14 7 7 0 010 14z"
+																stroke="currentColor"></path>
+														</svg>
+													) : null}
 												</div>
-											</React.Fragment>
-										)
-									})}
-								</div>
-							</React.Fragment>
-						)
-					})}
-				</div>
+											</div>
+										</React.Fragment>
+									)
+								})}
+							</div>
+						</React.Fragment>
+					)
+				})}
 
 				{modal ? (
 					checkModal === 'addmember' ? (

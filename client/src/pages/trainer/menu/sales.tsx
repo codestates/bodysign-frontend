@@ -121,8 +121,6 @@ const Sales: NextPage = () => {
 			const year = new Date(KST).getFullYear()
 			const month = new Date(KST).getMonth() + 1
 			const day = new Date(KST).getDate()
-			console.log(year, month, day)
-
 			return `${year} ${month} ${day}`
 		}
 		const getTimeStartDate = new Date(getYearMonthDay(startDate)).getTime()
@@ -147,134 +145,132 @@ const Sales: NextPage = () => {
 	if (loading) return <Loading />
 	return (
 		<>
-			<Layout variant="Web">
-				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
-					<div className="flex items-center justify-between">
-						<span className="flex text-[20px]">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								className="self-center cursor-pointer w-7 h-7"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
-								onClick={() => router.back()}>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={1.5}
-									d="M15 19l-7-7 7-7"
+			<Layout>
+				<div className="flex items-center justify-between">
+					<span className="flex text-[20px]">
+						<svg
+							className="w-6 h-6 cursor-pointer"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+							onClick={() => router.back()}>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={1.5}
+								d="M15 19l-7-7 7-7"
+							/>
+						</svg>
+						<div className="font-bold">매출 조회</div>
+					</span>
+					<span className="flex"></span>
+				</div>
+
+				<div className="mt-4 text-[12px]">
+					<div className="py-3 font-thin text-center">
+						기간별 매출 조회
+					</div>
+					<div className="flex flex-col p-3 border">
+						<form
+							className="flex flex-col"
+							onSubmit={e => handleSubmit(e)}>
+							<div className="flex items-center">
+								<DatePicker
+									className="w-[125px] p-1 border text-center mr-3"
+									selected={startDate}
+									onChange={date => setStartDate(date as Date)}
+									selectsStart
+									startDate={startDate}
+									endDate={endDate}
 								/>
-							</svg>
-							<div className="font-bold text-[20px]">매출 조회</div>
-						</span>
-						<span className="flex"></span>
-					</div>
-
-					<div className="mt-4 text-[12px]">
-						<div className="py-3 font-thin text-center">
-							기간별 매출 조회
-						</div>
-						<div className="flex flex-col p-3 border">
-							<form
-								className="flex flex-col"
-								onSubmit={e => handleSubmit(e)}>
-								<div className="flex items-center">
-									<DatePicker
-										className="w-[125px] p-1 border text-center mr-3"
-										selected={startDate}
-										onChange={date => setStartDate(date as Date)}
-										selectsStart
-										startDate={startDate}
-										endDate={endDate}
-									/>
-									~
-									<DatePicker
-										className="w-[125px] p-1 border text-center ml-3"
-										selected={endDate}
-										onChange={date => setEndDate(date as Date)}
-										selectsEnd
-										startDate={startDate}
-										endDate={endDate}
-										minDate={startDate}
-									/>
-									<button
-										className="h-7 px-1 ml-auto bg-yellow-100 border w-[85px]"
-										type="submit">
-										조회
-									</button>
+								~
+								<DatePicker
+									className="w-[125px] p-1 border text-center ml-3"
+									selected={endDate}
+									onChange={date => setEndDate(date as Date)}
+									selectsEnd
+									startDate={startDate}
+									endDate={endDate}
+									minDate={startDate}
+								/>
+								<button
+									className="h-7 px-1 ml-auto bg-yellow-100 border w-[85px]"
+									type="submit">
+									조회
+								</button>
+							</div>
+							{rangeFilterResult === 0 ? null : (
+								<div className="self-start mt-1 border w-[125px] text-center p-3">
+									{rangeFilterResult}원
 								</div>
-								{rangeFilterResult === 0 ? null : (
-									<div className="self-start mt-1 border w-[125px] text-center p-3">
-										{rangeFilterResult}원
-									</div>
-								)}
-							</form>
-						</div>
+							)}
+						</form>
 					</div>
+				</div>
 
-					<div className="relative mt-4 text-[12px]">
-						<canvas ref={canvasRef} height="400"></canvas>
-					</div>
+				<div className="relative mt-4 text-[12px]">
+					<canvas ref={canvasRef} height="400"></canvas>
+				</div>
 
-					<div className="flex flex-col mt-4 text-[12px] font-thin">
-						<div className="border-b border-gray-200">
-							<table className="min-w-full divide-y divide-gray-200">
-								<thead className="bg-gray-50">
-									<tr>
-										<th className="p-3 text-[12px] text-left text-gray-500">
-											기간
-										</th>
-										<th className="p-3 text-[12px] text-left text-gray-500">
-											수업료
-										</th>
-										<th className="p-3 text-[12px] text-left text-gray-500"></th>
-									</tr>
-								</thead>
-								<tbody className="bg-white divide-y divide-gray-200">
-									{sortedSessionHistories.map((sessionHistory, idx) => {
-										return (
-											<React.Fragment key={idx}>
-												<tr>
-													<td className="p-3 text-[12px] text-gray-500">
-														{`${sessionHistory[0].split('.')[0]}년 ${
-															sessionHistory[0].split('.')[1]
-														}월`}
-													</td>
-													<td className="p-3 text-[12px] text-gray-500">
-														{sessionHistory[1].reduce(
-															(acc, cur) => acc + cur
-														)}
-														원
-													</td>
-													<td className="flex justify-end p-1 text-[12px] text-gray-500">
-														<span
-															className="flex items-center cursor-pointer"
-															onClick={() => {
-																setDate(sessionHistory[0])
-																modalVar(true)
-															}}>
-															<span>상세 정보</span>
-															<svg
-																className="m-2 text-gray-400"
-																viewBox="0 0 15 15"
-																fill="none"
-																xmlns="http://www.w3.org/2000/svg"
-																width="15"
-																height="15">
-																<path
-																	d="M6.5 10.5l3-3-3-3"
-																	stroke="currentColor"
-																	strokeLinecap="square"></path>
-															</svg>
-														</span>
-													</td>
-												</tr>
-											</React.Fragment>
-										)
-									})}
-								</tbody>
-							</table>
-						</div>
+				<div className="flex flex-col mt-4 text-[12px] font-thin">
+					<div className="border-b border-gray-200">
+						<table className="min-w-full divide-y divide-gray-200">
+							<thead className="bg-gray-50">
+								<tr>
+									<th className="p-3 text-[12px] text-left text-gray-500">
+										기간
+									</th>
+									<th className="p-3 text-[12px] text-left text-gray-500">
+										수업료
+									</th>
+									<th className="p-3 text-[12px] text-left text-gray-500"></th>
+								</tr>
+							</thead>
+							<tbody className="bg-white divide-y divide-gray-200">
+								{sortedSessionHistories.map((sessionHistory, idx) => {
+									return (
+										<React.Fragment key={idx}>
+											<tr>
+												<td className="p-3 text-[12px] text-gray-500">
+													{`${sessionHistory[0].split('.')[0]}년 ${
+														sessionHistory[0].split('.')[1]
+													}월`}
+												</td>
+												<td className="p-3 text-[12px] text-gray-500">
+													{sessionHistory[1].reduce(
+														(acc, cur) => acc + cur
+													)}
+													원
+												</td>
+												<td className="flex justify-end p-1 text-[12px] text-gray-500">
+													<span
+														className="flex items-center cursor-pointer"
+														onClick={() => {
+															setDate(sessionHistory[0])
+															modalVar(true)
+														}}>
+														<span>상세 정보</span>
+														<svg
+															className="m-2 text-gray-400"
+															viewBox="0 0 15 15"
+															fill="none"
+															xmlns="http://www.w3.org/2000/svg"
+															width="15"
+															height="15">
+															<path
+																d="M6.5 10.5l3-3-3-3"
+																stroke="currentColor"
+																strokeLinecap="square"></path>
+														</svg>
+													</span>
+												</td>
+											</tr>
+										</React.Fragment>
+									)
+								})}
+							</tbody>
+						</table>
 					</div>
 				</div>
 
