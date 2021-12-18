@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
 import { signIn, signOut, useSession } from 'next-auth/client'
-// import GoogleLogin from 'react-google-login'
 import Layout from '../components/Layout'
 import Loading from './Loading'
 import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
@@ -11,9 +10,6 @@ import Link from 'next/link'
 const GOOGLE_CLIENT_ID = "228447519514-17eoff0h38vfipbkd7ata2gtt7e2bbo7.apps.googleusercontent.com" 
 
 // TODO : 유저/트레이너 타입을 받아서 각각 페이지로 라우팅하기
-// TODO : 구글 로그인 클릭하면 Redirect URL 을 서버 쪽으로 돌리기
-
-//* 리디렉션 오는 요청에 의해서 type을 google local 나눠서 보내기?
 
 const LOGIN = gql`
 	mutation LoginAuth($loginUserInput: LoginUserInput!) {
@@ -107,14 +103,6 @@ const Login: NextPage = () => {
               GOOGLE로 로그인
             </button>
             <div className="flex w-4/5 border-0">
-              {/* <GoogleLogin
-                className="m-1 w-4/5 font-IBM font-thin text-center"
-                clientId={GOOGLE_CLIENT_ID}
-                buttonText="Login"
-                cookiePolicy={"single_host_origin"}
-              >
-                구글로 로그인
-              </GoogleLogin> */}
             </div>
 			<Link href="/signup">
             <button className="font-IBM font-thin m-1 w-4/5 py-1 rounded text-gray-500 transition-colors duration-150 border border-gray-300 focus:shadow-outline hover:bg-gray-300 hover:text-white">회원가입</button>
