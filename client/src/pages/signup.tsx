@@ -25,7 +25,10 @@ const labelProperties =
 	'after:absolute after:h-full after:bg-yellow-100 after:w-full after:top-0 after:z-[-1] after:transition-[left] after:duration-500 peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
 
 const Signup: NextPage = () => {
+
 	const router = useRouter()
+	const logintype = router.query.logintype
+	const googleEmail = router.query.email
 	const [areYouTrainer, setAreYouTrainer] = useState(true)
 	const [interestedTypes, setInterestedTypes] = useState([
 		{ id: 0, type: 'PT', name: 'PT샵', status: false },
@@ -58,6 +61,12 @@ const Signup: NextPage = () => {
 			birthDate: new Date(data.birth),
 			loginType
 		}
+
+		if(logintype === "google") {
+			input.email = googleEmail
+			input.loginType = "google"
+		}
+
 		try {
 			areYouTrainer
 				? await createTrainerUser({
@@ -74,19 +83,31 @@ const Signup: NextPage = () => {
 		} catch (error) {
 			console.log(error)
 		}
+
+		alert('회원가입이 완료되었습니다.')
+		location.href = "http://localhost:3000"
 	}
 
 	return (
 		<>
-			<Layout>
-				<div className="flex flex-col mx-4 my-5 text-[12px]">
-					<div className="text-[20px] text-center">회원가입</div>
-
+			<Layout variant="Web">
+				<div className="font-IBM flex flex-col mx-4 my-5 text-[12px]">
+					<div className="text-[25px] text-center font-bold">회원가입</div>
 					<form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+						{ logintype === "google" ?
 						<div>
 							<label>이메일</label>
 							<input
-								className="w-full h-12 p-3 mt-1 border"
+								className="w-full h-12 p-3 mt-1 border rounded-3xl text-gray-400 outline-none"
+								type="text"
+								value={googleEmail}
+								readOnly
+							/>
+						</div>
+						: <div>
+							<label>이메일</label>
+							<input
+								className="w-full h-12 p-3 mt-1 border rounded-3xl"
 								type="text"
 								disabled={loginType === 'google'}
 								// defaultValue 소셜 회원가입 이메일
@@ -102,11 +123,12 @@ const Signup: NextPage = () => {
 								</div>
 							)}
 						</div>
+						}
 
 						<div className="mt-4">
 							<label>비밀번호</label>
 							<input
-								className="w-full h-12 p-3 mt-1 border"
+								className="w-full h-12 p-3 mt-1 border rounded-3xl"
 								type="password"
 								disabled={loginType === 'google'}
 								{...register('password', {
@@ -124,7 +146,7 @@ const Signup: NextPage = () => {
 						<div className="mt-4">
 							<label>이름</label>
 							<input
-								className="w-full h-12 p-3 mt-1 border"
+								className="w-full h-12 p-3 mt-1 border rounded-3xl"
 								type="text"
 								{...register('name', {
 									required: true

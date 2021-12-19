@@ -17,3 +17,4 @@ export const sessionExerciseInputVar = makeVar({
 	sessionId: 0,
 	sessionExerciseId: 0
 })
+export const accessTokenVar = makeVar('token')
