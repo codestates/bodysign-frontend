@@ -95,25 +95,16 @@ const ManageMember: NextPage = () => {
 
 	const manageMemberObject: Record<string, Member[]> = {}
 	const graduateManageMemberObject: Record<string, Member[]> = {}
-	if (!loading) {
+	if (!loading && data) {
 		const userCategories = data.trainer.userCategories
-		for (let i = 0; i < userCategories.length; i++) {
-			if (manageMemberObject[userCategories[i].name] === undefined) {
-				manageMemberObject[userCategories[i].name] = []
-			}
-		}
-		for (let i = 0; i < userCategories.length; i++) {
-			if (
-				graduateManageMemberObject[userCategories[i].name] === undefined
-			) {
-				graduateManageMemberObject[userCategories[i].name] = []
-			}
-		}
 
 		data.trainer.users.forEach((user: any) => {
 			const userCategoryName =
 				userCategories[user.userCategoryId - 1]?.name
 			if (user.graduate) {
+				if (graduateManageMemberObject[userCategoryName] === undefined) {
+					graduateManageMemberObject[userCategoryName] = []
+				}
 				graduateManageMemberObject[userCategoryName].push({
 					id: user.id,
 					email: user.email,
@@ -122,6 +113,9 @@ const ManageMember: NextPage = () => {
 					gender: user.gender
 				})
 			} else {
+				if (manageMemberObject[userCategoryName] === undefined) {
+					manageMemberObject[userCategoryName] = []
+				}
 				manageMemberObject[userCategoryName].push({
 					id: user.id,
 					email: user.email,
@@ -132,13 +126,6 @@ const ManageMember: NextPage = () => {
 			}
 		})
 	}
-
-	// useEffect(() => {
-	// 	if (category === '졸업') {
-	// 		// filter
-	// 	} else if (category === '관리') {
-	// 	}
-	// }, [category])
 
 	useEffect(() => {
 		socket.emit('joinLounge', 21)

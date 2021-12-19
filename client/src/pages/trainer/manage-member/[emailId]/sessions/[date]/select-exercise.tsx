@@ -78,7 +78,7 @@ const Exercise: NextPage = () => {
 									createSessionExercise({
 										variables: {
 											createSessionExerciseInput: {
-												name: sessionExerciseInput.name,
+												name: sessionExerciseInput.exerciseName,
 												sessionId: sessionExerciseInput.sessionId
 											}
 										}
@@ -144,7 +144,8 @@ const Exercise: NextPage = () => {
 											<div className="text-[12px] mt-1">
 												<div
 													className={`flex justify-center px-3 py-3 border ${
-														exercise.name === sessionExerciseInput.name
+														exercise.name ===
+														sessionExerciseInput.exerciseName
 															? 'ring-2'
 															: ''
 													}`}>
@@ -158,7 +159,7 @@ const Exercise: NextPage = () => {
 																) {
 																	sessionExerciseInputVar({
 																		...sessionExerciseInput,
-																		name: exercise.name
+																		exerciseName: exercise.name
 																	})
 																}
 															}}>
