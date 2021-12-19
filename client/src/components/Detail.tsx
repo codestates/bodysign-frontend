@@ -37,7 +37,7 @@ const Detail: NextPage = ({ date, day, isOpen, changeOpen }) => {
 
 	return (
 		<>
-			<Layout>
+			<Layout variant="Web">
 				<div className="flex flex-col m-5 mx-4 my-5 text-[12px] font-IBM font-thin">
 					<div className="flex mb-10 items-center">
 						<svg

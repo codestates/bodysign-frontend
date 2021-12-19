@@ -4,14 +4,15 @@ import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../components/Layout'
 
-const SearchMemberModal: NextPage = ({ addMemberModalHandler, searchMemberModalHandler }) => {
-
-	const [ inputPhoneNumber, setInputPhoneNumber ] = useState('')
-	const [ findUser, setFindUser ] = useState(false)
+const SearchMemberModal: NextPage = ({
+	addMemberModalHandler,
+	searchMemberModalHandler
+}) => {
+	const [inputPhoneNumber, setInputPhoneNumber] = useState('')
+	const [findUser, setFindUser] = useState(false)
 	const member_category_dummy = ['다이어트', '바디프로필', '스트렝스']
 
-
-	const inputPhoneNumberHandler = (e) => {
+	const inputPhoneNumberHandler = e => {
 		let phoneNumber = ''
 		phoneNumber = e.target.value
 
@@ -27,20 +28,32 @@ const SearchMemberModal: NextPage = ({ addMemberModalHandler, searchMemberModalH
 
 	return (
 		<>
-		<div onClick={addMemberModalHandler} className="modal-overlay absolute w-full h-full top-0 left-0 bg-black opacity-70 font-IBM font-thin"></div>
+			<div
+				onClick={addMemberModalHandler}
+				className="modal-overlay absolute w-full h-full top-0 left-0 bg-black opacity-70 font-IBM font-thin"></div>
 			<div className="modal-container text-center bg-white w-8/12 mx-auto rounded shadow-lg z-999 overflow-y-auto p-3">
 				<div className="font-IBM text-[12px] font-bold">회원 검색</div>
-				<div className=""> 
-					<input onChange={inputPhoneNumberHandler} placeholder="회원의 전화번호를 기입해 주세요." className="font-thin text-[12px] w-8/12 border rounded-2xl p-1 px-2 m-1" type="text" />
-					<button onClick={findUserHandler} className="text-[10px] border bg-gray-300 p-1.5 rounded-xl">검색</button>
+				<div className="">
+					<input
+						onChange={inputPhoneNumberHandler}
+						placeholder="회원의 전화번호를 기입해 주세요."
+						className="font-thin text-[12px] w-8/12 border rounded-2xl p-1 px-2 m-1"
+						type="text"
+					/>
+					<button
+						onClick={findUserHandler}
+						className="text-[10px] border bg-gray-300 p-1.5 rounded-xl">
+						검색
+					</button>
 				</div>
-				{
-					findUser ? 
-					<div className="text-green-600 text-[5px] m-1">검색 완료</div> 
+				{findUser ? (
+					<div className="text-green-600 text-[5px] m-1">검색 완료</div>
+				) : (
 					// 여기에 회원 정보 보여주기
-					: 
-					<div className="text-red-600 text-[5px] m-1">회원님을 찾을 수 없습니다.</div>
-				}
+					<div className="text-red-600 text-[5px] m-1">
+						회원님을 찾을 수 없습니다.
+					</div>
+				)}
 				<div className="flex justify-between mt-7 text-[12px]">
 					<span className="text-[8px]">카테고리</span>
 					<select
@@ -55,7 +68,7 @@ const SearchMemberModal: NextPage = ({ addMemberModalHandler, searchMemberModalH
 						))}
 					</select>
 				</div>
-		</div>
+			</div>
 		</>
 	)
 }
