@@ -12,9 +12,6 @@ export const managedUserInfoVar = makeVar({
 })
 export const sessionExerciseInputVar = makeVar({
 	name: '',
-	reps: 0,
-	sets: 0,
-	weight: 0,
 	sessionId: 0,
 	sessionExerciseId: 0
 })

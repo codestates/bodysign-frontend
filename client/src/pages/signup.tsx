@@ -25,7 +25,6 @@ const labelProperties =
 	'after:absolute after:h-full after:bg-yellow-100 after:w-full after:top-0 after:z-[-1] after:transition-[left] after:duration-500 peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
 
 const Signup: NextPage = () => {
-
 	const router = useRouter()
 	const logintype = router.query.logintype
 	const googleEmail = router.query.email
@@ -62,9 +61,9 @@ const Signup: NextPage = () => {
 			loginType
 		}
 
-		if(logintype === "google") {
+		if (logintype === 'google') {
 			input.email = googleEmail
-			input.loginType = "google"
+			input.loginType = 'google'
 		}
 
 		try {
@@ -85,12 +84,12 @@ const Signup: NextPage = () => {
 		}
 
 		alert('회원가입이 완료되었습니다.')
-		location.href = "http://localhost:3000"
+		location.href = 'http://localhost:3000'
 	}
 
 	return (
 		<>
-			<Layout variant="Web">
+			<Layout>
 				<div className="font-IBM flex flex-col mx-4 my-5 text-[12px]">
 					<div className="text-[25px] text-center font-bold">회원가입</div>
 					<form className="mt-4" onSubmit={handleSubmit(onSubmit)}>

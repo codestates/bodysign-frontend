@@ -40,9 +40,10 @@ const AddMember: NextPage = () => {
 			userName: data.name,
 			phoneNumber: data.phone,
 			gender: data.gender,
-			userCategoryId: data.userCategoryId,
-			graduate: data.graduate
+			userCategoryId: +data.userCategoryId,
+			graduate: +data.graduate === 0 ? false : true
 		}
+		console.log(input)
 		try {
 			await createNonRegisteredUser({
 				variables: {
@@ -50,7 +51,9 @@ const AddMember: NextPage = () => {
 						trainerId: 21,
 						userName: input.userName,
 						phoneNumber: input.phoneNumber,
-						gender: input.gender
+						gender: input.gender,
+						userCategoryId: input.userCategoryId,
+						graduate: input.graduate
 					}
 				}
 			})
@@ -172,7 +175,7 @@ const AddMember: NextPage = () => {
 								className="hidden peer"
 								type="radio"
 								id="management"
-								value="false"
+								value="0"
 								defaultChecked
 								{...register('graduate', {
 									required: true
@@ -189,7 +192,7 @@ const AddMember: NextPage = () => {
 								className="hidden peer"
 								type="radio"
 								id="graduate"
-								value="true"
+								value="1"
 								{...register('graduate', {
 									required: true
 								})}

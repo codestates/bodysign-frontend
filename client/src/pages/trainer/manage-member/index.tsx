@@ -28,7 +28,7 @@ interface Member {
 }
 
 interface FormInput {
-	phone: string
+	phoneNumber: string
 	userCategoryId: number
 	userCategoryName: string
 }
@@ -55,20 +55,16 @@ const ManageMember: NextPage = () => {
 		// 회원 추가 API
 		if (checkModal === 'linktraineruser') {
 			try {
-				// 트레이너와 회원을 연결하는 API
-				// update에서는 trainerId 인풋이 없다.
-				// 서버에서 전화번호를 가지고 특정 유저를 찾을지?
-				// 모든 유저를 받아서 클라이언트에서 찾을지?
-				updateUser({
-					variables: {
-						updateUserInput: {
-							id: 2,
-							trainerId: 21,
-							userCategoryId: +data.userCategoryId
-						}
-					}
-				})
-				modalVar(false)
+				// updateUser({
+				// 	variables: {
+				// 		updateUserInput: {
+				// 			id: 2,
+				// 			trainerId: 21,
+				// 			userCategoryId: +data.userCategoryId
+				// 		}
+				// 	}
+				// })
+				// modalVar(false)
 			} catch (error) {
 				console.log(error)
 			}
@@ -98,6 +94,7 @@ const ManageMember: NextPage = () => {
 	}
 
 	const manageMemberObject: Record<string, Member[]> = {}
+	const graduateManageMemberObject: Record<string, Member[]> = {}
 	if (!loading) {
 		const userCategories = data.trainer.userCategories
 		for (let i = 0; i < userCategories.length; i++) {
@@ -105,32 +102,50 @@ const ManageMember: NextPage = () => {
 				manageMemberObject[userCategories[i].name] = []
 			}
 		}
+		for (let i = 0; i < userCategories.length; i++) {
+			if (
+				graduateManageMemberObject[userCategories[i].name] === undefined
+			) {
+				graduateManageMemberObject[userCategories[i].name] = []
+			}
+		}
+
 		data.trainer.users.forEach((user: any) => {
 			const userCategoryName =
 				userCategories[user.userCategoryId - 1]?.name
-			manageMemberObject[userCategoryName].push({
-				id: user.id,
-				email: user.email,
-				userName: user.userName,
-				phoneNumber: user.phoneNumber,
-				gender: user.gender
-			})
+			if (user.graduate) {
+				graduateManageMemberObject[userCategoryName].push({
+					id: user.id,
+					email: user.email,
+					userName: user.userName,
+					phoneNumber: user.phoneNumber,
+					gender: user.gender
+				})
+			} else {
+				manageMemberObject[userCategoryName].push({
+					id: user.id,
+					email: user.email,
+					userName: user.userName,
+					phoneNumber: user.phoneNumber,
+					gender: user.gender
+				})
+			}
 		})
 	}
 
-	useEffect(() => {
-		if (category === '졸업') {
-			// filter
-		} else if (category === '관리') {
-		}
-	}, [category])
+	// useEffect(() => {
+	// 	if (category === '졸업') {
+	// 		// filter
+	// 	} else if (category === '관리') {
+	// 	}
+	// }, [category])
 
 	useEffect(() => {
 		socket.emit('joinLounge', 21)
 		socket.on('joinedLounge', data => {
-			// console.log(data)/
+			// console.log(data)
+			// 회원 추가 기능 구현하고 다시 데이터를 봐야 한다.
 		})
-		// 회원 추가 기능 구현하고 다시 데이터를 봐야 한다.
 	}, [])
 
 	if (loading) return <Loading />
@@ -241,7 +256,11 @@ const ManageMember: NextPage = () => {
 					</span>
 				</div>
 
-				{Object.entries(manageMemberObject).map((entry, idx) => {
+				{Object.entries(
+					category === '관리중'
+						? manageMemberObject
+						: graduateManageMemberObject
+				).map((entry, idx) => {
 					return (
 						<React.Fragment key={idx}>
 							<div className="mt-4">
@@ -438,12 +457,17 @@ const ManageMember: NextPage = () => {
 										className="w-full h-12 px-10 border"
 										type="text"
 										placeholder="휴대폰 번호 7자리 또는 8자리를 입력해주세요."
-										{...register('phone', {
+										{...register('phoneNumber', {
 											required: true,
-											pattern: /^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/
+											pattern: /^([0-9]{3,4})([0-9]{4})$/
 										})}
+										onBlur={async e => {
+											// 트레이너와 회원을 연결하는 API
+											// 값이 트루인지 확인하고 추가 버튼 disabled
+											// setPhoneNumber(e.target.value)
+										}}
 									/>
-									{errors.phone?.type === 'maxLength' && (
+									{errors.phoneNumber?.type === 'maxLength' && (
 										<div className="text-[16px] text-red-500 mt-1 text-center">
 											붙임표(-)를 제외한 휴대폰 번호 7~8자리를
 											입력해주세요.
