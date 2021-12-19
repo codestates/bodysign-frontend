@@ -198,7 +198,7 @@ const Detail: NextPage = () => {
 												? () => {
 														sessionExerciseInputVar({
 															...sessionExerciseInput,
-															name: exercise.name,
+															exerciseName: exercise.name,
 															sessionExerciseId: exercise.id
 														})
 														modalVar(true)
