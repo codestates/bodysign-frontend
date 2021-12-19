@@ -1,4 +1,5 @@
 import { NextPage } from 'next'
+import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import Layout from '../../../components/Layout'
 import { modalVar } from '../../../graphql/vars'
@@ -148,20 +149,21 @@ const Ledger: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[20px]">
-						<svg
-							className="w-6 h-6 cursor-pointer"
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-							onClick={() => router.back()}>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={1.5}
-								d="M15 19l-7-7 7-7"
-							/>
-						</svg>
+						<Link href="/trainer/menu">
+							<svg
+								className="w-6 h-6 cursor-pointer"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={1.5}
+									d="M15 19l-7-7 7-7"
+								/>
+							</svg>
+						</Link>
 						<div className="font-bold">수업료 정산</div>
 					</span>
 					<span className="flex"></span>

@@ -25,7 +25,6 @@ const labelProperties =
 	'after:absolute after:h-full after:bg-yellow-100 after:w-full after:top-0 after:z-[-1] after:transition-[left] after:duration-500 peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
 
 const Signup: NextPage = () => {
-
 	const router = useRouter()
 	const logintype = router.query.logintype
 	const googleEmail = router.query.email
@@ -62,9 +61,9 @@ const Signup: NextPage = () => {
 			loginType
 		}
 
-		if(logintype === "google") {
+		if (logintype === 'google') {
 			input.email = googleEmail
-			input.loginType = "google"
+			input.loginType = 'google'
 		}
 
 		try {
@@ -85,43 +84,44 @@ const Signup: NextPage = () => {
 		}
 
 		alert('회원가입이 완료되었습니다.')
-		location.href = "http://localhost:3000"
+		location.href = 'http://localhost:3000'
 	}
 
 	return (
 		<>
-			<Layout variant="Web">
+			<Layout>
 				<div className="font-IBM flex flex-col mx-4 my-5 text-[12px]">
 					<div className="text-[25px] text-center font-bold">회원가입</div>
 					<form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
-						{ logintype === "google" ?
-						<div>
-							<label>이메일</label>
-							<input
-								className="w-full h-12 p-3 mt-1 border rounded-3xl text-gray-400 outline-none"
-								type="text"
-								value={googleEmail}
-								readOnly
-							/>
-						</div>
-						: <div>
-							<label>이메일</label>
-							<input
-								className="w-full h-12 p-3 mt-1 border rounded-3xl"
-								type="text"
-								{...register('email', {
-									required: true,
-									pattern:
-										/^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/
-								})}
-							/>
-							{errors.email && (
-								<div className="text-[16px] text-red-500 mt-1 text-center">
-									이메일 형식을 지켜주세요.
-								</div>
-							)}
-						</div>
-						}
+						{logintype === 'google' ? (
+							<div>
+								<label>이메일</label>
+								<input
+									className="w-full h-12 p-3 mt-1 border rounded-3xl text-gray-400 outline-none"
+									type="text"
+									value={googleEmail}
+									readOnly
+								/>
+							</div>
+						) : (
+							<div>
+								<label>이메일</label>
+								<input
+									className="w-full h-12 p-3 mt-1 border rounded-3xl"
+									type="text"
+									{...register('email', {
+										required: true,
+										pattern:
+											/^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/
+									})}
+								/>
+								{errors.email && (
+									<div className="text-[16px] text-red-500 mt-1 text-center">
+										이메일 형식을 지켜주세요.
+									</div>
+								)}
+							</div>
+						)}
 
 						<div className="mt-4">
 							<label>비밀번호</label>

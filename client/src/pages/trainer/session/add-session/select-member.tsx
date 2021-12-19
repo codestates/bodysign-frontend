@@ -54,20 +54,21 @@ const SelectMember: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[20px] font-bold">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							className="w-7 h-7 cursor-pointer"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-							onClick={() => router.back()}>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={1.5}
-								d="M15 19l-7-7 7-7"
-							/>
-						</svg>
+						<Link href="/trainer/session/add-session">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="w-7 h-7 cursor-pointer"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={1.5}
+									d="M15 19l-7-7 7-7"
+								/>
+							</svg>
+						</Link>
 						<div>회원선택</div>
 					</span>
 				</div>
