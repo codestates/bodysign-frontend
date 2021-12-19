@@ -19,3 +19,4 @@ export const sessionExerciseInputVar = makeVar({
 	sessionExerciseId: 0
 })
 export const chatTargetUserIdVar = makeVar<number | null>(null)
+export const accessTokenVar = makeVar('token')
