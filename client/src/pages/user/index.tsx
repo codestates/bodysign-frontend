@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import type { NextPage } from 'next'
 import Layout from '../../components/Layout'
 import logo from '../../../public/logo3.svg'
-import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
+import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client'
 
 export const UserDocument = gql`
 	query User($id: Int!) {
@@ -38,7 +38,6 @@ export const UserDocument = gql`
 
 // TODO : 이름 받아오기
 const main: NextPage = () => {
-
 	const { loading, data: userData } = useQuery(UserDocument, {
 		variables: { id: 1 }
 	})
@@ -89,9 +88,9 @@ const main: NextPage = () => {
 	}
 
 	return (
-		<Layout variant="Web">
+		<Layout>
 			<div className="mb-2.5 flex flex-col w-full mx-4 my-5 text-[12px] font-IBM">
-				<img src={logo} width="50" alt="logo"/>
+				<img src={logo} width="50" alt="logo" />
 			</div>
 
 			<div className="m-5 font-IBM font-thin"></div>
@@ -104,16 +103,21 @@ const main: NextPage = () => {
 				<div className="text-xs mt-2.5 font-thin">
 					{`${inbodyList[0].date} 측정 기준`}
 				</div>
-				{`체중이 ${inbodyList[1].weight - inbodyList[0].weight} kg 변화했어요.`}
+				{`체중이 ${
+					inbodyList[1].weight - inbodyList[0].weight
+				} kg 변화했어요.`}
 			</div>
 			<div className="bottom-2 mt-[500px] mb-2 width-full">
 				<div className="font-IBM font-bold text-[20px] mb-3">
 					예정된 수업
 				</div>
 				<div className="text-[22px] font-IBM font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
-					<div className="inline-block p-1 mx-3 font-bold">{classData.date}</div>
-					<div className="inline-block p-1 mx-3 font-bold float-right">{classData.time}</div>
-
+					<div className="inline-block p-1 mx-3 font-bold">
+						{classData.date}
+					</div>
+					<div className="inline-block p-1 mx-3 font-bold float-right">
+						{classData.time}
+					</div>
 				</div>
 			</div>
 		</Layout>

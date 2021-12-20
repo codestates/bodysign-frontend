@@ -101,43 +101,40 @@ const Info: NextPage = () => {
 									d="M15 19l-7-7 7-7"
 								/>
 							</svg>
-							</Link>
-							<div className="font-bold">
-								내 정보
-							</div>
-						</span>
-						<Link href="/user/menu/modify">
+						</Link>
+						<div className="font-bold">내 정보</div>
+					</span>
+					<Link href="/user/menu/modify">
 						<span className="flex">
 							<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mx-1" viewBox="0 0 20 20" fill="currentColor">
 							<path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
 							<path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
 							</svg>
 						</span>
-						</Link>
-					</div>
-					<div className="mt-4">
-						<div className="flex flex-col justify-between px-3 py-3">
-							<div className="flex justify-between">
-								<span>이름</span>
-								<span className="font-thin">{userInfo.name}</span>
-							</div>
-							<div className="flex justify-between mt-1">
-								<span>성별</span>
-								<span className="font-thin">{userInfo.gender}</span>
-							</div>
-							<div className="flex justify-between mt-1">
-								<span>이메일</span>
-								<span className="font-thin">{userInfo.email}</span>
-							</div>
-							<div className="flex justify-between mt-1">
-								<span>생년월일</span>
-								<span className="font-thin">{userInfo.birth}</span>
-							</div>
-							<div className="flex justify-between mt-1">
-								<span>전화번호</span>
-								<span className="font-thin">{userInfo.phone}</span>
-							</div>
-
+					</Link>
+				</div>
+				<div className="mt-4">
+					<div className="flex flex-col justify-between px-3 py-3">
+						<div className="flex justify-between">
+							<span>이름</span>
+							<span className="font-thin">{userInfo.name}</span>
+						</div>
+						<div className="flex justify-between mt-1">
+							<span>성별</span>
+							<span className="font-thin">{userInfo.gender}</span>
+						</div>
+						<div className="flex justify-between mt-1">
+							<span>이메일</span>
+							<span className="font-thin">{userInfo.email}</span>
+						</div>
+						<div className="flex justify-between mt-1">
+							<span>생년월일</span>
+							<span className="font-thin">{userInfo.birth}</span>
+						</div>
+						<div className="flex justify-between mt-1">
+							<span>전화번호</span>
+							<span className="font-thin">{userInfo.phone}</span>
+						</div>
 							<div className="flex-col mx-5 mt-4">
 								<button
 									onClick={changePasswordModal}
@@ -152,6 +149,7 @@ const Info: NextPage = () => {
 							</div>
 						</div>
 					</div>
+				</div>
 			</div>
 		</Layout>
 	)

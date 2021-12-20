@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../../components/Layout'
 import dummydata from '../../../../../dummydata.json'
 import { deleteStateVar, modalVar } from '../../../../graphql/vars'
-import { gql, useQuery, useMutation } from '@apollo/client';
+import { gql, useQuery, useMutation } from '@apollo/client'
 import { useReactiveVar } from '@apollo/client'
 
 interface FormInput {
@@ -34,18 +34,17 @@ export const UserSessionDetail = gql`
 				}
 			}
 		}
-    }
+	}
 `
 
 const Detail: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
 	const deleteState = useReactiveVar(deleteStateVar)
-    const { loading, data } = useQuery(UserSessionDetail, {
-        variables: { id: 1 }
-    })
+	const { loading, data } = useQuery(UserSessionDetail, {
+		variables: { id: 1 }
+	})
 
-	if(loading) {
-		
+	if (loading) {
 	} else {
 		console.log(data.user.sessions[0].sessionExercises[0])
 	}
@@ -113,7 +112,7 @@ const Detail: NextPage = () => {
 
 	return (
 		<>
-			<Layout variant="Web">
+			<Layout>
 				<div className="font-IBM flex flex-col justify-center mx-4 my-5">
 					<div className="flex items-center justify-between">
 						<span className="flex text-[25px] font-bold">
@@ -223,8 +222,10 @@ const Detail: NextPage = () => {
 						})}
 					</div>
 
-                        {/* 트레이너 피드백 데이터 받아오기 */}
-                    <div className='w-full px-10 py-3 mt-4 text-gray-400 font-IBM font-thin text-center bg-gray-50 h-[150px]'>트레이너가 입력한 피드백입니다.</div>
+					{/* 트레이너 피드백 데이터 받아오기 */}
+					<div className="w-full px-10 py-3 mt-4 text-gray-400 font-IBM font-thin text-center bg-gray-50 h-[150px]">
+						트레이너가 입력한 피드백입니다.
+					</div>
 				</div>
 
 				{modal ? (

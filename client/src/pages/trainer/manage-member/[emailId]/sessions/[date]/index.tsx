@@ -1,21 +1,23 @@
 import { NextPage } from 'next'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../../../../components/Layout'
-import dummydata from '../../../../../../../dummydata.json'
 import {
-	managedUserIdrVar,
-	modalVar
+	managedUserInfoVar,
+	modalVar,
+	sessionExerciseInputVar
 } from '../../../../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import { useRouter } from 'next/dist/client/router'
 import {
+	CreateSessionExerciseVolumeDocument,
 	RemoveSessionExerciseDocument,
+	SessionDocument,
 	UpdateSessionDocument,
-	UpdateSessionExerciseDocument,
 	UserDocument
 } from '../../../../../../graphql/graphql'
+import Loading from '../../../../../../components/Loading'
 
 interface FormInput {
 	weight: string
@@ -25,127 +27,21 @@ interface FormInput {
 
 const Detail: NextPage = () => {
 	const router = useRouter()
-	const managedUserId = useReactiveVar(managedUserIdrVar)
 	const modal = useReactiveVar(modalVar)
+	const managedUserInfo = useReactiveVar(managedUserInfoVar)
+	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
-	const { loading, data } = useQuery(UserDocument, {
-		variables: { id: managedUserId }
+	const { loading, data } = useQuery(SessionDocument, {
+		variables: { id: sessionExerciseInput.sessionId }
 	})
-	const [updateSessionExercise] = useMutation(
-		UpdateSessionExerciseDocument
+	const [createSessionExerciseVolume] = useMutation(
+		CreateSessionExerciseVolumeDocument
 	)
+	const [updateSession] = useMutation(UpdateSessionDocument)
 	const [removeSessionExercise] = useMutation(
 		RemoveSessionExerciseDocument
 	)
-	const [updateSession] = useMutation(UpdateSessionDocument)
-
-	const exercises = [
-		{
-			id: 1,
-			name: '스쿼트',
-			volumes: [
-				{
-					id: 1,
-					weight: 85,
-					reps: 5,
-					sets: 1
-				}
-			]
-		},
-		{
-			id: 2,
-			name: '데드리프트',
-			volumes: [
-				{
-					id: 1,
-					weight: 85,
-					reps: 3,
-					sets: 1
-				},
-				{
-					id: 2,
-					weight: 90,
-					reps: 1,
-					sets: 1
-				}
-			]
-		},
-		{
-			id: 3,
-			name: '벤치프레스',
-			volumes: [
-				{
-					id: 1,
-					weight: 55,
-					reps: 3,
-					sets: 1
-				},
-				{
-					id: 2,
-					weight: 60,
-					reps: 1,
-					sets: 1
-				}
-			]
-		}
-		// {
-		// 	id: 4,
-		// 	name: '오버헤드프레스',
-		// 	volumes: [
-		// 		{ id: 1, weight: 30, reps: 5, sets: 1 },
-		// 		{
-		// 			id: 2,
-		// 			weight: 32.5,
-		// 			reps: 3,
-		// 			sets: 1
-		// 		},
-		// 		{
-		// 			id: 3,
-		// 			weight: 35,
-		// 			reps: 1,
-		// 			sets: 1
-		// 		}
-		// 	]
-		// },
-		// {
-		// 	id: 5,
-		// 	name: '친업',
-		// 	volumes: [
-		// 		{
-		// 			id: 1,
-		// 			weight: 30,
-		// 			reps: 5,
-		// 			sets: 1
-		// 		},
-		// 		{
-		// 			id: 2,
-		// 			weight: 32.5,
-		// 			reps: 3,
-		// 			sets: 1
-		// 		},
-		// 		{
-		// 			id: 3,
-		// 			weight: 35,
-		// 			reps: 1,
-		// 			sets: 1
-		// 		}
-		// 	]
-		// },
-		// {
-		// 	id: 6,
-		// 	name: '풀업',
-		// 	volumes: [
-		// 		{
-		// 			id: 1,
-		// 			weight: 55,
-		// 			reps: 5,
-		// 			sets: 3
-		// 		}
-		// 	]
-		// }
-	]
-
 	const {
 		register,
 		formState: { errors },
@@ -153,33 +49,46 @@ const Detail: NextPage = () => {
 	} = useForm<FormInput>()
 	const onSubmit: SubmitHandler<FormInput> = data => {
 		// 볼륨 작성 API
-		// try {
-		// 	updateSessionExercise({
-		// 		variables: {
-		// 			updateSessionExerciseInput: {
-		// 				id: 2,
-		// 				trainerId: 21
-		// 			}
-		// 		}
-		// 	})
-		// } catch (error) {
-		// 	console.log(error)
-		// }
+		try {
+			createSessionExerciseVolume({
+				variables: {
+					createSessionExerciseVolumeInput: {
+						sessionExerciseId: sessionExerciseInput.sessionExerciseId,
+						reps: +data.reps,
+						sets: +data.sets,
+						weight: +data.weight
+					}
+				},
+				refetchQueries: [
+					{
+						query: UserDocument,
+						variables: { id: managedUserInfo.userId }
+					}
+				]
+			})
+			sessionExerciseInputVar({
+				...sessionExerciseInput,
+				sessionExerciseId: 0
+			})
+			modalVar(false)
+		} catch (error) {
+			console.log(error)
+		}
 	}
 
+	if (loading) return <Loading />
 	return (
 		<>
-			<Layout variant="Web">
-				<div className="flex flex-col justify-center mx-4 my-5 font-IBM">
-					<div className="flex items-center justify-between">
-						<span className="flex text-[25px] font-bold">
+			<Layout>
+				<div className="flex items-center justify-between">
+					<span className="flex text-[25px] font-bold">
+						<Link href={router.asPath.split('20')[0]}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6 cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
-								stroke="currentColor"
-								onClick={() => router.back()}>
+								stroke="currentColor">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -187,143 +96,180 @@ const Detail: NextPage = () => {
 									d="M15 19l-7-7 7-7"
 								/>
 							</svg>
-							<div className="font-bold">{dummydata[0].date}</div>
-						</span>
-						<span className="flex items-center">
-							{!readyDelete ? (
-								<>
-									<span className="relative inline-block w-10 align-middle select-none">
-										<input
-											className="absolute block w-6 h-6 bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#fde68a] peer"
-											type="checkbox"
-											name="toggle"
-											id="toggle"
-											// checked={userData.user.graduate}
-											onChange={e => {
-												// 피드백 완료 여부 API
-												// 데이터를 받고 checked 상태를 변경한다.
-												// e.target.checked을 가지고 mutation
-												// try {
-												// 	updateSession({
-												// 		variables: {
-												// 			updateSessionInput: {
-												// 				id: managedUserId,
-												// 				graduate: e.target.checked
-												// 			}
-												// 		}
-												// 	})
-												// } catch (error) {
-												// 	console.log(error)
-												// }
-											}}
-										/>
-										<label
-											className="block h-6 bg-gray-300 rounded-full cursor-pointer peer peer-checked:bg-[#fde68a] overflow-hidden"
-											htmlFor="toggle"
-										/>
-									</span>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										className="mx-3 w-7 h-7 cursor-pointer"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
-										onClick={() => setReadyDelete(true)}>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={1.5}
-											d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-										/>
-									</svg>
-								</>
-							) : (
+						</Link>
+						<div className="font-bold">{router.query.date}</div>
+					</span>
+					<span className="flex items-center">
+						{!readyDelete ? (
+							<>
+								<span className="relative inline-block w-10 align-middle select-none">
+									<input
+										className="absolute block w-6 h-6 bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#fde68a] peer"
+										type="checkbox"
+										name="toggle"
+										id="toggle"
+										checked={data.session.sentFeedback}
+										onChange={async e => {
+											// 피드백 완료 여부 API
+											try {
+												await updateSession({
+													variables: {
+														updateSessionInput: {
+															id: sessionExerciseInput.sessionId,
+															sentFeedback: e.target.checked
+														}
+													},
+													refetchQueries: [
+														{
+															query: SessionDocument,
+															variables: {
+																id: sessionExerciseInput.sessionId
+															}
+														}
+													]
+												})
+											} catch (error) {
+												console.log(error)
+											}
+										}}
+									/>
+									<label
+										className="block h-6 bg-gray-300 rounded-full cursor-pointer peer peer-checked:bg-[#fde68a] overflow-hidden"
+										htmlFor="toggle"
+									/>
+								</span>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									className="mx-3 w-7 h-7 cursor-pointer"
 									fill="none"
 									viewBox="0 0 24 24"
 									stroke="currentColor"
-									onClick={() => {
-										// 운동 종목 삭제 API 2
-										setReadyDelete(false)
-										deleteLists.clear()
-									}}>
+									onClick={() => setReadyDelete(true)}>
 									<path
 										strokeLinecap="round"
 										strokeLinejoin="round"
 										strokeWidth={1.5}
-										d="M5 13l4 4L19 7"
+										d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
 									/>
 								</svg>
-							)}
-						</span>
-					</div>
+							</>
+						) : (
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="mx-3 w-7 h-7 cursor-pointer"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								onClick={async () => {
+									// 운동 종목 삭제 step 2
+									const deleteItemId = Array.from(deleteLists)[0]
+									if (deleteItemId) {
+										try {
+											await removeSessionExercise({
+												variables: {
+													id: deleteItemId
+												},
+												refetchQueries: [
+													{
+														query: SessionDocument,
+														variables: {
+															id: sessionExerciseInput.sessionId
+														}
+													}
+												]
+											})
+											deleteLists.clear()
+										} catch (error) {
+											console.log(error)
+										}
+									}
+									setReadyDelete(false)
+								}}>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={1.5}
+									d="M5 13l4 4L19 7"
+								/>
+							</svg>
+						)}
+					</span>
+				</div>
 
-					<div className="flex flex-col mt-4">
-						{exercises.map(exercise => {
-							return (
-								<React.Fragment key={exercise.id}>
-									<div className="font-thin flex px-3 py-3 mt-1 border first:mt-0 text-[16px] flex-col items-center">
-										<div
-											className="w-full p-3 text-center border bg-gray-50 cursor-pointer"
-											onClick={
-												!readyDelete
-													? () => modalVar(true)
-													: e => {
-															if (
-																e !== null &&
-																e.target instanceof HTMLElement
-															) {
-																// 운동 종목 삭제 API 1
-																// console.log(e.target.dataset.id)
-																// if (e.target.dataset.id) {
-																// 	const id = +e.target.dataset.id
-																// 	if (deleteLists.has(id)) {
-																// 		setDeleteLists(
-																// 			prev =>
-																// 				new Set(
-																// 					[...prev].filter(el => el !== id)
-																// 				)
-																// 		)
-																// 	} else {
-																// 		setDeleteLists(
-																// 			prev => new Set(prev.add(id))
-																// 		)
-																// 	}
-																// }
+				<div className="flex flex-col mt-4">
+					{data.session.sessionExercises.map((exercise: any) => {
+						const deleteItemId = Array.from(deleteLists)[0]
+						return (
+							<React.Fragment key={exercise.id}>
+								<div
+									className={`"flex px-3 py-3 mt-1 border first:mt-0 text-[16px] flex-col items-center" ${
+										exercise.id === deleteItemId ? 'ring-2' : ''
+									}`}>
+									<div
+										className={`w-full p-3 text-center border bg-gray-50 cursor-pointer ${
+											exercise.id === deleteItemId ? 'ring-2' : ''
+										}`}
+										data-id={exercise.id}
+										onClick={
+											!readyDelete
+												? () => {
+														sessionExerciseInputVar({
+															...sessionExerciseInput,
+															exerciseName: exercise.name,
+															sessionExerciseId: exercise.id
+														})
+														modalVar(true)
+												  }
+												: e => {
+														if (
+															e !== null &&
+															e.target instanceof HTMLElement
+														) {
+															// 운동 종목 삭제 step 1
+															if (e.target.dataset.id) {
+																const id = +e.target.dataset.id
+																// 하나만 가능한 조건
+																if (deleteLists.size > 0) {
+																	setDeleteLists(prev => new Set())
+																}
+																if (deleteLists.has(id)) {
+																	setDeleteLists(
+																		prev =>
+																			new Set(
+																				[...prev].filter(el => el !== id)
+																			)
+																	)
+																} else {
+																	setDeleteLists(
+																		prev => new Set(prev.add(id))
+																	)
+																}
 															}
-													  }
-											}>
-											{exercise.name}
-										</div>
-										{exercise.volumes.map(volume => {
-											return (
-												<React.Fragment key={volume.id}>
-													<div className="flex justify-around w-full py-1 border-b last:border-b-0">
-														<span className="w-full text-center">
-															{volume.weight}kg
-														</span>
-														<span className="w-full text-center">
-															{volume.reps}회
-														</span>
-														<span className="w-full text-center">
-															{volume.sets}세트
-														</span>
-													</div>
-												</React.Fragment>
-											)
-										})}
+														}
+												  }
+										}>
+										{exercise.name}
 									</div>
-								</React.Fragment>
-							)
-						})}
-					</div>
-
-					<Link
-						href={`/trainer/manage-member/${
-							dummydata[0].email.split('@')[0]
-						}/sessions/${dummydata[0].date}/select-exercise`}>
+									{exercise.sessionExerciseVolumes.map((volume: any) => {
+										return (
+											<div className="flex justify-around w-full py-1 border-b last:border-b-0">
+												<span className="w-full text-center">
+													{volume.weight}kg
+												</span>
+												<span className="w-full text-center">
+													{volume.reps}회
+												</span>
+												<span className="w-full text-center">
+													{volume.sets}세트
+												</span>
+											</div>
+										)
+									})}
+								</div>
+							</React.Fragment>
+						)
+					})}
+					<Link href={`${router.asPath}/select-exercise`}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="self-center w-6 h-6 mt-4 text-gray-500 cursor-pointer"
@@ -338,29 +284,31 @@ const Detail: NextPage = () => {
 							/>
 						</svg>
 					</Link>
-
-					<textarea
-						className="w-full px-10 py-3 mt-4 font-thin text-gray-400 font-IBM"
-						autoFocus
-						autoSave="true"
-						defaultValue={'피드백을 입력해주세요.'}
-						onChange={e => {
-							// 피드백 작성 API
-							// e.target.value
-							// try {
-							// 	updateSession({
-							// 		variables: {
-							// 			updateSessionInput: {
-							// 				id: managedUserId,
-							// 				feedback: e.target.value
-							// 			}
-							// 		}
-							// 	})
-							// } catch (error) {
-							// 	console.log(error)
-							// }
-						}}></textarea>
 				</div>
+
+				<textarea
+					className="w-full px-10 py-3 mt-4 font-IBM"
+					autoFocus
+					autoSave="true"
+					placeholder="피드백을 입력해주세요."
+					defaultValue={data.session.feedback}
+					onBlur={e => {
+						// 피드백 작성 API
+						// e.target.value
+						try {
+							updateSession({
+								variables: {
+									updateSessionInput: {
+										id: sessionExerciseInput.sessionId,
+										feedback: e.target.value
+									}
+								}
+							})
+						} catch (error) {
+							console.log(error)
+						}
+					}}
+				/>
 
 				{modal ? (
 					<div className="font-IBM fixed max-w-[450px] w-full bottom-0">

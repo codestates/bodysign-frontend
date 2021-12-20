@@ -1,17 +1,11 @@
-type WeborApp = 'Web' | 'App'
-
 interface LayoutProps {
 	children: React.ReactNode
-	variant: WeborApp
 }
 
-const Layout = ({ children, variant = 'Web' }: LayoutProps) => {
+const Layout = ({ children }: LayoutProps) => {
 	return (
-		<div
-			className={`flex-col justify-center m-auto ${
-				variant === 'Web' ? 'max-w-[450px]' : 'w-full'
-			}`}>
-			{children}
+		<div className="font-IBM flex flex-col justify-center sm:w-[450px] sm:mx-auto">
+			<div className="sm-max:w-screen layout">{children}</div>
 		</div>
 	)
 }

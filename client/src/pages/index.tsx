@@ -7,7 +7,7 @@ import Layout from '../components/Layout'
 const Home: NextPage = () => {
 	return (
 		<div>
-			<Layout variant="Web">
+			<Layout>
 				<Head>
 					<title>Bodysign</title>
 				</Head>

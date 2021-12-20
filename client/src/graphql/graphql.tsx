@@ -11,19 +11,24 @@ export const UserDocument = gql`
 			phoneNumber
 			gender
 			graduate
+			trainerId
+			userCategoryId
 			sessions {
 				id
 				userId
-				date
 				trainerId
 				feedback
+				sentFeedback
+				date
 				sessionExercises {
 					id
 					name
-					reps
-					sets
-					weight
 					sessionId
+					sessionExerciseVolumes {
+						reps
+						sets
+						weight
+					}
 				}
 			}
 			inbodies {
@@ -42,7 +47,6 @@ export const UserDocument = gql`
 				commission
 				userId
 			}
-			userCategoryId
 		}
 	}
 `
@@ -52,6 +56,8 @@ export const TrainerDocument = gql`
 		trainer(id: $id) {
 			id
 			email
+			userName
+			birthDate
 			phoneNumber
 			gender
 			users {
@@ -62,6 +68,7 @@ export const TrainerDocument = gql`
 				phoneNumber
 				gender
 				graduate
+				userCategoryId
 				sessionHistories {
 					id
 					date
@@ -70,15 +77,34 @@ export const TrainerDocument = gql`
 					usedCount
 					commission
 					userId
+					user {
+						userName
+					}
 				}
-				userCategoryId
 			}
 			sessions {
 				id
 				userId
-				date
 				trainerId
 				feedback
+				sentFeedback
+				completedSession
+				date
+				user {
+					id
+					userName
+					gender
+				}
+				sessionExercises {
+					name
+					sessionExerciseVolumes {
+						id
+						reps
+						sets
+						weight
+						seq
+					}
+				}
 			}
 			exerciseCategories {
 				id
@@ -100,16 +126,26 @@ export const TrainerDocument = gql`
 	}
 `
 
-export const SessionHistoriesDocument = gql`
-	query SessionHistories {
-		sessionHistories {
+export const SessionDocument = gql`
+	query Session($id: Int!) {
+		session(id: $id) {
 			id
-			date
-			costPerSession
-			totalCount
-			usedCount
-			commission
 			userId
+			trainerId
+			feedback
+			sentFeedback
+			date
+			sessionExercises {
+				id
+				name
+				sessionExerciseVolumes {
+					id
+					reps
+					sets
+					weight
+					seq
+				}
+			}
 		}
 	}
 `
@@ -130,6 +166,20 @@ export const UserCategoryDocument = gql`
 			id
 			name
 			trainerId
+		}
+	}
+`
+
+export const SessionHistoriesDocument = gql`
+	query SessionHistories {
+		sessionHistories {
+			id
+			date
+			costPerSession
+			totalCount
+			usedCount
+			commission
+			userId
 		}
 	}
 `
@@ -163,6 +213,21 @@ export const UpdateUserDocument = gql`
 	}
 `
 
+// export const FindOneUserByPhoneNumberTempDocument = gql`
+// 	mutation FindOneUserByPhoneNumberTemp(
+// 		$phoneNumber: String!
+// 		$trainerId: String!
+// 	) {
+// 		findOneUserByPhoneNumberTemp(
+// 			phoneNumber: $phoneNumber
+// 			trainerId: $trainerId
+// 		) {
+// 			id
+// 			userName
+// 		}
+// 	}
+// `
+
 export const CreateTrainerDocument = gql`
 	mutation CreateTrainer($createTrainerInput: CreateTrainerInput!) {
 		createTrainer(createTrainerInput: $createTrainerInput) {
@@ -176,6 +241,31 @@ export const CreateTrainerDocument = gql`
 	}
 `
 
+export const UpdateTrainerDocument = gql`
+	mutation UpdateTrainer($updateTrainerInput: UpdateTrainerInput!) {
+		updateTrainer(updateTrainerInput: $updateTrainerInput) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+		}
+	}
+`
+
+export const RemoveTrainerDocument = gql`
+	mutation RemoveTrainer($id: Int!) {
+		removeTrainer(id: $id) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+		}
+	}
+`
 export const CreateSessionDocument = gql`
 	mutation CreateSession($createSessionInput: CreateSessionInput!) {
 		createSession(createSessionInput: $createSessionInput) {
@@ -221,9 +311,6 @@ export const CreateSessionExerciseDocument = gql`
 		) {
 			id
 			name
-			reps
-			sets
-			weight
 			sessionId
 		}
 	}
@@ -238,9 +325,6 @@ export const UpdateSessionExerciseDocument = gql`
 		) {
 			id
 			name
-			reps
-			sets
-			weight
 			sessionId
 		}
 	}
@@ -251,9 +335,6 @@ export const RemoveSessionExerciseDocument = gql`
 		removeSessionExercise(id: $id) {
 			id
 			name
-			reps
-			sets
-			weight
 			sessionId
 		}
 	}
@@ -349,6 +430,22 @@ export const CreateUserCategoryDocument = gql`
 			id
 			status
 			trainerId
+		}
+	}
+`
+
+export const CreateSessionExerciseVolumeDocument = gql`
+	mutation CreateSessionExerciseVolume(
+		$createSessionExerciseVolumeInput: CreateSessionExerciseVolumeInput!
+	) {
+		createSessionExerciseVolume(
+			createSessionExerciseVolumeInput: $createSessionExerciseVolumeInput
+		) {
+			id
+			reps
+			sets
+			weight
+			seq
 		}
 	}
 `
