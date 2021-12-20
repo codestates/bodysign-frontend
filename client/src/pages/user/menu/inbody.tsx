@@ -4,8 +4,24 @@ import type { NextPage } from 'next'
 import AddInbody from '../../../components/AddInbody'
 import Layout from '../../../components/Layout'
 import Chart from 'chart.js/auto'
+import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
+
+export const UserInbody = gql`
+	query User($id: Int!) {
+		user(id: $id) {
+			inbodies {
+				id
+				bodyWeight
+				muscleWeight
+				bodyFat
+				measuredDate
+			}
+		}
+	}
+`
 
 const Inbody: NextPage = () => {
+	const { loading, data } = useQuery(UserInbody)
 	const [isInbodyModalOpen, setIsInbodyModalOpen] = useState(false)
 	const canvasRef = useRef(null)
 	const [inbodyDataList, setInbodyDataList] = useState([
