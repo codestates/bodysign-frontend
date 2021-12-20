@@ -14,7 +14,7 @@ const Menu: NextPage = () => {
 					</span>
 				</div>
 
-				<div className="mt-4 h-full">
+				<div className="mt-4">
 					<Link href="/trainer/menu/info">
 						<div className="flex justify-between cursor-pointer hover:bg-gray-100 items-center">
 							<li className="m-1 text-gray-400 list-none">내 정보</li>

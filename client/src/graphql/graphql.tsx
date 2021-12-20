@@ -12,19 +12,23 @@ export const UserDocument = gql`
 			gender
 			graduate
 			trainerId
+			userCategoryId
 			sessions {
 				id
 				userId
-				date
 				trainerId
 				feedback
+				sentFeedback
+				date
 				sessionExercises {
 					id
 					name
-					reps
-					sets
-					weight
 					sessionId
+					sessionExerciseVolumes {
+						reps
+						sets
+						weight
+					}
 				}
 			}
 			inbodies {
@@ -43,7 +47,6 @@ export const UserDocument = gql`
 				commission
 				userId
 			}
-			userCategoryId
 		}
 	}
 `
@@ -65,6 +68,7 @@ export const TrainerDocument = gql`
 				phoneNumber
 				gender
 				graduate
+				userCategoryId
 				sessionHistories {
 					id
 					date
@@ -77,19 +81,30 @@ export const TrainerDocument = gql`
 						userName
 					}
 				}
-				userCategoryId
 			}
 			sessions {
 				id
 				userId
-				date
 				trainerId
 				feedback
-				# user {
-				# 	id
-				# 	userName
-				# 	gender
-				# }
+				sentFeedback
+				completedSession
+				date
+				user {
+					id
+					userName
+					gender
+				}
+				sessionExercises {
+					name
+					sessionExerciseVolumes {
+						id
+						reps
+						sets
+						weight
+						seq
+					}
+				}
 			}
 			exerciseCategories {
 				id
@@ -111,16 +126,26 @@ export const TrainerDocument = gql`
 	}
 `
 
-export const SessionHistoriesDocument = gql`
-	query SessionHistories {
-		sessionHistories {
+export const SessionDocument = gql`
+	query Session($id: Int!) {
+		session(id: $id) {
 			id
-			date
-			costPerSession
-			totalCount
-			usedCount
-			commission
 			userId
+			trainerId
+			feedback
+			sentFeedback
+			date
+			sessionExercises {
+				id
+				name
+				sessionExerciseVolumes {
+					id
+					reps
+					sets
+					weight
+					seq
+				}
+			}
 		}
 	}
 `
@@ -141,6 +166,20 @@ export const UserCategoryDocument = gql`
 			id
 			name
 			trainerId
+		}
+	}
+`
+
+export const SessionHistoriesDocument = gql`
+	query SessionHistories {
+		sessionHistories {
+			id
+			date
+			costPerSession
+			totalCount
+			usedCount
+			commission
+			userId
 		}
 	}
 `
@@ -173,6 +212,21 @@ export const UpdateUserDocument = gql`
 		}
 	}
 `
+
+// export const FindOneUserByPhoneNumberTempDocument = gql`
+// 	mutation FindOneUserByPhoneNumberTemp(
+// 		$phoneNumber: String!
+// 		$trainerId: String!
+// 	) {
+// 		findOneUserByPhoneNumberTemp(
+// 			phoneNumber: $phoneNumber
+// 			trainerId: $trainerId
+// 		) {
+// 			id
+// 			userName
+// 		}
+// 	}
+// `
 
 export const CreateTrainerDocument = gql`
 	mutation CreateTrainer($createTrainerInput: CreateTrainerInput!) {
@@ -257,9 +311,6 @@ export const CreateSessionExerciseDocument = gql`
 		) {
 			id
 			name
-			reps
-			sets
-			weight
 			sessionId
 		}
 	}
@@ -274,9 +325,6 @@ export const UpdateSessionExerciseDocument = gql`
 		) {
 			id
 			name
-			reps
-			sets
-			weight
 			sessionId
 		}
 	}
@@ -287,9 +335,6 @@ export const RemoveSessionExerciseDocument = gql`
 		removeSessionExercise(id: $id) {
 			id
 			name
-			reps
-			sets
-			weight
 			sessionId
 		}
 	}
@@ -385,6 +430,22 @@ export const CreateUserCategoryDocument = gql`
 			id
 			status
 			trainerId
+		}
+	}
+`
+
+export const CreateSessionExerciseVolumeDocument = gql`
+	mutation CreateSessionExerciseVolume(
+		$createSessionExerciseVolumeInput: CreateSessionExerciseVolumeInput!
+	) {
+		createSessionExerciseVolume(
+			createSessionExerciseVolumeInput: $createSessionExerciseVolumeInput
+		) {
+			id
+			reps
+			sets
+			weight
+			seq
 		}
 	}
 `

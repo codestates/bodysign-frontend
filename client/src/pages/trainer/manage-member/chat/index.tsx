@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { io } from 'socket.io-client'
 import Layout from '../../../../components/Layout'
 import axios from 'axios'
+import { useReactiveVar } from '@apollo/client'
+import { chatTargetUserIdVar } from '../../../../graphql/vars'
 
 enum SenderReceiver {
 	User = 'User',
@@ -23,8 +25,8 @@ interface Chat {
 	updatedAt: string
 }
 
-const socket = io('localhost:5000')
 const Chat: NextPage = () => {
+	const chatTargetUserId = useReactiveVar(chatTargetUserIdVar)
 	const [message, setMessage] = useState('')
 	const [chats, setChat] = useState<Chat[]>([])
 	const [dataUrl, setDataUrl] = useState('')
@@ -34,8 +36,9 @@ const Chat: NextPage = () => {
 		readyUpload: false
 	})
 
+	const socket = io('localhost:5000')
 	useEffect(() => {
-		socket.emit('joinRoom', '26|21')
+		socket.emit('joinRoom', `${chatTargetUserId}|21`)
 		socket.on('joinedRoom', data => {
 			data.reverse().map((el: any) => {
 				if (el.sender === 'Trainer') {
@@ -63,7 +66,7 @@ const Chat: NextPage = () => {
 	}, [])
 
 	useEffect(() => {
-		socket.on('receiveMessage', chat => {
+		socket.on('receiveChat', chat => {
 			setChat(prev =>
 				prev.concat({
 					sender: chat.sender,
@@ -104,18 +107,11 @@ const Chat: NextPage = () => {
 				})
 		}
 	}
+
 	const sendChat = async () => {
 		try {
-			setChat(prev =>
-				prev.concat({
-					sender: SenderReceiver.Trainer,
-					text: message,
-					imgs: img.url ? [{ id: img.id, url: img.url }] : [],
-					updatedAt: new Date().toISOString()
-				})
-			)
 			socket.emit('sendChat', {
-				room: '26|21',
+				room: `${chatTargetUserId}|21`,
 				text: message,
 				sender: 'Trainer',
 				imgIds: img.id ? [img.id] : []
@@ -145,7 +141,8 @@ const Chat: NextPage = () => {
 								viewBox="0 0 24 24"
 								stroke="currentColor"
 								onClick={() => {
-									socket.emit('leaveRoom', '26|21')
+									socket.emit('leaveRoom', `${chatTargetUserId}|21`)
+									chatTargetUserIdVar(null)
 								}}>
 								<path
 									strokeLinecap="round"
@@ -182,8 +179,8 @@ const Chat: NextPage = () => {
 						</span>
 					</div> */}
 
-				<div className="flex flex-col border mt-4 h-full">
-					<div className="p-3 flex flex-col overflow-y-scroll no-scrollbar">
+				<div className="flex flex-col border mt-4">
+					<div className="p-3 flex flex-col overflow-y-scroll no-scrollbar h-[calc(100vh-37px-16px-68px)]">
 						{chats.map((chat, idx) => {
 							const url = chat.imgs[0]?.url
 							return chat.imgs.length ? (
@@ -215,7 +212,7 @@ const Chat: NextPage = () => {
 							)
 						})}
 					</div>
-					<div className="flex flex-col fixed bottom-0 sm-max:w-screen sm:w-[450px]">
+					<div className="flex flex-col">
 						<div className="p-3 flex">
 							<label className="mt-[10px] mr-2" htmlFor="upload">
 								<svg

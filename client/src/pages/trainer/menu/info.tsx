@@ -1,5 +1,6 @@
 import { NextPage } from 'next'
-import React, { useRef, useState } from 'react'
+import Link from 'next/link'
+import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
 import { modalVar } from '../../../graphql/vars'
@@ -62,20 +63,21 @@ const TrainerInfo: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[20px]">
-						<svg
-							className="w-6 h-6 cursor-pointer"
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-							onClick={() => router.back()}>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={1.5}
-								d="M15 19l-7-7 7-7"
-							/>
-						</svg>
+						<Link href="/trainer/menu">
+							<svg
+								className="w-6 h-6 cursor-pointer"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={1.5}
+									d="M15 19l-7-7 7-7"
+								/>
+							</svg>
+						</Link>
 						<div className="font-bold">{data.trainer.userName} 회원님</div>
 					</span>
 					<span className="flex">
@@ -104,8 +106,6 @@ const TrainerInfo: NextPage = () => {
 								stroke="currentColor"
 								onClick={async () => {
 									// 정보 수정 API
-									console.log(updateTrainerInput)
-
 									try {
 										await updateTrainer({
 											variables: {

@@ -3,7 +3,11 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { managedUserInfoVar, modalVar } from '../../../graphql/vars'
+import {
+	chatTargetUserIdVar,
+	managedUserInfoVar,
+	modalVar
+} from '../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import Loading from '../../../components/Loading'
 import {
@@ -21,10 +25,11 @@ interface Member {
 	userName: string
 	phoneNumber: string
 	gender: string
+	count: string
 }
 
 interface FormInput {
-	phone: string
+	phoneNumber: string
 	userCategoryId: number
 	userCategoryName: string
 }
@@ -51,20 +56,16 @@ const ManageMember: NextPage = () => {
 		// 회원 추가 API
 		if (checkModal === 'linktraineruser') {
 			try {
-				// 트레이너와 회원을 연결하는 API
-				// update에서는 trainerId 인풋이 없다.
-				// 서버에서 전화번호를 가지고 특정 유저를 찾을지?
-				// 모든 유저를 받아서 클라이언트에서 찾을지?
-				updateUser({
-					variables: {
-						updateUserInput: {
-							id: 2,
-							trainerId: 21,
-							userCategoryId: +data.userCategoryId
-						}
-					}
-				})
-				modalVar(false)
+				// updateUser({
+				// 	variables: {
+				// 		updateUserInput: {
+				// 			id: 2,
+				// 			trainerId: 21,
+				// 			userCategoryId: +data.userCategoryId
+				// 		}
+				// 	}
+				// })
+				// modalVar(false)
 			} catch (error) {
 				console.log(error)
 			}
@@ -94,39 +95,54 @@ const ManageMember: NextPage = () => {
 	}
 
 	const manageMemberObject: Record<string, Member[]> = {}
-	if (!loading) {
+	const graduateManageMemberObject: Record<string, Member[]> = {}
+	if (!loading && data) {
 		const userCategories = data.trainer.userCategories
-		for (let i = 0; i < userCategories.length; i++) {
-			if (manageMemberObject[userCategories[i].name] === undefined) {
-				manageMemberObject[userCategories[i].name] = []
-			}
-		}
+
 		data.trainer.users.forEach((user: any) => {
+			let sumUsedCount = 0
+			let sumTotalCount = 0
+			for (let i = 0; i < user.sessionHistories.length; i++) {
+				sumUsedCount = sumUsedCount + user.sessionHistories[i].usedCount
+				sumTotalCount = sumTotalCount + user.sessionHistories[i].totalCount
+			}
+
 			const userCategoryName =
 				userCategories[user.userCategoryId - 1]?.name
-			manageMemberObject[userCategoryName].push({
-				id: user.id,
-				email: user.email,
-				userName: user.userName,
-				phoneNumber: user.phoneNumber,
-				gender: user.gender
-			})
+			if (user.graduate) {
+				if (graduateManageMemberObject[userCategoryName] === undefined) {
+					graduateManageMemberObject[userCategoryName] = []
+				}
+				graduateManageMemberObject[userCategoryName].push({
+					id: user.id,
+					email: user.email,
+					userName: user.userName,
+					phoneNumber: user.phoneNumber,
+					gender: user.gender,
+					count: `${sumUsedCount} / ${sumTotalCount}`
+				})
+			} else {
+				if (manageMemberObject[userCategoryName] === undefined) {
+					manageMemberObject[userCategoryName] = []
+				}
+				manageMemberObject[userCategoryName].push({
+					id: user.id,
+					email: user.email,
+					userName: user.userName,
+					phoneNumber: user.phoneNumber,
+					gender: user.gender,
+					count: `${sumUsedCount} / ${sumTotalCount}`
+				})
+			}
 		})
 	}
 
 	useEffect(() => {
-		if (category === '졸업') {
-			// filter
-		} else if (category === '관리') {
-		}
-	}, [category])
-
-	useEffect(() => {
 		socket.emit('joinLounge', 21)
 		socket.on('joinedLounge', data => {
-			console.log(data)
+			// console.log(data)
+			// 회원 추가 기능 구현하고 다시 데이터를 봐야 한다.
 		})
-		// 회원 추가 기능 구현하고 다시 데이터를 봐야 한다.
 	}, [])
 
 	if (loading) return <Loading />
@@ -195,11 +211,31 @@ const ManageMember: NextPage = () => {
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
-								onClick={() => {
-									// 회원 삭제 API 2
-									// update API 추가 예정
+								onClick={async () => {
+									// 회원 삭제 step 2
+									const deleteItemId = Array.from(deleteLists)[0]
+									if (deleteItemId) {
+										try {
+											await updateUser({
+												variables: {
+													updateUserInput: {
+														id: deleteItemId,
+														trainerId: null
+													}
+												},
+												refetchQueries: [
+													{
+														query: TrainerDocument,
+														variables: { id: 21 }
+													}
+												]
+											})
+											deleteLists.clear()
+										} catch (error) {
+											console.log(error)
+										}
+									}
 									setReadyDelete(false)
-									deleteLists.clear()
 								}}>
 								<path
 									strokeLinecap="round"
@@ -237,7 +273,11 @@ const ManageMember: NextPage = () => {
 					</span>
 				</div>
 
-				{Object.entries(manageMemberObject).map((entry, idx) => {
+				{Object.entries(
+					category === '관리중'
+						? manageMemberObject
+						: graduateManageMemberObject
+				).map((entry, idx) => {
 					return (
 						<React.Fragment key={idx}>
 							<div className="mt-4">
@@ -262,9 +302,10 @@ const ManageMember: NextPage = () => {
 															/>
 														)}
 														{
-															<div className="flex flex-col h-1 ml-1 cursor-pointer">
+															<div className="flex flex-col h-1 ml-1">
 																<div
-																	className="ml-2 hover:cursor-pointer font-thin h-[18px]"
+																	className="ml-2 font-thin h-[18px] cursor-pointer"
+																	data-id={member.id}
 																	onClick={
 																		!readyDelete
 																			? () => {
@@ -285,10 +326,16 @@ const ManageMember: NextPage = () => {
 																						e !== null &&
 																						e.target instanceof HTMLElement
 																					) {
-																						// 회원 삭제 API 1
+																						// 회원 삭제 step 1
 																						if (e.target.dataset.id) {
 																							const id =
 																								+e.target.dataset.id
+																							// 하나만 가능한 조건
+																							if (deleteLists.size > 0) {
+																								setDeleteLists(
+																									prev => new Set()
+																								)
+																							}
 																							if (deleteLists.has(id)) {
 																								setDeleteLists(
 																									prev =>
@@ -311,25 +358,31 @@ const ManageMember: NextPage = () => {
 																	{member.userName} 회원님
 																</div>
 																<div className="text-[5px] ml-2 font-thin">
-																	10 / 24회
+																	{member.count}
 																</div>
 															</div>
 														}
 													</div>
 													{!readyDelete ? (
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															className="w-6 h-6"
-															fill="none"
-															viewBox="0 0 24 24"
-															stroke="currentColor">
-															<path
-																strokeLinecap="round"
-																strokeLinejoin="round"
-																strokeWidth={1.5}
-																d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
-															/>
-														</svg>
+														<Link href={`/trainer/manage-member/chat`}>
+															<svg
+																className="w-6 h-6"
+																data-id={member.id}
+																xmlns="http://www.w3.org/2000/svg"
+																fill="none"
+																viewBox="0 0 24 24"
+																stroke="currentColor"
+																onClick={() => {
+																	chatTargetUserIdVar(+member.id)
+																}}>
+																<path
+																	strokeLinecap="round"
+																	strokeLinejoin="round"
+																	strokeWidth={1.5}
+																	d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+																/>
+															</svg>
+														</Link>
 													) : deleteLists.has(+member.id) ? (
 														<svg
 															className="text-green-600"
@@ -428,12 +481,17 @@ const ManageMember: NextPage = () => {
 										className="w-full h-12 px-10 border"
 										type="text"
 										placeholder="휴대폰 번호 7자리 또는 8자리를 입력해주세요."
-										{...register('phone', {
+										{...register('phoneNumber', {
 											required: true,
-											pattern: /^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/
+											pattern: /^([0-9]{3,4})([0-9]{4})$/
 										})}
+										onBlur={async e => {
+											// 트레이너와 회원을 연결하는 API
+											// 값이 트루인지 확인하고 추가 버튼 disabled
+											// setPhoneNumber(e.target.value)
+										}}
 									/>
-									{errors.phone?.type === 'maxLength' && (
+									{errors.phoneNumber?.type === 'maxLength' && (
 										<div className="text-[16px] text-red-500 mt-1 text-center">
 											붙임표(-)를 제외한 휴대폰 번호 7~8자리를
 											입력해주세요.
