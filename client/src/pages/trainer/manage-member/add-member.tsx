@@ -1,4 +1,5 @@
 import { NextPage } from 'next'
+import Link from 'next/link'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
@@ -69,19 +70,21 @@ const AddMember: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[20px] font-bold">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							className="w-7 h-7"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor">
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={1.5}
-								d="M15 19l-7-7 7-7"
-							/>
-						</svg>
+						<Link href="/trainer/manage-member">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="w-7 h-7"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={1.5}
+									d="M15 19l-7-7 7-7"
+								/>
+							</svg>
+						</Link>
 						<div>회원정보등록</div>
 					</span>
 					<span className="flex"></span>

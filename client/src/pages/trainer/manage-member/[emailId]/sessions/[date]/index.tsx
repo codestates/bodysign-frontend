@@ -35,12 +35,12 @@ const Detail: NextPage = () => {
 	const { loading, data } = useQuery(SessionDocument, {
 		variables: { id: sessionExerciseInput.sessionId }
 	})
-	const [removeSessionExercise] = useMutation(
-		RemoveSessionExerciseDocument
-	)
-	const [updateSession] = useMutation(UpdateSessionDocument)
 	const [createSessionExerciseVolume] = useMutation(
 		CreateSessionExerciseVolumeDocument
+	)
+	const [updateSession] = useMutation(UpdateSessionDocument)
+	const [removeSessionExercise] = useMutation(
+		RemoveSessionExerciseDocument
 	)
 	const {
 		register,
@@ -75,13 +75,6 @@ const Detail: NextPage = () => {
 			console.log(error)
 		}
 	}
-
-	// let session: any
-	// if (!loading && data) {
-	// 	session = data.user.sessions.filter(
-	// 		(session: any) => session.id === sessionExerciseInput.sessionId
-	// 	)[0]
-	// }
 
 	if (loading) return <Loading />
 	return (
@@ -118,8 +111,6 @@ const Detail: NextPage = () => {
 										checked={data.session.sentFeedback}
 										onChange={async e => {
 											// 피드백 완료 여부 API
-											// e.target.checked
-											console.log(e.target.checked)
 											try {
 												await updateSession({
 													variables: {
@@ -169,10 +160,30 @@ const Detail: NextPage = () => {
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
-								onClick={() => {
-									// 운동 종목 삭제 API 2
+								onClick={async () => {
+									// 운동 종목 삭제 step 2
+									const deleteItemId = Array.from(deleteLists)[0]
+									if (deleteItemId) {
+										try {
+											await removeSessionExercise({
+												variables: {
+													id: deleteItemId
+												},
+												refetchQueries: [
+													{
+														query: SessionDocument,
+														variables: {
+															id: sessionExerciseInput.sessionId
+														}
+													}
+												]
+											})
+											deleteLists.clear()
+										} catch (error) {
+											console.log(error)
+										}
+									}
 									setReadyDelete(false)
-									deleteLists.clear()
 								}}>
 								<path
 									strokeLinecap="round"
@@ -187,11 +198,17 @@ const Detail: NextPage = () => {
 
 				<div className="flex flex-col mt-4">
 					{data.session.sessionExercises.map((exercise: any) => {
+						const deleteItemId = Array.from(deleteLists)[0]
 						return (
 							<React.Fragment key={exercise.id}>
-								<div className="flex px-3 py-3 mt-1 border first:mt-0 text-[16px] flex-col items-center">
+								<div
+									className={`"flex px-3 py-3 mt-1 border first:mt-0 text-[16px] flex-col items-center" ${
+										exercise.id === deleteItemId ? 'ring-2' : ''
+									}`}>
 									<div
-										className="w-full p-3 text-center border bg-gray-50 cursor-pointer"
+										className={`w-full p-3 text-center border bg-gray-50 cursor-pointer ${
+											exercise.id === deleteItemId ? 'ring-2' : ''
+										}`}
 										data-id={exercise.id}
 										onClick={
 											!readyDelete
@@ -208,10 +225,13 @@ const Detail: NextPage = () => {
 															e !== null &&
 															e.target instanceof HTMLElement
 														) {
-															// 운동 종목 삭제 API 1
-															// console.log(e.target.dataset.id)
+															// 운동 종목 삭제 step 1
 															if (e.target.dataset.id) {
 																const id = +e.target.dataset.id
+																// 하나만 가능한 조건
+																if (deleteLists.size > 0) {
+																	setDeleteLists(prev => new Set())
+																}
 																if (deleteLists.has(id)) {
 																	setDeleteLists(
 																		prev =>
