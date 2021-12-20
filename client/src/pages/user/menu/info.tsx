@@ -36,14 +36,6 @@ export const RemoveUserDocument = gql`
 	}
 `
 
-// export const UpdatePasswordUser = gql`
-// 	mutation UpdatePasswordUser($updatePasswordUser: UpdatePasswordTrainerInput!) {
-// 		updatePasswordUser(updatePasswordUser: $updatePasswordUser) {
-
-// 		}
-// 	}
-// `
-
 const Info: NextPage = () => {
 	const { loading, data } = useQuery(UserDocument, {
         variables: { id: 2 }

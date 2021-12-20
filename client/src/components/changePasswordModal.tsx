@@ -3,44 +3,45 @@ import type { NextPage } from 'next'
 import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
 
 export const UpdateUserPassword = gql`
-	mutation UpdateUser($updateUserInput: UpdateUserInput!) {
-		updateUser(updateUserInput: $updateUserInput) {
+	mutation UpdatePasswordUserInput($updatePasswordUserInput: UpdatePasswordUserInput!) {
+		updatePasswordUser(updatePasswordUserInput: $updatePasswordUserInput) {
 			id
-			password
+			prevPassword
+            nowPassword
 		}
 	}
 `
 
 const ChangePasswordModal: NextPage = ({ passwordModalOpenhandler, isOpen }) => {
-    const [ updateUser ] = useMutation(UpdateUserPassword)
+    const [ updateUserPassword ] = useMutation(UpdateUserPassword)
 
     const [ passwordData, setPasswordData ] = useState({
-        oldPasswordInput: "",
-        newPasswordInput: ""
+        prevPassword: "",
+        nowPassword: ""
     })
 
     const setOldPasswordInput = (e: any) => {
-        let oldPasswordInput = e.target.value
+        let prevPassword = e.target.value
 
         setPasswordData({
             ...passwordData,
-            oldPasswordInput: oldPasswordInput
+            prevPassword: prevPassword
         })
     }
 
     const setNewPasswordInput = (e: any) => {
-        let newPasswordInput = e.target.value
+        let nowPassword = e.target.value
 
         setPasswordData({
             ...passwordData,
-            newPasswordInput: newPasswordInput
+            nowPassword: nowPassword
         })
     }
 
     const checkNewPassword = (e: any) => {
         let confirmPassword = e.target.value
         
-        if(passwordData.newPasswordInput === confirmPassword) {
+        if(passwordData.nowPassword === confirmPassword) {
             let confirmPasswordInput = document.querySelector(".confirm-password")
             confirmPasswordInput?.classList.add("border-green-600")
             confirmPasswordInput?.classList.remove("border-red-400")
@@ -53,16 +54,13 @@ const ChangePasswordModal: NextPage = ({ passwordModalOpenhandler, isOpen }) => 
     }
 
     const savePasswordData = () => {
-        // oldPasswordInput 데이터를 서버로 보내주기
-        // 액세스 토큰으로 인증
-        // TODO: oldPasswordInput 정보가 맞는지 체크
-        // 맞으면? newPasswordInput 으로 패스워드 교체
-        // 틀리면? 틀렸다 메시지 보내기
-        
-        updateUser({
+        // TODO: 뮤테이션 사용
+        updateUserPassword({
 			variables: {
 				updateUserInput: {
-					password: passwordData.newPasswordInput
+                    id: 2,
+					password: passwordData.prevPassword,
+                    nowPassword: passwordData.nowPassword
 				}
 		    }
         })
