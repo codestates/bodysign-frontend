@@ -25,6 +25,7 @@ interface Member {
 	userName: string
 	phoneNumber: string
 	gender: string
+	count: string
 }
 
 interface FormInput {
@@ -99,6 +100,13 @@ const ManageMember: NextPage = () => {
 		const userCategories = data.trainer.userCategories
 
 		data.trainer.users.forEach((user: any) => {
+			let sumUsedCount = 0
+			let sumTotalCount = 0
+			for (let i = 0; i < user.sessionHistories.length; i++) {
+				sumUsedCount = sumUsedCount + user.sessionHistories[i].usedCount
+				sumTotalCount = sumTotalCount + user.sessionHistories[i].totalCount
+			}
+
 			const userCategoryName =
 				userCategories[user.userCategoryId - 1]?.name
 			if (user.graduate) {
@@ -110,7 +118,8 @@ const ManageMember: NextPage = () => {
 					email: user.email,
 					userName: user.userName,
 					phoneNumber: user.phoneNumber,
-					gender: user.gender
+					gender: user.gender,
+					count: `${sumUsedCount} / ${sumTotalCount}`
 				})
 			} else {
 				if (manageMemberObject[userCategoryName] === undefined) {
@@ -121,7 +130,8 @@ const ManageMember: NextPage = () => {
 					email: user.email,
 					userName: user.userName,
 					phoneNumber: user.phoneNumber,
-					gender: user.gender
+					gender: user.gender,
+					count: `${sumUsedCount} / ${sumTotalCount}`
 				})
 			}
 		})
@@ -201,11 +211,31 @@ const ManageMember: NextPage = () => {
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
-								onClick={() => {
-									// 회원 삭제 API 2
-									// update API 추가 예정
+								onClick={async () => {
+									// 회원 삭제 step 2
+									const deleteItemId = Array.from(deleteLists)[0]
+									if (deleteItemId) {
+										try {
+											await updateUser({
+												variables: {
+													updateUserInput: {
+														id: deleteItemId,
+														trainerId: null
+													}
+												},
+												refetchQueries: [
+													{
+														query: TrainerDocument,
+														variables: { id: 21 }
+													}
+												]
+											})
+											deleteLists.clear()
+										} catch (error) {
+											console.log(error)
+										}
+									}
 									setReadyDelete(false)
-									deleteLists.clear()
 								}}>
 								<path
 									strokeLinecap="round"
@@ -272,9 +302,10 @@ const ManageMember: NextPage = () => {
 															/>
 														)}
 														{
-															<div className="flex flex-col h-1 ml-1 cursor-pointer">
+															<div className="flex flex-col h-1 ml-1">
 																<div
-																	className="ml-2 hover:cursor-pointer font-thin h-[18px]"
+																	className="ml-2 font-thin h-[18px] cursor-pointer"
+																	data-id={member.id}
 																	onClick={
 																		!readyDelete
 																			? () => {
@@ -295,10 +326,16 @@ const ManageMember: NextPage = () => {
 																						e !== null &&
 																						e.target instanceof HTMLElement
 																					) {
-																						// 회원 삭제 API 1
+																						// 회원 삭제 step 1
 																						if (e.target.dataset.id) {
 																							const id =
 																								+e.target.dataset.id
+																							// 하나만 가능한 조건
+																							if (deleteLists.size > 0) {
+																								setDeleteLists(
+																									prev => new Set()
+																								)
+																							}
 																							if (deleteLists.has(id)) {
 																								setDeleteLists(
 																									prev =>
@@ -321,7 +358,7 @@ const ManageMember: NextPage = () => {
 																	{member.userName} 회원님
 																</div>
 																<div className="text-[5px] ml-2 font-thin">
-																	10 / 24회
+																	{member.count}
 																</div>
 															</div>
 														}

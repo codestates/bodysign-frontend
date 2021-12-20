@@ -309,8 +309,6 @@ const Sales: NextPage = () => {
 												}
 											})
 											.map(sessionHistory => {
-												console.log(sessionHistory)
-
 												return (
 													<React.Fragment key={sessionHistory.id}>
 														<tr>

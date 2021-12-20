@@ -325,9 +325,6 @@ export const UpdateSessionExerciseDocument = gql`
 		) {
 			id
 			name
-			reps
-			sets
-			weight
 			sessionId
 		}
 	}
@@ -338,9 +335,6 @@ export const RemoveSessionExerciseDocument = gql`
 		removeSessionExercise(id: $id) {
 			id
 			name
-			reps
-			sets
-			weight
 			sessionId
 		}
 	}

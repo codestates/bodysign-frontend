@@ -145,10 +145,6 @@ const Info: NextPage = () => {
 									checked={userData.user.graduate}
 									onChange={e => {
 										// 졸업 유무 변경 API
-										// 데이터를 받고 checked 상태를 변경한다.
-										// e.target.checked을 가지고 mutation
-										console.log(e.target.checked)
-
 										try {
 											updateUser({
 												variables: {

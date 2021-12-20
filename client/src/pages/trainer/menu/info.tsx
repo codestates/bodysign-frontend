@@ -106,8 +106,6 @@ const TrainerInfo: NextPage = () => {
 								stroke="currentColor"
 								onClick={async () => {
 									// 정보 수정 API
-									console.log(updateTrainerInput)
-
 									try {
 										await updateTrainer({
 											variables: {

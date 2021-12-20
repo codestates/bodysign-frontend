@@ -23,6 +23,8 @@ const Session: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
 	const [category, setCategory] = useState('일정')
 	const [sessionId, setSessionId] = useState<number>()
+	const [readyDelete, setReadyDelete] = useState(false)
+	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const { loading, data } = useQuery(TrainerDocument, {
 		variables: { id: 21 }
 	})
@@ -72,47 +74,93 @@ const Session: NextPage = () => {
 				<div className="flex items-center justify-between">
 					<span className="flex text-[25px]">
 						<div
-							className={`${category === '일정' ? 'font-bold' : ''}`}
+							className={`${
+								category === '일정' ? 'font-bold' : ''
+							} cursor-pointer`}
 							onClick={() => setCategory('일정')}>
 							일정
 						</div>
 						<div
 							className={`ml-2 ${
 								category === '피드백' ? 'font-bold' : ''
-							}`}
+							} cursor-pointer`}
 							onClick={() => setCategory('피드백')}>
 							피드백
 						</div>
 					</span>
 					<span className="flex">
-						<Link href="/trainer/session/add-session">
+						{!readyDelete ? (
+							<>
+								<Link href="/trainer/session/add-session">
+									<svg
+										className="w-7 h-7 cursor-pointer"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor">
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth={1.5}
+											d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+										/>
+									</svg>
+								</Link>
+								<svg
+									className="ml-2 w-7 h-7 cursor-pointer"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+									onClick={() => setReadyDelete(true)}>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={1.5}
+										d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+									/>
+								</svg>
+							</>
+						) : (
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="w-7 h-7"
+								className="w-7 h-7 cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
-								stroke="currentColor">
+								stroke="currentColor"
+								onClick={async () => {
+									// 수업 삭제 step 2
+									const deleteItemId = Array.from(deleteLists)[0]
+									if (deleteItemId) {
+										try {
+											await removeSession({
+												variables: {
+													id: deleteItemId
+												},
+												refetchQueries: [
+													{
+														query: TrainerDocument,
+														variables: {
+															id: 21
+														}
+													}
+												]
+											})
+											deleteLists.clear()
+										} catch (error) {
+											console.log(error)
+										}
+									}
+									setReadyDelete(false)
+								}}>
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
 									strokeWidth={1.5}
-									d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+									d="M5 13l4 4L19 7"
 								/>
 							</svg>
-						</Link>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							className="ml-2 w-7 h-7"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor">
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={1.5}
-								d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-							/>
-						</svg>
+						)}
 					</span>
 				</div>
 
@@ -120,6 +168,7 @@ const Session: NextPage = () => {
 					{Object.entries(
 						category === '일정' ? sessionObject : completedSessionObject
 					).map((entry, idx) => {
+						const deleteItemId = Array.from(deleteLists)[0]
 						return (
 							<React.Fragment key={idx}>
 								<div className="mt-4">
@@ -133,17 +182,11 @@ const Session: NextPage = () => {
 										const minutes = date.getMinutes()
 										return (
 											<React.Fragment key={session.id}>
-												<div
-													className="text-[16px] mt-2"
-													onClick={
-														category === '일정'
-															? () => {
-																	setSessionId(session.id)
-																	modalVar(true)
-															  }
-															: undefined
-													}>
-													<div className="flex justify-between p-3 border font-thin rounded-3xl">
+												<div className="text-[16px] mt-2">
+													<div
+														className={`flex justify-between p-3 border font-thin rounded-3xl ${
+															session.id === deleteItemId ? 'ring-2' : ''
+														}`}>
 														<div className="flex">
 															{session.gender === 'male' ? (
 																<img
@@ -160,10 +203,54 @@ const Session: NextPage = () => {
 															)}
 															<div
 																className={`ml-1 ${
-																	category === '일정'
-																		? 'cursor-pointer'
-																		: ''
-																}`}>
+																	!readyDelete
+																		? category === '일정'
+																			? 'cursor-pointer'
+																			: ''
+																		: 'cursor-pointer'
+																}`}
+																data-id={session.id}
+																onClick={
+																	!readyDelete
+																		? category === '일정'
+																			? () => {
+																					setSessionId(session.id)
+																					modalVar(true)
+																			  }
+																			: undefined
+																		: e => {
+																				if (
+																					e !== null &&
+																					e.target instanceof HTMLElement
+																				) {
+																					// 수업 삭제 step 1
+																					if (e.target.dataset.id) {
+																						const id = +e.target.dataset.id
+																						// 하나만 가능한 조건
+																						if (deleteLists.size > 0) {
+																							setDeleteLists(
+																								prev => new Set()
+																							)
+																						}
+																						if (deleteLists.has(id)) {
+																							setDeleteLists(
+																								prev =>
+																									new Set(
+																										[...prev].filter(
+																											el => el !== id
+																										)
+																									)
+																							)
+																						} else {
+																							setDeleteLists(
+																								prev =>
+																									new Set(prev.add(id))
+																							)
+																						}
+																					}
+																				}
+																		  }
+																}>
 																{session.userName} 회원님
 															</div>
 														</div>

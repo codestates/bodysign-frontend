@@ -155,11 +155,28 @@ const Exercise: NextPage = () => {
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
-								onClick={() => {
-									// 운동 삭제 API 2
-									console.log(...deleteLists)
+								onClick={async () => {
+									// 운동 삭제 step 2
+									const deleteItemId = Array.from(deleteLists)[0]
+									if (deleteItemId) {
+										try {
+											await removeExercise({
+												variables: {
+													id: deleteItemId
+												},
+												refetchQueries: [
+													{
+														query: TrainerDocument,
+														variables: { id: 21 }
+													}
+												]
+											})
+											deleteLists.clear()
+										} catch (error) {
+											console.log(error)
+										}
+									}
 									setReadyDelete(false)
-									deleteLists.clear()
 								}}>
 								<path
 									strokeLinecap="round"
@@ -200,19 +217,20 @@ const Exercise: NextPage = () => {
 				</div>
 
 				{Object.entries(exerciseObject).map((category, idx) => {
+					const deleteItemId = Array.from(deleteLists)[0]
 					return (
 						<React.Fragment key={idx}>
 							<div className="mt-4">
 								<div className="text-[12px] font-bold">{category[0]}</div>
 								{category[1].map(exercise => {
-									// console.log(exercise.isChecked)
 									return (
 										<React.Fragment key={exercise.id}>
 											<div className="text-[12px] mt-1">
 												<div
 													className={`flex justify-center px-3 py-3 font-thin border rounded-3xl ${
 														!readyDelete ? null : 'cursor-pointer'
-													}`}
+													} ${exercise.id === deleteItemId ? 'ring-2' : ''}
+													`}
 													data-id={exercise.id}
 													onClick={
 														!readyDelete
@@ -222,9 +240,13 @@ const Exercise: NextPage = () => {
 																		e !== null &&
 																		e.target instanceof HTMLElement
 																	) {
-																		// 운동 삭제 API 1
+																		// 운동 삭제 step 1
 																		if (e.target.dataset.id) {
 																			const id = +e.target.dataset.id
+																			// 하나만 가능한 조건
+																			if (deleteLists.size > 0) {
+																				setDeleteLists(prev => new Set())
+																			}
 																			if (deleteLists.has(id)) {
 																				setDeleteLists(
 																					prev =>
