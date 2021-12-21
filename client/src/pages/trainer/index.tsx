@@ -57,7 +57,7 @@ const Main: NextPage = () => {
 		<>
 			<Layout>
 				<div className="mb-2.5 flex flex-col w-full mx-4 my-5 text-[12px] font-IBM">
-					<Image src={logo} width="50" alt="logo" />
+					<Image src={logo} width="50" height="50" alt="logo" />
 				</div>
 				<div className="m-5 font-IBM font-thin">
 					<div className="font-IBM font-extrabold text-[25px]">

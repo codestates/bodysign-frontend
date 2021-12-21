@@ -84,7 +84,7 @@ const Signup: NextPage<FormInput> = () => {
 		}
 
 		alert('회원가입이 완료되었습니다.')
-		location.href = 'http://localhost:3000'
+		// location.href = 'http://localhost:3000'
 	}
 
 	return (
