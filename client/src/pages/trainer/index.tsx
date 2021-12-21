@@ -29,7 +29,7 @@ const Main: NextPage = () => {
 
 	useEffect(() => {
 		getTrainerData()
-	}, [])
+	}, [getTrainerData])
 
 	const [inbodyList, setInbodyList] = useState([
 		{

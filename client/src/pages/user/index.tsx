@@ -74,7 +74,7 @@ const Main: NextPage = () => {
 
 	useEffect(() => {
 		getUserData()
-	}, [])
+	}, [getUserData])
 	const { loading, data: queryUserData } = useQuery(UserDocument, {
 		variables: { id: userData?.id }
 	})

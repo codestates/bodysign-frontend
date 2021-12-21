@@ -26,6 +26,8 @@ const LOGIN = gql`
 `
 
 const Login: NextPage = () => {
+
+	console.log(process.env.NEXT_PUBLIC_API_DOMAIN)
 	const [form, setForm] = useState({
 		email: '',
 		password: ''
@@ -77,9 +79,9 @@ const Login: NextPage = () => {
 		accessTokenVar(accessToken)
 
 		if (userType === 'user') {
-			router.push('http://localhost:3000/user')
+			router.push(`${process.env.NEXT_PUBLIC_API_DOMAIN}/user`)
 		} else if (userType === 'trainer') {
-			router.push('http://localhost:3000/trainer')
+			router.push(`${process.env.NEXT_PUBLIC_API_DOMAIN}/trainer`)
 		}
 	}
 

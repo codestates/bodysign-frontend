@@ -16,7 +16,7 @@ import { chatTargetUserIdVar } from '../graphql/vars'
 import { accessTokenVar } from '../graphql/vars'
 
 const httpLink = new HttpLink({
-	uri: 'http://localhost:4000/graphql',
+	uri: process.env.NEXT_PUBLIC_API_GRAPHQL,
 	credentials: 'same-origin'
 })
 const authMiddleware = new ApolloLink((operation, forward) => {
@@ -67,5 +67,17 @@ function MyApp({ Component, pageProps }: AppProps) {
 		</>
 	)
 }
+
+// This also gets called at build time
+export async function getStaticProps() {
+	// params contains the post `id`.
+	// If the route is like /posts/1, then params.id is 1
+	// const res = await fetch(`https://.../posts/${params.id}`)
+	// const post = await res.json()
+  
+	// Pass post data to the page via props
+	return { props: { } }
+  }
+  
 
 export default MyApp
