@@ -63,7 +63,7 @@ const Chat: NextPage = () => {
 				return el
 			})
 		})
-	}, [])
+	}, [chatTargetUserId, socket])
 
 	useEffect(() => {
 		socket.on('receiveChat', chat => {
@@ -76,7 +76,7 @@ const Chat: NextPage = () => {
 				})
 			)
 		})
-	}, [])
+	}, [socket])
 
 	const fileChange = async (target: HTMLInputElement) => {
 		const { files } = target

@@ -74,7 +74,7 @@ const Info: NextPage = () => {
 		} catch (error) {
 			console.log(error)
 		}
-	}, [isGraduate])
+	}, [updateUser, isGraduate, managedUserInfo.userId])
 
 	if (loading) return <Loading />
 	if (userLoading) return <Loading />

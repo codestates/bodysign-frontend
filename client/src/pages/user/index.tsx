@@ -38,7 +38,7 @@ export const UserDocument = gql`
 // https://codepen.io/CheeseTurtle/pen/jzdgI?editors=1010
 
 // TODO : 이름 받아오기
-const main: NextPage = () => {
+const Main: NextPage = () => {
 	const { loading, data: userData } = useQuery(UserDocument, {
 		variables: { id: 1 }
 	})
@@ -125,4 +125,4 @@ const main: NextPage = () => {
 	)
 }
 
-export default main
+export default Main

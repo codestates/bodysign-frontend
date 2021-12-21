@@ -93,7 +93,7 @@ const Inbody: NextPage = () => {
 				chart.destroy()
 			}
 		}
-	}, [])
+	}, [inbodyDataList])
 
 	return (
 		<>
