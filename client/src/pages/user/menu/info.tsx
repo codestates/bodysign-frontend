@@ -3,8 +3,52 @@ import { useState } from 'react'
 import ChangePasswordModal from '../../../components/changePasswordModal'
 import Layout from '../../../components/Layout'
 import Link from 'next/link'
+import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
+
+// TODO: 비밀번호 변경
+
+export const UserDocument = gql`
+	query User($id: Int!) {
+		user(id: $id) {
+			__typename
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+			graduate
+		}
+	}
+`
+
+export const RemoveUserDocument = gql`
+	mutation RemoveUser($id: Int!) {
+		removeUser(id: $id) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+			graduate
+		}
+	}
+`
 
 const Info: NextPage = () => {
+	const { loading, data } = useQuery(UserDocument, {
+        variables: { id: 2 }
+    })
+
+	if(loading) {
+
+	} else {
+		console.log(data)
+	}
+
+	const [removeUser] = useMutation(RemoveUserDocument)
+	
 	const [userInfo, setUserInfo] = useState({
 		name: '홍길동',
 		gender: '남',
@@ -16,16 +60,25 @@ const Info: NextPage = () => {
 
 	const changePasswordModal = () => {
 		setIsPasswordModalOpen(!isPasswordModalOpen)
+
 	}
 
-	const deleteUserHandler = () => {
+	const deleteUserHandler = async () => {
 		alert('정말 탈퇴하시겠습니까?')
-		// 서버로 탈퇴 요청 보내기
+		try {
+			await removeUser({
+				variables: {
+					id: 2
+				}
+			})
+		} catch (error) {
+			console.log(error)
+		}
 	}
 
 	return (
-		<Layout>
-			<div className="font-IBM flex flex-col justify-center mx-4 my-5 text-[12px]">
+		<Layout variant="Web">
+			<div className="font-IBM flex flex-col justify-center mx-4 my-5 text-[15px]">
 				{isPasswordModalOpen ? (
 					<ChangePasswordModal
 						isOpen={isPasswordModalOpen}
@@ -33,8 +86,8 @@ const Info: NextPage = () => {
 					/>
 				) : null}
 				<div className="flex items-center justify-between">
-					<span className="flex text-[20px]">
-						<Link href="/user/menu">
+						<span className="flex text-[25px]">
+							<Link href="/user/menu">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6 cursor-pointer"
@@ -53,17 +106,9 @@ const Info: NextPage = () => {
 					</span>
 					<Link href="/user/menu/modify">
 						<span className="flex">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								className="h-5 w-5 mx-1"
-								viewBox="0 0 20 20"
-								fill="currentColor">
-								<path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-								<path
-									fill-rule="evenodd"
-									d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-									clip-rule="evenodd"
-								/>
+							<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mx-1" viewBox="0 0 20 20" fill="currentColor">
+							<path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+							<path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
 							</svg>
 						</span>
 					</Link>
@@ -90,17 +135,17 @@ const Info: NextPage = () => {
 							<span>전화번호</span>
 							<span className="font-thin">{userInfo.phone}</span>
 						</div>
-
-						<div className="flex-col mx-5 mt-4">
-							<button
-								onClick={changePasswordModal}
-								className="font-thin w-20 p-1 my-2 text-[10px] border float-right hover:bg-gray-50">
-								비밀번호 변경
-							</button>
-							<div
-								onClick={deleteUserHandler}
-								className="inline-block mt-10 text-[6px] text-red-600 hover:text-gray-400 hover:cursor-pointer">
-								회원탈퇴
+							<div className="flex-col mx-5 mt-4">
+								<button
+									onClick={changePasswordModal}
+									className="font-thin w-20 p-1 my-2 text-[12px] border float-right hover:bg-gray-50">
+									비밀번호 변경
+								</button>
+								<div
+									onClick={deleteUserHandler}
+									className="inline-block mt-10 text-[10px] text-red-600 hover:text-gray-400 hover:cursor-pointer">
+									회원탈퇴
+								</div>
 							</div>
 						</div>
 					</div>

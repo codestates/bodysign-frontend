@@ -17,6 +17,7 @@ const LOGIN = gql`
 	mutation LoginAuth($loginUserInput: LoginUserInput!) {
 		loginAuth(loginUserInput: $loginUserInput) {
 			accessToken
+			userType
 		}
 	}
 `
@@ -61,19 +62,23 @@ const Login: NextPage = () => {
 			}
 		})
 
-		// TODO: 로그인이 완료 되면 액세스 토큰을 받아와서 쿠키에 저장해서 요청할 때 마다 토큰 보내주기
-		// TODO: 토큰이 필요한 요청들을 리스트업
-		// TODO: 필요한 요청의 HEADER에 토큰이 들어갈 수 있게 구현
-		// TODO: 전역변수에 액세스토큰 담기
 		//? 왜 두번 눌러야 들어오지?
-		if (loading) {
-			console.log('loading')
-			console.log(data)
-		} else {
-			const accessToken = data.loginAuth.accessToken
-			console.log('get')
-			accessTokenVar(accessToken)
+		try {
+			if (loading) {
+			} else {
+				const accessToken = data.loginAuth.accessToken
+				const userType = data.loginAuth.userType
+				accessTokenVar(accessToken)
+				if(userType === "user"){
+					window.location.href = "http://localhost:3000/user"
+				} else if(userType === "trainer"){
+					window.location.href = "http://localhost:3000/trainer"
+				}
+			}
+		} catch {
+			
 		}
+
 	}
 
 	const onGoogleLogin = () => {

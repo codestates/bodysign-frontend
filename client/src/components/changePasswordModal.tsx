@@ -1,57 +1,70 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
+import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
 
-const ChangePasswordModal: NextPage = ({
-	passwordModalOpenhandler,
-	isOpen
-}) => {
-	const [passwordData, setPasswordData] = useState({
-		oldPasswordInput: '',
-		newPasswordInput: ''
-	})
-
-	const setOldPasswordInput = (e: any) => {
-		let oldPasswordInput = e.target.value
-
-		setPasswordData({
-			...passwordData,
-			oldPasswordInput: oldPasswordInput
-		})
-	}
-
-	const setNewPasswordInput = (e: any) => {
-		let newPasswordInput = e.target.value
-
-		setPasswordData({
-			...passwordData,
-			newPasswordInput: newPasswordInput
-		})
-	}
-
-	const checkNewPassword = (e: any) => {
-		let confirmPassword = e.target.value
-
-		if (passwordData.newPasswordInput === confirmPassword) {
-			let confirmPasswordInput = document.querySelector(
-				'.confirm-password'
-			)
-			confirmPasswordInput?.classList.add('border-green-600')
-			confirmPasswordInput?.classList.remove('border-red-400')
-		} else {
-			let confirmPasswordInput = document.querySelector(
-				'.confirm-password'
-			)
-			confirmPasswordInput?.classList.add('border-red-400')
-			confirmPasswordInput?.classList.remove('border-green-600')
+export const UpdateUserPassword = gql`
+	mutation UpdatePasswordUserInput($updatePasswordUserInput: UpdatePasswordUserInput!) {
+		updatePasswordUser(updatePasswordUserInput: $updatePasswordUserInput) {
+			id
+			prevPassword
+            nowPassword
 		}
 	}
+`
 
-	const savePasswordData = () => {
-		// oldPasswordInput 데이터를 서버로 보내주기
-		// oldPasswordInput 정보가 맞는지 체크
-		// 맞으면? newPasswordInput 으로 패스워드 교체
-		// 틀리면? 틀렸다 메시지 보내기
-	}
+const ChangePasswordModal: NextPage = ({ passwordModalOpenhandler, isOpen }) => {
+    const [ updateUserPassword ] = useMutation(UpdateUserPassword)
+
+    const [ passwordData, setPasswordData ] = useState({
+        prevPassword: "",
+        nowPassword: ""
+    })
+
+    const setOldPasswordInput = (e: any) => {
+        let prevPassword = e.target.value
+
+        setPasswordData({
+            ...passwordData,
+            prevPassword: prevPassword
+        })
+    }
+
+    const setNewPasswordInput = (e: any) => {
+        let nowPassword = e.target.value
+
+        setPasswordData({
+            ...passwordData,
+            nowPassword: nowPassword
+        })
+    }
+
+    const checkNewPassword = (e: any) => {
+        let confirmPassword = e.target.value
+        
+        if(passwordData.nowPassword === confirmPassword) {
+            let confirmPasswordInput = document.querySelector(".confirm-password")
+            confirmPasswordInput?.classList.add("border-green-600")
+            confirmPasswordInput?.classList.remove("border-red-400")
+        } else {
+            let confirmPasswordInput = document.querySelector(".confirm-password")
+            confirmPasswordInput?.classList.add("border-red-400")
+            confirmPasswordInput?.classList.remove("border-green-600")
+        }
+        
+    }
+
+    const savePasswordData = () => {
+        // TODO: 뮤테이션 사용
+        updateUserPassword({
+			variables: {
+				updateUserInput: {
+                    id: 2,
+					password: passwordData.prevPassword,
+                    nowPassword: passwordData.nowPassword
+				}
+		    }
+        })
+    }
 
 	const modalCloseHandler = () => {
 		passwordModalOpenhandler(!isOpen)

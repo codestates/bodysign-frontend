@@ -5,9 +5,9 @@ import Layout from '../../../components/Layout'
 
 const Menu: NextPage = () => {
 	return (
-		<Layout>
-			<div className="font-IBM flex flex-col m-5 mx-4 my-5 text-[12px]">
-				<div className="font-IBM font-bold mb-5 text-[20px]">전체</div>
+		<Layout variant="Web">
+			<div className="font-IBM flex flex-col m-5 mx-4 my-5 text-[15px]">
+				<div className="font-IBM font-bold mb-5 text-[25px]">전체</div>
 				<Link href="/user/menu/info">
 					<div className="flex items-center justify-between hover:bg-gray-100 font-IBM">
 						<li className="m-1 text-gray-400 list-none">내 정보</li>
