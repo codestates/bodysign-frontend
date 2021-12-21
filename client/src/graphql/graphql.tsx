@@ -184,6 +184,37 @@ export const SessionHistoriesDocument = gql`
 	}
 `
 
+export const CreateSocialUser = gql`
+	mutation CreateSocialUser(
+		$createSocialUserInput: CreateSocialUserInput!
+	) {
+		createSocialUser(createSocialUserInput: $createSocialUserInput) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+		}
+	}
+`
+
+export const CreateSocialTrainer = gql`
+	mutation CreateSocialTrainer(
+		$createSocialTrainerInput: CreateSocialTrainerInput!
+	) {
+		createSocialTrainer(
+			createSocialTrainerInput: $createSocialTrainerInput
+		) {
+			id
+			email
+			userName
+			birthDate
+			gender
+		}
+	}
+`
+
 export const CreateUserDocument = gql`
 	mutation CreateUser($createUserInput: CreateUserInput!) {
 		createUser(createUserInput: $createUserInput) {

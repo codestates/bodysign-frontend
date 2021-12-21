@@ -27,7 +27,7 @@ const Session: NextPage = () => {
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: 21 }
+		variables: { id: 1 }
 	})
 	const [updateSession] = useMutation(UpdateSessionDocument)
 	const [removeSession] = useMutation(RemoveSessionDocument)
@@ -92,10 +92,7 @@ const Session: NextPage = () => {
 					<span className="flex">
 						{!readyDelete ? (
 							<>
-								<Link
-									href="/trainer/session/add-session"
-									passHref
-								>
+								<Link href="/trainer/session/add-session" passHref>
 									<svg
 										className="cursor-pointer w-[2.8rem] h-[2.8rem]"
 										viewBox="-2 -1.5 18 18"
@@ -193,14 +190,14 @@ const Session: NextPage = () => {
 												<div className="flex">
 													{session.gender === 'male' ? (
 														<Image
-															src="http://s3.amazonaws.com/pix.iemoji.com/images/emoji/apple/ios-12/256/man-raising-hand-light-skin-tone.png"
+															src="/man.png"
 															width="36"
 															height="30"
 															alt="image"
 														/>
 													) : (
 														<Image
-															src="http://s3.amazonaws.com/pix.iemoji.com/images/emoji/apple/ios-12/256/woman-raising-hand-light-skin-tone.png"
+															src="/woman.png"
 															width="36"
 															height="30"
 															alt="image"

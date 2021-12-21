@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import { signIn, signOut, useSession } from 'next-auth/client'
 import Layout from '../components/Layout'
@@ -6,6 +6,8 @@ import Loading from './Loading'
 import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client'
 import { loginTypeVar, accessTokenVar } from '../graphql/vars'
 import Link from 'next/link'
+import { useRouter } from 'next/dist/client/router'
+import axios from 'axios'
 import { Cookies } from "react-cookie"
 
 // TODO : env로 빼야함
@@ -34,6 +36,7 @@ const Login: NextPage = () => {
 
 	const [session, pageLoading] = useSession()
 
+	const router = useRouter()
 	if (pageLoading) {
 		return <Loading />
 	}
@@ -54,32 +57,30 @@ const Login: NextPage = () => {
 		})
 	}
 
-	const onSubmit = (e: any) => {
-		loginAuth({
-			variables: {
-				loginUserInput: {
-					...form
-				}
-			}
-		})
-
+	const onSubmit = async (e: any) => {
 		//? 왜 두번 눌러야 들어오지?
 		try {
-			if (loading) {
-			} else {
-				const accessToken = data.loginAuth.accessToken
-				const userType = data.loginAuth.userType
-				accessTokenVar(accessToken)
-				if(userType === "user"){
-					window.location.href = "http://localhost:3000/user"
-				} else if(userType === "trainer"){
-					window.location.href = "http://localhost:3000/trainer"
+			await loginAuth({
+				variables: {
+					loginUserInput: {
+						...form
+					}
 				}
-			}
-		} catch {
-			
+			})
+		} catch (error) {
+			console.log(error)
 		}
+	}
+	if (!loading && data) {
+		const accessToken = data.loginAuth.accessToken
+		const userType = data.loginAuth.userType
+		accessTokenVar(accessToken)
 
+		if (userType === 'user') {
+			router.push('http://localhost:3000/user')
+		} else if (userType === 'trainer') {
+			router.push('http://localhost:3000/trainer')
+		}
 	}
 
 	const onGoogleLogin = () => {
@@ -88,37 +89,54 @@ const Login: NextPage = () => {
 
 	}
 
-    return <>
-    <Layout>
-      <div className="flex flex-col mx-auto my-5 text-[15px]">
-        {!session && <>
-          <div className="max-w-screen-md">
-            <input className="font-IBM font-thin rounded-xl border p-1 m-1 w-4/5" type="text" placeholder="이메일" onChange={onChangeId} />
-            <input className="font-IBM font-thin rounded-xl border p-1 m-1 w-4/5" type="password" placeholder="비밀번호" onChange={onChangePassword}/>
-            <button onClick={onSubmit} className="font-IBM font-thin py-1 rounded text-gray-800 bg-gray-300 hover:bg-gray-400 hover:text-white m-1 w-4/5 ">
-              로그인
-            </button>
-			<button onClick={onGoogleLogin} className="font-IBM font-thin py-1 rounded text-gray-800 bg-gray-200 hover:bg-gray-400 hover:text-white m-1 w-4/5 ">
-              GOOGLE로 로그인
-            </button>
-            <div className="flex w-4/5 border-0">
-            </div>
-			<Link
-				href="/signup"
-				passHref
-			>
-            <button className="font-IBM font-thin m-1 w-4/5 py-1 rounded text-gray-500 transition-colors duration-150 border border-gray-300 focus:shadow-outline hover:bg-gray-300 hover:text-white">회원가입</button>
-			</Link>
-          </div>
-    
-        </>}
-        {session && <>
-          로그인 되었습니다. <br/>
-          <button onClick={() => signOut()}>Sign out</button>
-        </>}
-      </div>
-    </Layout>
-  </>
+	return (
+		<>
+			<Layout>
+				<div className="flex flex-col mx-auto my-5 text-[15px]">
+					{!session && (
+						<>
+							<div className="max-w-screen-md">
+								<input
+									className="w-4/5 p-1 m-1 font-thin border font-IBM rounded-xl"
+									type="text"
+									placeholder="이메일"
+									onChange={onChangeId}
+								/>
+								<input
+									className="w-4/5 p-1 m-1 font-thin border font-IBM rounded-xl"
+									type="password"
+									placeholder="비밀번호"
+									onChange={onChangePassword}
+								/>
+								<button
+									onClick={onSubmit}
+									className="w-4/5 py-1 m-1 font-thin text-gray-800 bg-gray-300 rounded font-IBM hover:bg-gray-400 hover:text-white ">
+									로그인
+								</button>
+								<button
+									onClick={onGoogleLogin}
+									className="w-4/5 py-1 m-1 font-thin text-gray-800 bg-gray-200 rounded font-IBM hover:bg-gray-400 hover:text-white ">
+									GOOGLE로 로그인
+								</button>
+								<div className="flex w-4/5 border-0"></div>
+								<Link href="/signup" passHref>
+									<button className="w-4/5 py-1 m-1 font-thin text-gray-500 transition-colors duration-150 border border-gray-300 rounded font-IBM focus:shadow-outline hover:bg-gray-300 hover:text-white">
+										회원가입
+									</button>
+								</Link>
+							</div>
+						</>
+					)}
+					{session && (
+						<>
+							로그인 되었습니다. <br />
+							<button onClick={() => signOut()}>Sign out</button>
+						</>
+					)}
+				</div>
+			</Layout>
+		</>
+	)
 }
 
 export default Login

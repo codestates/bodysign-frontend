@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import Layout from '../../components/Layout'
 import logo from '../../../public/logo3.svg'
-import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client'
+import { gql, useQuery, useReactiveVar } from '@apollo/client'
 import Image from 'next/image'
+import axios from 'axios'
+import { userDataVar } from '../../graphql/vars'
+import { getCookies } from 'cookies-next'
 
 export const UserDocument = gql`
 	query User($id: Int!) {
@@ -34,9 +37,15 @@ export const UserDocument = gql`
 `
 
 export const VerifyOwner = gql`
-	query VerifyOwner($id: Int!) {
-		verifyOwner(id: $id) {
-			
+	query VerifyOwner {
+		verifyOwner {
+			__typename
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
 		}
 	}
 `
@@ -47,11 +56,31 @@ export const VerifyOwner = gql`
 
 // TODO : 이름 받아오기
 const Main: NextPage = () => {
-	const { loading, data: userData } = useQuery(UserDocument, {
-		variables: { id: 1 }
-	})
+	const userData = useReactiveVar(userDataVar)
 
-	console.log(userData)
+	const accessToken = getCookies().accessToken
+	const getUserData = async () => {
+		await axios
+			.get('http://localhost:4000/auth/profile', {
+				headers: {
+					authorization: `Bearer ${accessToken}`
+				}
+			})
+			.then(res => {
+				userDataVar(res.data)
+			})
+			.catch(error => console.log(error))
+	}
+
+	useEffect(() => {
+		getUserData()
+	}, [])
+	const { loading, data: queryUserData } = useQuery(UserDocument, {
+		variables: { id: userData?.id }
+	})
+	if (!loading && queryUserData) {
+		console.log(queryUserData)
+	}
 
 	const [inbodyList, setInbodyList] = useState([
 		{
@@ -102,7 +131,7 @@ const Main: NextPage = () => {
 				<Image src={logo} width="50" height="50" alt="logo" />
 			</div>
 
-			<div className="m-5 font-IBM font-thin"></div>
+			<div className="m-5 font-thin font-IBM"></div>
 
 			<div className="font-IBM font-extrabold text-[25px]">
 				{/* 체중, 골격근량, 체지방 보여주기 */}
@@ -124,7 +153,7 @@ const Main: NextPage = () => {
 					<div className="inline-block p-1 mx-3 font-bold">
 						{classData.date}
 					</div>
-					<div className="inline-block p-1 mx-3 font-bold float-right">
+					<div className="inline-block float-right p-1 mx-3 font-bold">
 						{classData.time}
 					</div>
 				</div>

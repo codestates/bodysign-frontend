@@ -15,15 +15,17 @@ import '../components/loading.css'
 import { chatTargetUserIdVar } from '../graphql/vars'
 import { accessTokenVar } from '../graphql/vars'
 
-const httpLink = new HttpLink({ uri: 'http://localhost:4000/graphql' })
+const httpLink = new HttpLink({
+	uri: 'http://localhost:4000/graphql',
+	credentials: 'same-origin'
+})
 const authMiddleware = new ApolloLink((operation, forward) => {
 	// add the authorization to the headers
-
 	operation.setContext(({ headers = {} }) => ({
 		headers: {
 			...headers,
 			// TODO: 액세스토큰을 여기 담아서 요청들에 보내기 완료. 제대로 작동하는지 체크 필요
-			authorization: accessTokenVar() ? `Bearer ${accessTokenVar()}` : ""
+			authorization: accessTokenVar() ? `Bearer ${accessTokenVar()}` : ''
 		}
 	}))
 

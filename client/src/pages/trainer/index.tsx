@@ -1,15 +1,36 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/dist/client/router'
 import type { NextPage } from 'next'
 import Layout from '../../components/Layout'
 import logo from '../../../public/logo.svg'
 import BottomBar from '../../components/BottomBar'
 import Image from 'next/image'
-
+import axios from 'axios'
+import { getCookies } from 'cookies-next'
+import { userDataVar } from '../../graphql/vars'
 // TODO: CSS 애니메이션 꾸미기
 // https://codepen.io/Tbgse/pen/dYaJyJ
 // https://codepen.io/CheeseTurtle/pen/jzdgI?editors=1010
 
 const Main: NextPage = () => {
+	const accessToken = getCookies().accessToken
+	const getTrainerData = async () => {
+		await axios
+			.get('http://localhost:4000/auth/profile', {
+				headers: {
+					authorization: `Bearer ${accessToken}`
+				}
+			})
+			.then(res => {
+				userDataVar(res.data)
+			})
+			.catch(error => console.log(error))
+	}
+
+	useEffect(() => {
+		getTrainerData()
+	}, [])
+
 	const [inbodyList, setInbodyList] = useState([
 		{
 			date: '21/01/01',
@@ -59,7 +80,7 @@ const Main: NextPage = () => {
 				<div className="mb-2.5 flex flex-col w-full mx-4 my-5 text-[12px] font-IBM">
 					<Image src={logo} width="50" height="50" alt="logo" />
 				</div>
-				<div className="m-5 font-IBM font-thin">
+				<div className="m-5 font-thin font-IBM">
 					<div className="font-IBM font-extrabold text-[25px]">
 						{/* 체중, 골격근량, 체지방 보여주기 */}
 						{/* 이 때 CSS 애니메이션 추가가 필요 */}
@@ -78,7 +99,7 @@ const Main: NextPage = () => {
 							<div className="inline-block p-1 mx-3 font-bold">
 								{'권오연 회원님'}
 							</div>
-							<div className="inline-block p-1 mx-3 font-bold float-right">
+							<div className="inline-block float-right p-1 mx-3 font-bold">
 								{classData.time}
 							</div>
 						</div>
@@ -86,7 +107,7 @@ const Main: NextPage = () => {
 							<div className="inline-block p-1 mx-3 font-bold">
 								{'장수민 회원님'}
 							</div>
-							<div className="inline-block p-1 mx-3 font-bold float-right">
+							<div className="inline-block float-right p-1 mx-3 font-bold">
 								{'17:00'}
 							</div>
 						</div>
@@ -94,7 +115,7 @@ const Main: NextPage = () => {
 							<div className="inline-block p-1 mx-3 font-bold">
 								{'최원준 회원님'}
 							</div>
-							<div className="inline-block p-1 mx-3 font-bold float-right">
+							<div className="inline-block float-right p-1 mx-3 font-bold">
 								{'19:00'}
 							</div>
 						</div>
@@ -102,7 +123,7 @@ const Main: NextPage = () => {
 							<div className="inline-block p-1 mx-3 font-bold">
 								{'황현수 회원님'}
 							</div>
-							<div className="inline-block p-1 mx-3 font-bold float-right">
+							<div className="inline-block float-right p-1 mx-3 font-bold">
 								{'21:00'}
 							</div>
 						</div>

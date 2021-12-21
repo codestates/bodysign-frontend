@@ -1,5 +1,18 @@
 import { makeVar } from '@apollo/client'
 
+interface UserData {
+	birthDate: Date
+	createdAt: Date
+	email: string
+	gender: string
+	id: number
+	loginType: string
+	phoneNumber: null
+	status: string
+	updatedAt: Date
+	userName: string
+}
+
 export const loginTypeVar = makeVar('local')
 export const modalVar = makeVar(false)
 export const deleteStateVar = makeVar(false)
@@ -17,3 +30,4 @@ export const sessionExerciseInputVar = makeVar({
 })
 export const chatTargetUserIdVar = makeVar<number | null>(null)
 export const accessTokenVar = makeVar('token')
+export const userDataVar = makeVar<UserData | null>(null)

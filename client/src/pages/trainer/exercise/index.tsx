@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { modalVar } from '../../../graphql/vars'
+import { modalVar, userDataVar } from '../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import {
 	CreateExerciseCategoryDocument,
@@ -28,10 +28,11 @@ interface FormInput {
 const Exercise: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
 	const [checkModal, setCheckModal] = useState('addexercise')
+	const userData = useReactiveVar(userDataVar)
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: 21 }
+		variables: { id: userData?.id }
 	})
 	const [createExerciseCategory] = useMutation(
 		CreateExerciseCategoryDocument
@@ -53,7 +54,7 @@ const Exercise: NextPage = () => {
 					refetchQueries: [
 						{
 							query: TrainerDocument,
-							variables: { id: 21 }
+							variables: { id: 1 }
 						}
 					]
 				})
