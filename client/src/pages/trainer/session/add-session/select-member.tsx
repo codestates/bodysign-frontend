@@ -7,6 +7,7 @@ import { useQuery } from '@apollo/client'
 import { TrainerDocument } from '../../../../graphql/graphql'
 import Loading from '../../../../components/Loading'
 import { useRouter } from 'next/dist/client/router'
+import Image from 'next/image'
 
 interface MemberSession {
 	id: number
@@ -54,7 +55,10 @@ const SelectMember: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[20px] font-bold">
-						<Link href="/trainer/session/add-session">
+						<Link
+							href="/trainer/session/add-session"
+							passHref
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="w-7 h-7 cursor-pointer"
@@ -99,19 +103,24 @@ const SelectMember: NextPage = () => {
 												<div className="flex justify-between px-3 py-3 border rounded-3xl">
 													<div className="flex">
 														{member.gender === 'male' ? (
-															<img
+															<Image
 																src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
 																width="25"
 																height="25"
+																alt="image"
 															/>
 														) : (
-															<img
+															<Image
 																src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
 																width="25"
 																height="25"
+																alt="image"
 															/>
 														)}
-														<Link href="/trainer/session/add-session">
+														<Link
+															href="/trainer/session/add-session"
+															passHref
+														>
 															<div
 																className="ml-1 font-thin hover:cursor-pointer"
 																data-id={member.id}

@@ -15,7 +15,10 @@ const Menu: NextPage = () => {
 				</div>
 
 				<div className="mt-4">
-					<Link href="/trainer/menu/info">
+					<Link
+						href="/trainer/menu/info"
+						passHref
+					>
 						<div className="flex justify-between cursor-pointer hover:bg-gray-100 items-center">
 							<li className="m-1 text-gray-400 list-none">내 정보</li>
 							<svg
@@ -32,7 +35,10 @@ const Menu: NextPage = () => {
 							</svg>
 						</div>
 					</Link>
-					<Link href="/trainer/menu/sales">
+					<Link
+						href="/trainer/menu/sales"
+						passHref
+					>
 						<div className="flex justify-between mt-1 cursor-pointer hover:bg-gray-100 items-center">
 							<li className="m-1 text-gray-400 list-none">매출 조회</li>
 							<svg
@@ -49,7 +55,10 @@ const Menu: NextPage = () => {
 							</svg>
 						</div>
 					</Link>
-					<Link href="/trainer/menu/ledger">
+					<Link
+						href="/trainer/menu/ledger"
+						passHref
+					>
 						<div className="flex justify-between mt-1 cursor-pointer hover:bg-gray-100 items-center">
 							<li className="m-1 text-gray-400 list-none">수업료 정산</li>
 							<svg

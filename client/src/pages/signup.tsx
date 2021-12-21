@@ -12,19 +12,19 @@ import {
 } from '../graphql/graphql'
 
 interface FormInput {
-	email: string
+	email: string | undefined | string[]
+	userName: string
 	password: string
-	name: string
-	birth: string
-	phone: string
-	loginType: string
+	phoneNumber: string
 	gender: string
+	birthDate: string
+	loginType: string
 }
 
 const labelProperties =
 	'after:absolute after:h-full after:bg-yellow-100 after:w-full after:top-0 after:z-[-1] after:transition-[left] after:duration-500 peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
 
-const Signup: NextPage = () => {
+const Signup: NextPage<FormInput> = () => {
 	const router = useRouter()
 	const logintype = router.query.logintype
 	const googleEmail = router.query.email
@@ -53,11 +53,11 @@ const Signup: NextPage = () => {
 		// const interestTypes = exerciseTypes.filter(type => type.status)
 		const input = {
 			email: data.email,
-			userName: data.name,
+			userName: data.userName,
 			password: data.password,
-			phoneNumber: data.phone,
+			phoneNumber: data.phoneNumber,
 			gender: data.gender,
-			birthDate: new Date(data.birth),
+			birthDate: new Date(data.birthDate),
 			loginType
 		}
 
@@ -147,7 +147,7 @@ const Signup: NextPage = () => {
 							<input
 								className="w-full h-12 p-3 mt-1 border rounded-3xl"
 								type="text"
-								{...register('name', {
+								{...register('userName', {
 									required: true
 								})}
 							/>
@@ -230,7 +230,7 @@ const Signup: NextPage = () => {
 						{areYouTrainer ? (
 							<div className="flex flex-col mt-4">
 								<div className="text-center">
-									Pick a few types that you're interested in.
+									{"타입을 선택하세요."}
 								</div>
 								<div className="flex flex-wrap justify-between py-2">
 									{interestedTypes.map(type => {
@@ -299,7 +299,7 @@ const Signup: NextPage = () => {
 									<input
 										className="w-full h-12 p-3 mt-1"
 										type="date"
-										{...register('birth', {
+										{...register('birthDate', {
 											required: true
 										})}
 									/>
@@ -310,12 +310,12 @@ const Signup: NextPage = () => {
 									<input
 										className="w-full h-12 p-3 mt-1 border"
 										type="text"
-										{...register('phone', {
+										{...register('phoneNumber', {
 											required: true,
 											pattern: /^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/
 										})}
 									/>
-									{errors.phone && (
+									{errors.phoneNumber && (
 										<div className="text-[16px] text-red-500 mt-1 text-center">
 											붙임표(-)는 제외하고 입력해주세요.
 										</div>
@@ -362,9 +362,9 @@ const Signup: NextPage = () => {
 							<div className="px-3">
 								<div className="font-semibold bg-gray-100">목적</div>
 								<div className="mt-1 text-[12px]">
-									Bodysign (이하 "서비스"라 합니다.)과 관련하여, 서비스와
+									{`Bodysign (이하 "서비스"라 합니다.)과 관련하여, 서비스와
 									이용 고객 간에 서비스의 이용조건 및 절차, 서비스와 회원
-									간의 권리, 의무 및 기타 필요한 사항을 규정
+									간의 권리, 의무 및 기타 필요한 사항을 규정`}
 								</div>
 							</div>
 

@@ -12,7 +12,10 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 
 	return variant === 'Trainer' ? (
 		<div className="flex justify-between px-8 py-2 text-gray-400 border-t bg-gray-50 bottom-0 sticky">
-			<Link href="/trainer">
+			<Link
+				href="/trainer"
+				passHref
+			>
 				<span
 					className={`flex flex-col items-center cursor-pointer ${
 						path === '/trainer' ? 'text-black' : ''
@@ -30,7 +33,10 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 					<div className="text-[12px] mt-1">홈</div>
 				</span>
 			</Link>
-			<Link href="/trainer/manage-member">
+			<Link
+				href="/trainer/manage-member"
+				passHref
+			>
 				<span
 					className={`flex flex-col items-center cursor-pointer ${
 						path.includes('/trainer/manage-member') ? 'text-black' : ''
@@ -51,7 +57,10 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 					<div className="text-[12px] mt-1">회원</div>
 				</span>
 			</Link>
-			<Link href="/trainer/exercise">
+			<Link
+				href="/trainer/exercise"
+				passHref
+			>
 				<span
 					className={`flex flex-col items-center cursor-pointer ${
 						path.includes('/trainer/exercise') ? 'text-black' : ''
@@ -69,7 +78,10 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 					<div className="text-[12px] mt-1">운동</div>
 				</span>
 			</Link>
-			<Link href="/trainer/session">
+			<Link
+				href="/trainer/session"
+				passHref
+			>
 				<span
 					className={`flex flex-col items-center cursor-pointer ${
 						path.includes('/trainer/session') ? 'text-black' : ''
@@ -87,7 +99,10 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 					<div className="text-[12px] mt-1">수업</div>
 				</span>
 			</Link>
-			<Link href="/trainer/menu">
+			<Link
+				href="/trainer/menu"
+				passHref
+			>
 				<span
 					className={`flex flex-col items-center cursor-pointer ${
 						path.includes('/trainer/menu') ? 'text-black' : ''
@@ -110,7 +125,10 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 		</div>
 	) : (
 		<div className="flex justify-between px-8 py-2 text-gray-400 border-t bg-gray-50 bottom-0 sticky">
-			<Link href="/user">
+			<Link
+				href="/user"
+				passHref
+			>
 				<span
 					className={`flex flex-col items-center cursor-pointer ${
 						path === '/user' ? 'text-black' : ''
@@ -128,7 +146,10 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 					<div className="text-[12px] mt-1">홈</div>
 				</span>
 			</Link>
-			<Link href="/user/session">
+			<Link
+				href="/user/session"
+				passHref
+			>
 				<span
 					className={`flex flex-col items-center cursor-pointer ${
 						path.includes('session') ? 'text-black' : ''
@@ -146,7 +167,10 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 					<div className="text-[12px] mt-1">수업</div>
 				</span>
 			</Link>
-			<Link href="/user/chat">
+			<Link
+				href="/user/chat"
+				passHref
+			>
 				<span
 					className={`flex flex-col items-center cursor-pointer ${
 						path.includes('chat') ? 'text-black' : ''
@@ -165,7 +189,10 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 				</span>
 			</Link>
 
-			<Link href="/user/menu">
+			<Link
+				href="/user/menu"
+				passHref			
+			>
 				<span
 					className={`flex flex-col items-center cursor-pointer ${
 						path.includes('menu') ? 'text-black' : ''
@@ -177,8 +204,8 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 						width="18"
 						height="18">
 						<path
-							fill-rule="evenodd"
-							clip-rule="evenodd"
+							fillRule="evenodd"
+							clipRule="evenodd"
 							d="M15 2H0V1h15v1zm0 4H0V5h15v1zm0 4H0V9h15v1zm0 4H0v-1h15v1z"
 							fill="currentColor"></path>
 					</svg>

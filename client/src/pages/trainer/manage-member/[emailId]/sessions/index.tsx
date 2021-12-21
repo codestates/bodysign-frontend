@@ -35,7 +35,10 @@ const Sessions: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[25px]">
-						<Link href="/trainer/manage-member">
+						<Link
+							href="/trainer/manage-member"
+							passHref
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6 cursor-pointer"
@@ -71,17 +74,23 @@ const Sessions: NextPage = () => {
 
 				<div className="flex justify-between pr-3 mt-4 text-[18px]">
 					<Link
-						href={`/trainer/manage-member/${managedUserInfo.email}/info`}>
+						href={`/trainer/manage-member/${managedUserInfo.email}/info`}
+						passHref
+					>
 						<span className="ml-0 cursor-pointer">회원정보</span>
 					</Link>
 					<Link
-						href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}>
+						href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}
+						passHref
+					>
 						<span className="pb-1 ml-2 border-b border-black cursor-pointer">
 							수업기록
 						</span>
 					</Link>
 					<Link
-						href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}>
+						href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}
+						passHref
+					>
 						<span className="ml-2 cursor-pointer">인바디</span>
 					</Link>
 				</div>
@@ -119,7 +128,10 @@ const Sessions: NextPage = () => {
 						)
 					})}
 
-					<Link href="/trainer/session/add-session">
+					<Link
+						href="/trainer/session/add-session"
+						passHref
+					>
 						<svg
 							className="self-center w-6 h-6 mt-4 text-gray-500 cursor-pointer"
 							xmlns="http://www.w3.org/2000/svg"

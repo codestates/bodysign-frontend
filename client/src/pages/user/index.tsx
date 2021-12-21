@@ -3,6 +3,7 @@ import type { NextPage } from 'next'
 import Layout from '../../components/Layout'
 import logo from '../../../public/logo3.svg'
 import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client'
+import Image from 'next/image'
 
 export const UserDocument = gql`
 	query User($id: Int!) {
@@ -90,7 +91,7 @@ const main: NextPage = () => {
 	return (
 		<Layout>
 			<div className="mb-2.5 flex flex-col w-full mx-4 my-5 text-[12px] font-IBM">
-				<img src={logo} width="50" alt="logo" />
+				<Image src={logo} width="50" alt="logo" />
 			</div>
 
 			<div className="m-5 font-IBM font-thin"></div>

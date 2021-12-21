@@ -93,7 +93,10 @@ const Modify: NextPage = () => {
 		<Layout>
 			<div className="font-IBM flex flex-col m-5 mx-4 my-5 text-[12px]">
 				<div className="flex items-center mb-10">
-					<Link href="/user/menu/info">
+					<Link
+						href="/user/menu/info"
+						passHref
+					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="h-6 w-6"
@@ -101,9 +104,9 @@ const Modify: NextPage = () => {
 							viewBox="0 0 24 24"
 							stroke="currentColor">
 							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
 								d="M15 19l-7-7 7-7"
 							/>
 						</svg>
@@ -112,14 +115,14 @@ const Modify: NextPage = () => {
 					<svg
 						onClick={saveInfo}
 						xmlns="http://www.w3.org/2000/svg"
-						class="h-6 w-6"
+						className="h-6 w-6"
 						fill="none"
 						viewBox="0 0 24 24"
 						stroke="currentColor">
 						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
 							d="M5 13l4 4L19 7"
 						/>
 					</svg>

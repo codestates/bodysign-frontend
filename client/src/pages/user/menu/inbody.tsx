@@ -60,7 +60,7 @@ const Inbody: NextPage = () => {
 			const chart = new Chart(canvasRef.current, {
 				type: 'line',
 				data: {
-					labels: inbodyDataList.map(inbodyData => inbodyData.date),
+					labels: inbodyDataList.map((inbodyData, index) => inbodyData.date),
 					datasets: [
 						{
 							label: '체중',
@@ -106,7 +106,9 @@ const Inbody: NextPage = () => {
 				) : null}
 				<div className="font-IBM flex-col m-5 items-center mx-4 my-5">
 					<div className="flex mb-10 text-[12px] items-center">
-						<Link href="/user/menu">
+						<Link href="/user/menu"
+							passHref
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="h-6 w-6"
@@ -114,9 +116,9 @@ const Inbody: NextPage = () => {
 								viewBox="0 0 24 24"
 								stroke="currentColor">
 								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth="2"
 									d="M15 19l-7-7 7-7"
 								/>
 							</svg>
@@ -138,9 +140,9 @@ const Inbody: NextPage = () => {
 									</tr>
 								</thead>
 								<tbody>
-									{inbodyDataList.map(inbodyData => {
+									{inbodyDataList.map((inbodyData, index) => {
 										return (
-											<tr>
+											<tr key={index}>
 												<td>{inbodyData.date}</td>
 												<td>{inbodyData.weight}</td>
 												<td>{inbodyData.muscle_mass}</td>
@@ -157,9 +159,9 @@ const Inbody: NextPage = () => {
 								viewBox="0 0 20 20"
 								fill="currentColor">
 								<path
-									fill-rule="evenodd"
+									fillRule="evenodd"
 									d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-									clip-rule="evenodd"
+									clipRule="evenodd"
 								/>
 							</svg>
 						</div>

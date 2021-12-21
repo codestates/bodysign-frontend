@@ -63,7 +63,10 @@ const TrainerInfo: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[20px]">
-						<Link href="/trainer/menu">
+						<Link
+							href="/trainer/menu"
+							passHref
+						>
 							<svg
 								className="w-6 h-6 cursor-pointer"
 								xmlns="http://www.w3.org/2000/svg"

@@ -1,7 +1,12 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
 
-const AddInbody: NextPage = ({ inbodyModalOpenhandler, isOpen }) => {
+interface AddInbodyProps {
+    inbodyModalOpenhandler: any,
+    isOpen: any,
+}
+
+const AddInbody: NextPage<AddInbodyProps> = ({ inbodyModalOpenhandler, isOpen }) => {
 	const [newInbodyData, setNewInbodyData] = useState({
 		date: '2021.01.01',
 		weight: 0,

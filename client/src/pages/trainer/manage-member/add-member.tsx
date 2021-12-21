@@ -70,7 +70,10 @@ const AddMember: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[20px] font-bold">
-						<Link href="/trainer/manage-member">
+						<Link
+							href="/trainer/manage-member"
+							passHref
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="w-7 h-7"

@@ -12,7 +12,12 @@ export const UpdateUserPassword = gql`
 	}
 `
 
-const ChangePasswordModal: NextPage = ({ passwordModalOpenhandler, isOpen }) => {
+interface ChangePasswordModalProps {
+    passwordModalOpenhandler: any,
+    isOpen: any,
+}
+
+const ChangePasswordModal: NextPage<ChangePasswordModalProps> = ({ passwordModalOpenhandler, isOpen }) => {
     const [ updateUserPassword ] = useMutation(UpdateUserPassword)
 
     const [ passwordData, setPasswordData ] = useState({

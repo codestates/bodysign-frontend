@@ -3,12 +3,13 @@ import type { NextPage } from 'next'
 import Layout from '../../components/Layout'
 import logo from '../../../public/logo.svg'
 import BottomBar from '../../components/BottomBar'
+import Image from 'next/image'
 
 // TODO: CSS 애니메이션 꾸미기
 // https://codepen.io/Tbgse/pen/dYaJyJ
 // https://codepen.io/CheeseTurtle/pen/jzdgI?editors=1010
 
-const main: NextPage = () => {
+const Main: NextPage = () => {
 	const [inbodyList, setInbodyList] = useState([
 		{
 			date: '21/01/01',
@@ -56,7 +57,7 @@ const main: NextPage = () => {
 		<>
 			<Layout>
 				<div className="mb-2.5 flex flex-col w-full mx-4 my-5 text-[12px] font-IBM">
-					<img src={logo} width="50" alt="logo" />
+					<Image src={logo} width="50" alt="logo" />
 				</div>
 				<div className="m-5 font-IBM font-thin">
 					<div className="font-IBM font-extrabold text-[25px]">
@@ -113,4 +114,4 @@ const main: NextPage = () => {
 	)
 }
 
-export default main
+export default Main

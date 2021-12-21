@@ -51,9 +51,12 @@ const Session: NextPage = () => {
 					<div className="text-[25px] mb-3 font-IBM font-bold">
 						수업 기록
 					</div>
-					{sessionList.map(session => (
-						<Link href="/user/session/date">
-							<div className="border border-gray-300 rounded-2xl mb-2 hover:bg-gray-100 hover:cursor-pointer">
+					{sessionList.map((session, index) => (
+						<Link
+							href="/user/session/date"
+							passHref
+						>
+							<div key={index} className="border border-gray-300 rounded-2xl mb-2 hover:bg-gray-100 hover:cursor-pointer">
 								<div className="inline-block p-1 mx-1 font-IBM font-medium">
 									{session.date}
 								</div>

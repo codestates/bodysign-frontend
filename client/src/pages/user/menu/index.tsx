@@ -5,10 +5,13 @@ import Layout from '../../../components/Layout'
 
 const Menu: NextPage = () => {
 	return (
-		<Layout variant="Web">
+		<Layout>
 			<div className="font-IBM flex flex-col m-5 mx-4 my-5 text-[15px]">
 				<div className="font-IBM font-bold mb-5 text-[25px]">전체</div>
-				<Link href="/user/menu/info">
+				<Link
+					href="/user/menu/info"
+					passHref
+				>
 					<div className="flex items-center justify-between hover:bg-gray-100 font-IBM">
 						<li className="m-1 text-gray-400 list-none">내 정보</li>
 						<svg
@@ -21,11 +24,14 @@ const Menu: NextPage = () => {
 							<path
 								d="M6.5 10.5l3-3-3-3"
 								stroke="currentColor"
-								stroke-linecap="square"></path>
+								strokeLinecap="square"></path>
 						</svg>
 					</div>
 				</Link>
-				<Link href="/user/menu/inbody">
+				<Link
+					href="/user/menu/inbody"
+					passHref
+				>
 					<div className="flex items-center justify-between hover:bg-gray-100 font-IBM">
 						<li className="m-1 text-gray-400 list-none">인바디</li>
 						<svg
@@ -38,7 +44,7 @@ const Menu: NextPage = () => {
 							<path
 								d="M6.5 10.5l3-3-3-3"
 								stroke="currentColor"
-								stroke-linecap="square"></path>
+								strokeLinecap="square"></path>
 						</svg>
 					</div>
 				</Link>

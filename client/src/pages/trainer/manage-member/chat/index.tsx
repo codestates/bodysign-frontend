@@ -133,7 +133,10 @@ const Chat: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[25px]">
-						<Link href="/trainer/manage-member/">
+						<Link
+							href="/trainer/manage-member/"
+							passHref
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6 cursor-pointer"
@@ -197,6 +200,7 @@ const Chat: NextPage = () => {
 										width="140"
 										height="140"
 										layout="fixed"
+										alt="image"
 									/>
 								</div>
 							) : (
@@ -271,6 +275,7 @@ const Chat: NextPage = () => {
 								layout="responsive"
 								placeholder="blur"
 								blurDataURL="true"
+								alt="image"
 							/>
 						) : null}
 					</div>

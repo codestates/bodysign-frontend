@@ -11,6 +11,7 @@ import {
 	RemoveSessionDocument
 } from '../../../graphql/graphql'
 import Loading from '../../../components/Loading'
+import Image from 'next/image'
 
 interface MemberSession {
 	id: number
@@ -91,7 +92,10 @@ const Session: NextPage = () => {
 					<span className="flex">
 						{!readyDelete ? (
 							<>
-								<Link href="/trainer/session/add-session">
+								<Link
+									href="/trainer/session/add-session"
+									passHref
+								>
 									<svg
 										className="w-7 h-7 cursor-pointer"
 										xmlns="http://www.w3.org/2000/svg"
@@ -189,16 +193,18 @@ const Session: NextPage = () => {
 														}`}>
 														<div className="flex">
 															{session.gender === 'male' ? (
-																<img
+																<Image
 																	src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
 																	width="25"
 																	height="25"
+																	alt="image"
 																/>
 															) : (
-																<img
+																<Image
 																	src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
 																	width="25"
 																	height="25"
+																	alt="image"
 																/>
 															)}
 															<div

@@ -47,7 +47,10 @@ const Exercise: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[20px] font-bold">
-						<Link href={router.asPath.split('select')[0]}>
+						<Link
+							href={router.asPath.split('select')[0]}
+							passHref
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6 cursor-pointer"

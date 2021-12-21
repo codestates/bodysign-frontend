@@ -87,7 +87,7 @@ const Login: NextPage = () => {
 	}
 
     return <>
-    <Layout variant="Web">
+    <Layout>
       <div className="flex flex-col mx-auto my-5 text-[15px]">
         {!session && <>
           <div className="max-w-screen-md">
@@ -101,7 +101,10 @@ const Login: NextPage = () => {
             </button>
             <div className="flex w-4/5 border-0">
             </div>
-			<Link href="/signup">
+			<Link
+				href="/signup"
+				passHref
+			>
             <button className="font-IBM font-thin m-1 w-4/5 py-1 rounded text-gray-500 transition-colors duration-150 border border-gray-300 focus:shadow-outline hover:bg-gray-300 hover:text-white">회원가입</button>
 			</Link>
           </div>

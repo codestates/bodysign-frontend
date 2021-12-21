@@ -104,15 +104,21 @@ const Inbody: NextPage = () => {
 
 				<div className="flex justify-between pr-3 mt-4 text-[18px]">
 					<Link
-						href={`/trainer/manage-member/${managedUserInfo.email}/info`}>
+						href={`/trainer/manage-member/${managedUserInfo.email}/info`}
+						passHref
+					>
 						<span className="ml-0 cursor-pointer">회원정보</span>
 					</Link>
 					<Link
-						href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}>
+						href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}
+						passHref
+					>
 						<span className="ml-2 cursor-pointer">수업기록</span>
 					</Link>
 					<Link
-						href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}>
+						href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}
+						passHref
+					>
 						<span className="pb-1 ml-2 border-b border-black cursor-pointer">
 							인바디
 						</span>

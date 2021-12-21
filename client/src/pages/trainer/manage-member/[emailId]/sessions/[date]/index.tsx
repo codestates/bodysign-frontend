@@ -82,7 +82,10 @@ const Detail: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[25px] font-bold">
-						<Link href={router.asPath.split('20')[0]}>
+						<Link
+							href={router.asPath.split('20')[0]}
+							passHref
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6 cursor-pointer"
@@ -250,9 +253,9 @@ const Detail: NextPage = () => {
 										}>
 										{exercise.name}
 									</div>
-									{exercise.sessionExerciseVolumes.map((volume: any) => {
+									{exercise.sessionExerciseVolumes.map((volume: any, index: any) => {
 										return (
-											<div className="flex justify-around w-full py-1 border-b last:border-b-0">
+											<div key={index} className="flex justify-around w-full py-1 border-b last:border-b-0">
 												<span className="w-full text-center">
 													{volume.weight}kg
 												</span>
@@ -269,7 +272,10 @@ const Detail: NextPage = () => {
 							</React.Fragment>
 						)
 					})}
-					<Link href={`${router.asPath}/select-exercise`}>
+					<Link
+						href={`${router.asPath}/select-exercise`}
+						passHref
+					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="self-center w-6 h-6 mt-4 text-gray-500 cursor-pointer"

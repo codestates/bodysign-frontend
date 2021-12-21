@@ -18,6 +18,7 @@ import {
 import { useRouter } from 'next/dist/client/router'
 import BottomBar from '../../../components/BottomBar'
 import { io } from 'socket.io-client'
+import Image from 'next/image'
 
 interface Member {
 	id: string
@@ -289,16 +290,18 @@ const ManageMember: NextPage = () => {
 												<div className="flex justify-between px-3 py-3 border rounded-3xl">
 													<div className="flex">
 														{member.gender === 'male' ? (
-															<img
+															<Image
 																src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
 																width="25"
 																height="25"
+																alt="image"
 															/>
 														) : (
-															<img
+															<Image
 																src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
 																width="25"
 																height="25"
+																alt="image"
 															/>
 														)}
 														{
@@ -364,7 +367,10 @@ const ManageMember: NextPage = () => {
 														}
 													</div>
 													{!readyDelete ? (
-														<Link href={`/trainer/manage-member/chat`}>
+														<Link
+															href={`/trainer/manage-member/chat`}
+															passHref
+														>
 															<svg
 																className="w-6 h-6"
 																data-id={member.id}
@@ -413,7 +419,10 @@ const ManageMember: NextPage = () => {
 								className="fixed inset-0 z-[-1] bg-black opacity-20"
 								onClick={() => modalVar(false)}></div>
 							<div className="bg-white flex z-[50] h-full flex-col py-10">
-								<Link href="/trainer/manage-member/add-member">
+								<Link
+									href="/trainer/manage-member/add-member"
+									passHref
+								>
 									<div className="font-IBM font-thin text-[12px] rounded-lg border w-full h-12 px-10 bg-gray-400 text-white text-center py-3 cursor-pointer">
 										새로운 회원정보 등록
 									</div>

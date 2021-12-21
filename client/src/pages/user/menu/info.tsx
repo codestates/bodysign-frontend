@@ -77,7 +77,7 @@ const Info: NextPage = () => {
 	}
 
 	return (
-		<Layout variant="Web">
+		<Layout>
 			<div className="font-IBM flex flex-col justify-center mx-4 my-5 text-[15px]">
 				{isPasswordModalOpen ? (
 					<ChangePasswordModal
@@ -87,7 +87,10 @@ const Info: NextPage = () => {
 				) : null}
 				<div className="flex items-center justify-between">
 						<span className="flex text-[25px]">
-							<Link href="/user/menu">
+							<Link
+								href="/user/menu"
+								passHref
+							>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6 cursor-pointer"
@@ -104,7 +107,10 @@ const Info: NextPage = () => {
 						</Link>
 						<div className="font-bold">내 정보</div>
 					</span>
-					<Link href="/user/menu/modify">
+					<Link
+						href="/user/menu/modify"
+						passHref
+					>
 						<span className="flex">
 							<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mx-1" viewBox="0 0 20 20" fill="currentColor">
 							<path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
@@ -150,7 +156,6 @@ const Info: NextPage = () => {
 						</div>
 					</div>
 				</div>
-			</div>
 		</Layout>
 	)
 }

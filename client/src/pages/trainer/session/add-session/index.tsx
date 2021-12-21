@@ -8,6 +8,7 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useRouter } from 'next/dist/client/router'
 import { CreateSessionDocument } from '../../../../graphql/graphql'
+import Image from 'next/image'
 
 const AddSession: NextPage = () => {
 	const router = useRouter()
@@ -88,7 +89,10 @@ const AddSession: NextPage = () => {
 				<div className="mt-4">
 					<div className="text-[12px] font-medium">회원</div>
 					{managedUserInfo.userName === '' ? (
-						<Link href="/trainer/session/add-session/select-member">
+						<Link
+							href="/trainer/session/add-session/select-member"
+							passHref
+						>
 							<button className="text-[12px] w-full p-2 mt-1 border font-thin rounded-3xl">
 								회원 선택
 							</button>
@@ -96,16 +100,18 @@ const AddSession: NextPage = () => {
 					) : (
 						<div className="w-full p-3 mt-1 font-thin border flex">
 							{managedUserInfoVar().gender === 'male' ? (
-								<img
+								<Image
 									src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
 									width="25"
 									height="25"
+									alt="image"
 								/>
 							) : (
-								<img
+								<Image
 									src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
 									width="25"
 									height="25"
+									alt="image"
 								/>
 							)}
 							<div className="ml-2">

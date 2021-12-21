@@ -4,7 +4,12 @@ import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../components/Layout'
 
-const SearchMemberModal: NextPage = ({
+interface SearchMemberModalProps {
+    addMemberModalHandler: any,
+    searchMemberModalHandler: any,
+}
+
+const SearchMemberModal: NextPage<SearchMemberModalProps> = ({
 	addMemberModalHandler,
 	searchMemberModalHandler
 }) => {
@@ -12,7 +17,7 @@ const SearchMemberModal: NextPage = ({
 	const [findUser, setFindUser] = useState(false)
 	const member_category_dummy = ['다이어트', '바디프로필', '스트렝스']
 
-	const inputPhoneNumberHandler = e => {
+	const inputPhoneNumberHandler = (e: any) => {
 		let phoneNumber = ''
 		phoneNumber = e.target.value
 
