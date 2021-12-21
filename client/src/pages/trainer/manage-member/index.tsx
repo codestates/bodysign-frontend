@@ -44,7 +44,7 @@ const ManageMember: NextPage = () => {
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: 21 }
+		variables: { id: 1 }
 	})
 	const [createUserCategory] = useMutation(CreateUserCategoryDocument)
 	const [updateUser] = useMutation(UpdateUserDocument)
@@ -77,14 +77,14 @@ const ManageMember: NextPage = () => {
 				await createUserCategory({
 					variables: {
 						createUserCategoryInput: {
-							trainerId: 21,
+							trainerId: 1,
 							name: data.userCategoryName
 						}
 					},
 					refetchQueries: [
 						{
 							query: TrainerDocument,
-							variables: { id: 21 }
+							variables: { id: 1 }
 						}
 					]
 				})
@@ -173,6 +173,26 @@ const ManageMember: NextPage = () => {
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									className="cursor-pointer w-[2.8rem] h-[2.8rem]"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+									data-check-modal="addmember"
+									onClick={e => {
+										if (e !== null && e.target instanceof SVGElement) {
+											setCheckModal(e.target.dataset.checkModal as string)
+											modalVar(true)
+										}
+									}}>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+									/>
+								</svg>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									className="ml-[0.8rem] cursor-pointer w-[2.8rem] h-[2.8rem]"
 									fill="none"
 									viewBox="0 0 24 24"
 									stroke="currentColor"
@@ -267,14 +287,14 @@ const ManageMember: NextPage = () => {
 												<div className="flex">
 													{member.gender === 'male' ? (
 														<Image
-															src="http://s3.amazonaws.com/pix.iemoji.com/images/emoji/apple/ios-12/256/man-raising-hand-light-skin-tone.png"
+															src="/man.png"
 															width="36"
 															height="30"
 															alt="image"
 														/>
 													) : (
 														<Image
-															src="http://s3.amazonaws.com/pix.iemoji.com/images/emoji/apple/ios-12/256/woman-raising-hand-light-skin-tone.png"
+															src="/woman.png"
 															width="36"
 															height="30"
 															alt="image"
@@ -340,8 +360,7 @@ const ManageMember: NextPage = () => {
 												{!readyDelete ? (
 													<Link
 														href={`/trainer/manage-member/chat`}
-														passHref
-													>
+														passHref>
 														<svg
 															className="w-[2.8rem] h-[2.8rem] mt-[0.4rem]"
 															data-id={member.id}
@@ -377,7 +396,7 @@ const ManageMember: NextPage = () => {
 										</React.Fragment>
 									)
 								})}
-								<div className="text-[1.8rem] mt-[0.8rem] flex justify-center py-[2rem] bg-white rounded-full shadow-md border">
+								{/* <div className="text-[1.8rem] mt-[0.8rem] flex justify-center py-[2rem] bg-white rounded-full shadow-md border">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										className="w-[2.8rem] h-[2.8rem] text-[#9F9F9F]"
@@ -400,7 +419,7 @@ const ManageMember: NextPage = () => {
 											d="M12 4v16m8-8H4"
 										/>
 									</svg>
-								</div>
+								</div> */}
 							</div>
 						</React.Fragment>
 					)
@@ -416,9 +435,7 @@ const ManageMember: NextPage = () => {
 							onClick={() => modalVar(false)}></div>
 						<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[2rem]">
 							<div className="text-[3.2rem] text-bold">회원 추가</div>
-							<Link href="/trainer/manage-member/add-member"
-								passHref
-							>
+							<Link href="/trainer/manage-member/add-member" passHref>
 								<div className="w-full py-[1.2rem] text-center mt-[2.4rem] border rounded-3xl shadow-md cursor-pointer h-[5.5rem]">
 									새로운 회원정보 등록
 								</div>

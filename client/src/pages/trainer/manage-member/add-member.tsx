@@ -3,13 +3,14 @@ import Link from 'next/link'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import Loading from '../../../components/Loading'
 import {
 	CreateNonRegisteredUserDocument,
 	TrainerDocument
 } from '../../../graphql/graphql'
 import { useRouter } from 'next/dist/client/router'
+import { userDataVar } from '../../../graphql/vars'
 
 interface FormInput {
 	name: string
@@ -24,8 +25,9 @@ const labelProperties =
 
 const AddMember: NextPage = () => {
 	const router = useRouter()
+	const userData = useReactiveVar(userDataVar)
 	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: 21 }
+		variables: { id: userData?.id }
 	})
 	const [createNonRegisteredUser] = useMutation(
 		CreateNonRegisteredUserDocument
@@ -70,9 +72,7 @@ const AddMember: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[3.2rem]">
-						<Link href="/trainer/manage-member"
-							passHref
-						>
+						<Link href="/trainer/manage-member" passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"

@@ -54,10 +54,7 @@ const SelectMember: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[3.2rem]">
-						<Link
-							href="/trainer/session/add-session"
-							passHref
-						>
+						<Link href="/trainer/session/add-session" passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
@@ -74,10 +71,7 @@ const SelectMember: NextPage = () => {
 						</Link>
 						<div className="ml-[0.8rem] font-bold">회원선택</div>
 					</span>
-					<Link
-						href="/trainer/session/add-session"
-						passHref
-					>
+					<Link href="/trainer/session/add-session" passHref>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="cursor-pointer w-[3.6rem] h-[3.6rem] text-[#FDAD00]"
@@ -139,14 +133,14 @@ const SelectMember: NextPage = () => {
 												<div className="flex">
 													{member.gender === 'male' ? (
 														<Image
-															src="http://s3.amazonaws.com/pix.iemoji.com/images/emoji/apple/ios-12/256/man-raising-hand-light-skin-tone.png"
+															src="/man.png"
 															width="36"
 															height="30"
 															alt="image"
 														/>
 													) : (
 														<Image
-															src="http://s3.amazonaws.com/pix.iemoji.com/images/emoji/apple/ios-12/256/woman-raising-hand-light-skin-tone.png"
+															src="/woman.png"
 															width="36"
 															height="30"
 															alt="image"
