@@ -86,14 +86,14 @@ const Info: NextPage = () => {
 					/>
 				) : null}
 				<div className="flex items-center justify-between">
-						<span className="flex text-[25px]">
+						<span className="flex text-[3.2rem]">
 							<Link
 								href="/user/menu"
 								passHref
 							>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="self-center w-6 h-6 cursor-pointer"
+								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor">
@@ -101,7 +101,7 @@ const Info: NextPage = () => {
 									strokeLinecap="round"
 									strokeLinejoin="round"
 									strokeWidth={2}
-									d="M15 19l-7-7 7-7"
+									d="M10 19l-7-7m0 0l7-7m-7 7h18"
 								/>
 							</svg>
 						</Link>
@@ -112,15 +112,26 @@ const Info: NextPage = () => {
 						passHref
 					>
 						<span className="flex">
-							<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mx-1" viewBox="0 0 20 20" fill="currentColor">
-							<path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-							<path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
+						<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="w-[2.8rem] h-[2.8rem]"
+								viewBox="0 0 20 20"
+								fill="currentColor"
+								onClick={async () => {
+									setIsmodify(true)
+								}}>
+								<path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+								<path
+									fillRule="evenodd"
+									d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+									clipRule="evenodd"
+								/>
 							</svg>
 						</span>
 					</Link>
 				</div>
-				<div className="mt-4">
-					<div className="flex flex-col justify-between px-3 py-3">
+				<div className="mt-4 text-[1.8rem]">
+					<div className="flex flex-col justify-between">
 						<div className="flex justify-between">
 							<span>이름</span>
 							<span className="font-thin">{userInfo.name}</span>
@@ -141,15 +152,15 @@ const Info: NextPage = () => {
 							<span>전화번호</span>
 							<span className="font-thin">{userInfo.phone}</span>
 						</div>
-							<div className="flex-col mx-5 mt-4">
-								<button
+							<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[1.6rem]">
+								<div
 									onClick={changePasswordModal}
 									className="font-thin w-20 p-1 my-2 text-[12px] border float-right hover:bg-gray-50">
 									비밀번호 변경
-								</button>
+								</div>
 								<div
 									onClick={deleteUserHandler}
-									className="inline-block mt-10 text-[10px] text-red-600 hover:text-gray-400 hover:cursor-pointer">
+									className="text-[1.8rem] text-red-600 hover:text-gray-400 cursor-pointer">
 									회원탈퇴
 								</div>
 							</div>

@@ -3,6 +3,7 @@ import type { NextPage } from 'next'
 import Layout from '../../../components/Layout'
 import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client'
 import Link from 'next/link'
+import BottomBar from '../../../components/BottomBar'
 
 // TODO: 날짜, 요일, 시간 쪽을 클릭하면 e.target.children이 빈 배열로 나옴 -> 에러 발생
 // TODO: 세션 디테일 모달을 트레이너 참고해서 변경
@@ -48,7 +49,7 @@ const Session: NextPage = () => {
 		<Layout>
 			<div className="flex flex-col m-5 mx-4 my-5 font-IBM text-[15px]">
 				<>
-					<div className="text-[25px] mb-3 font-IBM font-bold">
+					<div className="text-[3.2rem] mb-3 font-IBM font-bold">
 						수업 기록
 					</div>
 					{sessionList.map((session, index) => (
@@ -57,7 +58,7 @@ const Session: NextPage = () => {
 							passHref
 							key={index} 
 						>
-							<div className="border border-gray-300 rounded-2xl mb-2 hover:bg-gray-100 hover:cursor-pointer">
+							<div className="h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white">
 								<div className="inline-block p-1 mx-1 font-IBM font-medium">
 									{session.date}
 								</div>
@@ -70,6 +71,7 @@ const Session: NextPage = () => {
 					))}
 				</>
 			</div>
+			<BottomBar variant="User" />
 		</Layout>
 	)
 }

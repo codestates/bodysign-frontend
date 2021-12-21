@@ -7,6 +7,7 @@ import dummydata from '../../../../../dummydata.json'
 import { deleteStateVar, modalVar } from '../../../../graphql/vars'
 import { gql, useQuery, useMutation } from '@apollo/client'
 import { useReactiveVar } from '@apollo/client'
+import BottomBar from '../../../../components/BottomBar'
 
 interface FormInput {
 	weight: string
@@ -46,7 +47,6 @@ const Detail: NextPage = () => {
 
 	if (loading) {
 	} else {
-		console.log(data.user.sessions[0].sessionExercises[0])
 	}
 
 	const exercises = [
@@ -295,6 +295,7 @@ const Detail: NextPage = () => {
 						</div>
 					</div>
 				) : null}
+				<BottomBar variant="User" />
 			</Layout>
 		</>
 	)

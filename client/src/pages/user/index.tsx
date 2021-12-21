@@ -7,6 +7,7 @@ import Image from 'next/image'
 import axios from 'axios'
 import { userDataVar } from '../../graphql/vars'
 import { getCookies } from 'cookies-next'
+import BottomBar from '../../components/BottomBar'
 
 export const UserDocument = gql`
 	query User($id: Int!) {
@@ -158,6 +159,7 @@ const Main: NextPage = () => {
 					</div>
 				</div>
 			</div>
+			<BottomBar variant="User" />
 		</Layout>
 	)
 }
