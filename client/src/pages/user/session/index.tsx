@@ -55,8 +55,9 @@ const Session: NextPage = () => {
 						<Link
 							href="/user/session/date"
 							passHref
+							key={index} 
 						>
-							<div key={index} className="border border-gray-300 rounded-2xl mb-2 hover:bg-gray-100 hover:cursor-pointer">
+							<div className="border border-gray-300 rounded-2xl mb-2 hover:bg-gray-100 hover:cursor-pointer">
 								<div className="inline-block p-1 mx-1 font-IBM font-medium">
 									{session.date}
 								</div>

@@ -11,7 +11,6 @@ import {
 	UpdateTrainerDocument
 } from '../../../graphql/graphql'
 import Loading from '../../../components/Loading'
-import { useRouter } from 'next/dist/client/router'
 
 interface FormInput {
 	password: string
@@ -20,7 +19,6 @@ interface FormInput {
 }
 
 const TrainerInfo: NextPage = () => {
-	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
 	const [checkModal, setCheckModal] = useState('changepassword')
 	const [isModify, setIsmodify] = useState(false)
@@ -62,32 +60,32 @@ const TrainerInfo: NextPage = () => {
 		<>
 			<Layout>
 				<div className="flex items-center justify-between">
-					<span className="flex text-[20px]">
+					<span className="flex text-[3.2rem]">
 						<Link
 							href="/trainer/menu"
 							passHref
 						>
 							<svg
-								className="w-6 h-6 cursor-pointer"
 								xmlns="http://www.w3.org/2000/svg"
+								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
-									strokeWidth={1.5}
-									d="M15 19l-7-7 7-7"
+									strokeWidth={2}
+									d="M10 19l-7-7m0 0l7-7m-7 7h18"
 								/>
 							</svg>
 						</Link>
-						<div className="font-bold">{data.trainer.userName} 회원님</div>
+						<div className="ml-[0.8rem] font-bold">내 정보</div>
 					</span>
 					<span className="flex">
 						{!isModify ? (
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="h-5 w-5 mr-2"
+								className="w-[2.8rem] h-[2.8rem]"
 								viewBox="0 0 20 20"
 								fill="currentColor"
 								onClick={async () => {
@@ -103,7 +101,7 @@ const TrainerInfo: NextPage = () => {
 						) : (
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="w-7 h-7"
+								className="ml-[0.8rem] w-[2.8rem] h-[2.8rem]"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
@@ -126,7 +124,7 @@ const TrainerInfo: NextPage = () => {
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
-									strokeWidth={1.5}
+									strokeWidth={2}
 									d="M5 13l4 4L19 7"
 								/>
 							</svg>
@@ -134,17 +132,17 @@ const TrainerInfo: NextPage = () => {
 					</span>
 				</div>
 
-				<div className="mt-4">
-					<div className="flex flex-col justify-between px-3 py-3">
+				<div className="mt-4 text-[1.8rem]">
+					<div className="flex flex-col justify-between">
 						<div className="flex justify-between">
 							<span>이름</span>
 							<span className="font-thin">{data.trainer.userName}</span>
 						</div>
-						<div className="flex justify-between mt-1">
+						<div className="flex justify-between mt-[0.4rem]">
 							<span>성별</span>
 							<span className="font-thin">{data.trainer.gender}</span>
 						</div>
-						<div className="flex justify-between mt-1">
+						<div className="flex justify-between mt-[0.4rem]">
 							<span>이메일</span>
 							{!isModify ? (
 								<span className="font-thin">{data.trainer.email}</span>
@@ -161,13 +159,13 @@ const TrainerInfo: NextPage = () => {
 								/>
 							)}
 						</div>
-						<div className="flex justify-between mt-1">
+						<div className="flex justify-between mt-[0.4rem]">
 							<span>생년월일</span>
 							<span className="font-thin">
 								{data.trainer.birthDate.split('T')[0]}
 							</span>
 						</div>
-						<div className="flex justify-between mt-1">
+						<div className="flex justify-between mt-[0.4rem]">
 							<span>전화번호</span>
 							{!isModify ? (
 								<span className="font-thin">
@@ -187,9 +185,6 @@ const TrainerInfo: NextPage = () => {
 							)}
 						</div>
 					</div>
-				</div>
-
-				<div className="mx-5 mt-4">
 					<button
 						data-check-modal="changepassword"
 						onClick={e => {
@@ -200,61 +195,68 @@ const TrainerInfo: NextPage = () => {
 							}
 							modalVar(true)
 						}}
-						className="font-thin w-[100px] p-1 my-2 text-[10px] border float-right hover:bg-gray-50 self-end">
+						className="font-thin w-[14rem] p-[1.2rem] mt-[0.8rem] text-[10px] border float-right">
 						비밀번호 변경
 					</button>
-					<div
-						data-check-modal="deleteaccount"
-						onClick={e => {
-							if (e !== null && e.target instanceof HTMLElement) {
-								{
-									setCheckModal(e.target.dataset.checkModal as string)
-								}
-							}
-							modalVar(true)
-						}}
-						className="inline-block mt-10 text-[6px] text-red-600 hover:text-gray-400 hover:cursor-pointer">
-						회원탈퇴
-					</div>
 				</div>
+				<div
+					className="text-[1.8rem] text-red-600 hover:text-gray-400 cursor-pointer"
+					data-check-modal="deleteaccount"
+					onClick={e => {
+						if (e !== null && e.target instanceof HTMLElement) {
+							{
+								setCheckModal(e.target.dataset.checkModal as string)
+							}
+						}
+						modalVar(true)
+					}}>
+					회원탈퇴
+				</div>
+			</Layout>
 
-				{modal ? (
-					checkModal === 'changepassword' ? (
-						<div className="fixed max-w-[450px] w-full bottom-0">
-							<div
-								className="fixed inset-0 z-[-1] bg-black opacity-20"
-								onClick={() => modalVar(false)}></div>
-							<div className="bg-white flex z-[50] h-full flex-col py-10">
-								<div className="py-3 text-center text-[20px]">
-									비밀번호 변경
-								</div>
-								<form
-									className="flex flex-col mt-4"
-									onSubmit={handleSubmit(onSubmit)}>
+			{modal ? (
+				checkModal === 'changepassword' ? (
+					<div className="fixed bottom-0 w-full font-IBM">
+						<div
+							className="fixed inset-0 z-[-1] bg-black opacity-20"
+							onClick={() => modalVar(false)}></div>
+						<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[1.6rem]">
+							<div className="text-[3.2rem] text-bold">비밀번호 변경</div>
+							<form
+								className="flex flex-col mt-[2.4rem]"
+								onSubmit={handleSubmit(onSubmit)}>
+								<div className="flex flex-col justify-between">
+									<label className="text-[1.4rem]">현재 비밀번호</label>
 									<input
-										className="w-full h-12 px-10 border"
+										className="w-full text-center border rounded-3xl shadow-md h-[5.5rem]"
 										type="password"
 										placeholder="기존 비밀번호"
 										{...register('password', {
 											required: true
 										})}
-									/>
+									/>{' '}
+								</div>
+								<div className="flex flex-col justify-between mt-[1.6rem]">
+									<label className="text-[1.4rem]">새 비밀번호</label>
 									<input
-										className="w-full h-12 px-10 mt-1 border"
+										className="w-full text-center border rounded-3xl shadow-md h-[5.5rem]"
 										type="password"
 										placeholder="새 비밀번호"
 										{...register('newPassword', {
 											required: true,
 											minLength: 8
 										})}
-									/>
-									{errors.newPassword?.type === 'minLength' && (
-										<p className="text-[16px] text-red-500 mt-1 text-center">
-											비밀번호는 최소 8자 이상으로 입력해주세요.
-										</p>
-									)}
+									/>{' '}
+								</div>
+								{errors.newPassword?.type === 'minLength' && (
+									<p className="text-[16px] text-red-500 mt-[0.8rem] text-center">
+										비밀번호는 최소 8자 이상으로 입력해주세요.
+									</p>
+								)}
+								<div className="flex flex-col justify-between mt-[1.6rem]">
+									<label className="text-[1.4rem]">비밀번호 확인</label>
 									<input
-										className="w-full h-12 px-10 mt-1 border"
+										className="w-full text-center border rounded-3xl shadow-md h-[5.5rem]"
 										type="password"
 										placeholder="비밀번호 확인"
 										{...register('checkPassword', {
@@ -262,66 +264,68 @@ const TrainerInfo: NextPage = () => {
 											// minLength: 8
 											validate: value => value === newPassword
 										})}
-									/>
-									{errors.checkPassword && (
-										<p className="text-[16px] text-red-500 mt-1 text-center">
-											비밀번호가 일치하지 않습니다.
-										</p>
-									)}
-
-									<div className="max-w-[450px] self-end mt-4">
-										<button
-											className="px-4 py-3 bg-gray-100 border"
-											onClick={() => modalVar(false)}>
-											취소
-										</button>
-										<button
-											className="px-4 py-3 mx-3 bg-yellow-100 border"
-											type="submit">
-											추가
-										</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					) : (
-						<div className="fixed max-w-[450px] w-full bottom-0">
-							<div
-								className="fixed inset-0 z-[-1] bg-black opacity-20"
-								onClick={() => modalVar(false)}></div>
-							<div className="bg-white flex z-[50] h-full flex-col py-10">
-								<div className="py-3 text-center text-[20px]">
-									회원탈퇴를 진행하시겠습니까?
+									/>{' '}
 								</div>
-								<div className="max-w-[450px] self-end mt-4">
+								{errors.checkPassword && (
+									<p className="text-[16px] text-red-500 mt-[0.8rem] text-center">
+										비밀번호가 일치하지 않습니다.
+									</p>
+								)}
+								<div className="flex justify-between mt-[2.4rem]">
 									<button
-										className="px-4 py-3 bg-gray-100 border"
+										className="w-[45%] p-[1.2rem] border shadow-md rounded-3xl"
 										onClick={() => modalVar(false)}>
 										취소
 									</button>
 									<button
-										className="px-4 py-3 mx-3 bg-red-100 border"
-										onClick={async () => {
-											// 회원탈퇴 API
-											try {
-												await removeTrainer({
-													variables: {
-														id: 1
-													}
-												})
-											} catch (error) {
-												console.log(error)
-											}
-											modalVar(false)
-										}}>
-										확인
+										className="w-[45%] p-[1.2rem] bg-[#FED06E] border shadow-md rounded-3xl "
+										type="submit">
+										추가
 									</button>
 								</div>
+							</form>
+						</div>
+					</div>
+				) : (
+					<div className="fixed bottom-0 w-full font-IBM">
+						<div
+							className="fixed inset-0 z-[-1] bg-black opacity-20"
+							onClick={() => modalVar(false)}></div>
+						<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[1.6rem]">
+							<div className="text-[2.4rem] text-bold">
+								회원탈퇴를 진행하시겠습니까?
+							</div>
+
+							<div className="flex flex-col justify-between mt-[2.4rem]">
+								<button
+									className="w-full text-center border rounded-3xl shadow-md cursor-pointer h-[5.5rem]"
+									type="submit"
+									onClick={() => modalVar(false)}>
+									취소
+								</button>
+								<button
+									className="w-full mt-[1.6rem] text-center border rounded-3xl shadow-md cursor-pointer h-[5.5rem] bg-[#FED06E]"
+									type="submit"
+									onClick={async () => {
+										// 회원탈퇴 API
+										try {
+											await removeTrainer({
+												variables: {
+													id: 1
+												}
+											})
+										} catch (error) {
+											console.log(error)
+										}
+										modalVar(false)
+									}}>
+									완료
+								</button>
 							</div>
 						</div>
-					)
-				) : null}
-			</Layout>
+					</div>
+				)
+			) : null}
 		</>
 	)
 }

@@ -20,7 +20,7 @@ interface FormInput {
 }
 
 const labelProperties =
-	'after:absolute after:h-full after:bg-yellow-100 after:w-full after:top-0 after:z-[-1] after:transition-[left] after:duration-500 peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
+	'after:absolute after:border after:h-[4.8rem] after:bg-[#FDAD00] after:p-[1.2rem] after:w-full after:-top-0 after:z-[-1] after:transition-[left] after:duration-500 after:rounded-[2rem] peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
 
 const AddMember: NextPage = () => {
 	const router = useRouter()
@@ -69,35 +69,35 @@ const AddMember: NextPage = () => {
 		<>
 			<Layout>
 				<div className="flex items-center justify-between">
-					<span className="flex text-[20px] font-bold">
-						<Link
-							href="/trainer/manage-member"
+					<span className="flex text-[3.2rem]">
+						<Link href="/trainer/manage-member"
 							passHref
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="w-7 h-7"
+								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
-									strokeWidth={1.5}
-									d="M15 19l-7-7 7-7"
+									strokeWidth={2}
+									d="M10 19l-7-7m0 0l7-7m-7 7h18"
 								/>
 							</svg>
 						</Link>
-						<div>회원정보등록</div>
+						<div className="ml-[0.8rem] font-bold">회원정보등록</div>
 					</span>
-					<span className="flex"></span>
 				</div>
 
-				<form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+				<form
+					className="mt-[1.6rem] text-[1.8rem]"
+					onSubmit={handleSubmit(onSubmit)}>
 					<div>
 						<label>이름</label>
 						<input
-							className="w-full h-12 p-3 mt-1 border"
+							className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
 							type="text"
 							{...register('name', {
 								required: true
@@ -105,10 +105,10 @@ const AddMember: NextPage = () => {
 						/>
 					</div>
 
-					<div className="mt-4">
+					<div className="mt-[1.6rem]">
 						<label>휴대폰 번호</label>
 						<input
-							className="w-full h-12 p-3 mt-1 border"
+							className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
 							type="text"
 							{...register('phone', {
 								required: true,
@@ -116,19 +116,19 @@ const AddMember: NextPage = () => {
 							})}
 						/>
 						{errors.phone && (
-							<div className="text-[16px] text-red-500 mt-1 text-center">
+							<div className="text-[16px] text-red-500 mt-[0.4rem] text-center">
 								붙임표(-)는 제외하고 입력해주세요.
 							</div>
 						)}
 					</div>
 
-					<div className="mt-4">
+					<div className="mt-[1.6rem]">
 						<label>회원 카테고리</label>
 						{loading ? (
 							<Loading />
 						) : (
 							<select
-								className="w-full h-12 p-3 mt-1 bg-white border"
+								className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem] bg-white"
 								{...register('userCategoryId')}>
 								{data.trainer.userCategories.map((category: any) => (
 									<option key={category.id} value={category.id}>
@@ -139,7 +139,7 @@ const AddMember: NextPage = () => {
 						)}
 					</div>
 
-					<div className="mt-4">
+					<div className="mt-[1.6rem]">
 						<span>
 							<input
 								className="hidden peer"
@@ -152,7 +152,7 @@ const AddMember: NextPage = () => {
 								})}
 							/>
 							<label
-								className={`${labelProperties} w-1/2 text-center p-3 inline-block relative border border-r-0 cursor-pointer after:left-full`}
+								className={`${labelProperties} h-[4.8rem] rounded-l-[2rem] w-1/2 text-center p-[1.2rem] inline-block relative border border-r-0 cursor-pointer after:left-full after:border-r-0`}
 								htmlFor="male">
 								남성
 							</label>
@@ -168,14 +168,14 @@ const AddMember: NextPage = () => {
 								})}
 							/>
 							<label
-								className={`${labelProperties} w-1/2 text-center p-3 inline-block relative border border-l-0 cursor-pointer after:-left-full`}
+								className={`${labelProperties} h-[4.8rem] rounded-r-[2rem] w-1/2 text-center p-[1.2rem] inline-block relative border border-l-0 cursor-pointer after:-left-full after:border-l-0`}
 								htmlFor="female">
 								여성
 							</label>
 						</span>
 					</div>
 
-					<div className="mt-4">
+					<div className="mt-[1.6rem]">
 						<span>
 							<input
 								className="hidden peer"
@@ -188,7 +188,7 @@ const AddMember: NextPage = () => {
 								})}
 							/>
 							<label
-								className={`${labelProperties} w-1/2 text-center p-3 inline-block relative border border-r-0 cursor-pointer after:left-full`}
+								className={`${labelProperties} h-[4.8rem] rounded-l-[2rem] w-1/2 text-center p-[1.2rem] inline-block relative border border-r-0 cursor-pointer after:left-full`}
 								htmlFor="management">
 								관리중
 							</label>
@@ -204,7 +204,7 @@ const AddMember: NextPage = () => {
 								})}
 							/>
 							<label
-								className={`${labelProperties} w-1/2 text-center p-3 inline-block relative border border-l-0 cursor-pointer after:-left-full`}
+								className={`${labelProperties} h-[4.8rem] rounded-r-[2rem] w-1/2 text-center p-[1.2rem] inline-block relative border border-l-0 cursor-pointer after:-left-full`}
 								htmlFor="graduate">
 								졸업
 							</label>
@@ -212,7 +212,8 @@ const AddMember: NextPage = () => {
 					</div>
 
 					<input
-						className={`w-full h-12 mt-4 text-black bg-yellow-200 cursor-pointer disabled:opacity-50`}
+						className={`w-full h-[4.8rem] mt-[1.6rem] text-black bg-[#FDAD00] cursor-pointer disabled:opacity-50 rounded-[2rem]`}
+						value="회원등록"
 						type="submit"
 					/>
 				</form>

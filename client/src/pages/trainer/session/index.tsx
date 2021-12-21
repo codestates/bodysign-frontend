@@ -73,17 +73,17 @@ const Session: NextPage = () => {
 		<>
 			<Layout>
 				<div className="flex items-center justify-between">
-					<span className="flex text-[25px]">
+					<span className="flex text-[3.2rem]">
 						<div
 							className={`${
-								category === '일정' ? 'font-bold' : ''
+								category === '일정' ? 'font-bold' : 'text-[#9F9F9F]'
 							} cursor-pointer`}
 							onClick={() => setCategory('일정')}>
 							일정
 						</div>
 						<div
-							className={`ml-2 ${
-								category === '피드백' ? 'font-bold' : ''
+							className={`ml-[0.8rem] ${
+								category === '피드백' ? 'font-bold' : 'text-[#9F9F9F]'
 							} cursor-pointer`}
 							onClick={() => setCategory('피드백')}>
 							피드백
@@ -97,21 +97,19 @@ const Session: NextPage = () => {
 									passHref
 								>
 									<svg
-										className="w-7 h-7 cursor-pointer"
-										xmlns="http://www.w3.org/2000/svg"
+										className="cursor-pointer w-[2.8rem] h-[2.8rem]"
+										viewBox="-2 -1.5 18 18"
 										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor">
+										xmlns="http://www.w3.org/2000/svg"
+										width="28"
+										height="28">
 										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={1.5}
-											d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-										/>
+											d="M3.5 0v5m8-5v5m-4 1v5M5 8.5h5m-8.5-6h12a1 1 0 011 1v10a1 1 0 01-1 1h-12a1 1 0 01-1-1v-10a1 1 0 011-1z"
+											stroke="currentColor"></path>
 									</svg>
 								</Link>
 								<svg
-									className="ml-2 w-7 h-7 cursor-pointer"
+									className="ml-[0.8rem] cursor-pointer w-[2.8rem] h-[2.8rem]"
 									xmlns="http://www.w3.org/2000/svg"
 									fill="none"
 									viewBox="0 0 24 24"
@@ -120,7 +118,7 @@ const Session: NextPage = () => {
 									<path
 										strokeLinecap="round"
 										strokeLinejoin="round"
-										strokeWidth={1.5}
+										strokeWidth={2}
 										d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
 									/>
 								</svg>
@@ -128,7 +126,7 @@ const Session: NextPage = () => {
 						) : (
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="w-7 h-7 cursor-pointer"
+								className="cursor-pointer w-[3.6rem] h-[3.6rem] text-[#FDAD00]"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
@@ -160,7 +158,7 @@ const Session: NextPage = () => {
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
-									strokeWidth={1.5}
+									strokeWidth={2}
 									d="M5 13l4 4L19 7"
 								/>
 							</svg>
@@ -168,160 +166,156 @@ const Session: NextPage = () => {
 					</span>
 				</div>
 
-				<div className="h-[calc(100vh-37px-60px)] flex flex-col overflow-y-scroll no-scrollbar">
-					{Object.entries(
-						category === '일정' ? sessionObject : completedSessionObject
-					).map((entry, idx) => {
-						const deleteItemId = Array.from(deleteLists)[0]
-						return (
-							<React.Fragment key={idx}>
-								<div className="mt-4">
-									<div className="text-[16px]">{entry[0]}</div>
-									{entry[1].map(session => {
-										const date = new Date(session.date)
-										let hours = date.getHours() + ''
-										if (hours.length === 1) {
-											hours = 0 + hours
-										}
-										const minutes = date.getMinutes()
-										return (
-											<React.Fragment key={session.id}>
-												<div className="text-[16px] mt-2">
+				{Object.entries(
+					category === '일정' ? sessionObject : completedSessionObject
+				).map((entry, idx) => {
+					const deleteItemId = Array.from(deleteLists)[0]
+					const date = entry[0].split('-')
+					return (
+						<React.Fragment key={idx}>
+							<div className="mt-[2.4rem]">
+								<div className="text-[1.8rem] font-semibold">
+									{`${date[1]}월 ${date[2]}일`}
+								</div>
+								{entry[1].map(session => {
+									const date = new Date(session.date)
+									let hours = date.getHours() + ''
+									if (hours.length === 1) {
+										hours = 0 + hours
+									}
+									const minutes = date.getMinutes()
+									return (
+										<React.Fragment key={session.id}>
+											<div
+												className={`h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white ${
+													session.id === deleteItemId ? 'ring-2' : ''
+												}`}>
+												<div className="flex">
+													{session.gender === 'male' ? (
+														<Image
+															src="http://s3.amazonaws.com/pix.iemoji.com/images/emoji/apple/ios-12/256/man-raising-hand-light-skin-tone.png"
+															width="36"
+															height="30"
+															alt="image"
+														/>
+													) : (
+														<Image
+															src="http://s3.amazonaws.com/pix.iemoji.com/images/emoji/apple/ios-12/256/woman-raising-hand-light-skin-tone.png"
+															width="36"
+															height="30"
+															alt="image"
+														/>
+													)}
 													<div
-														className={`flex justify-between p-3 border font-thin rounded-3xl ${
-															session.id === deleteItemId ? 'ring-2' : ''
-														}`}>
-														<div className="flex">
-															{session.gender === 'male' ? (
-																<Image
-																	src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
-																	width="25"
-																	height="25"
-																	alt="image"
-																/>
-															) : (
-																<Image
-																	src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
-																	width="25"
-																	height="25"
-																	alt="image"
-																/>
-															)}
-															<div
-																className={`ml-1 ${
-																	!readyDelete
-																		? category === '일정'
-																			? 'cursor-pointer'
-																			: ''
-																		: 'cursor-pointer'
-																}`}
-																data-id={session.id}
-																onClick={
-																	!readyDelete
-																		? category === '일정'
-																			? () => {
-																					setSessionId(session.id)
-																					modalVar(true)
-																			  }
-																			: undefined
-																		: e => {
-																				if (
-																					e !== null &&
-																					e.target instanceof HTMLElement
-																				) {
-																					// 수업 삭제 step 1
-																					if (e.target.dataset.id) {
-																						const id = +e.target.dataset.id
-																						// 하나만 가능한 조건
-																						if (deleteLists.size > 0) {
-																							setDeleteLists(
-																								prev => new Set()
-																							)
-																						}
-																						if (deleteLists.has(id)) {
-																							setDeleteLists(
-																								prev =>
-																									new Set(
-																										[...prev].filter(
-																											el => el !== id
-																										)
-																									)
-																							)
-																						} else {
-																							setDeleteLists(
-																								prev =>
-																									new Set(prev.add(id))
-																							)
-																						}
-																					}
+														className={`self-center ml-[1.2rem] ${
+															!readyDelete
+																? category === '일정'
+																	? 'cursor-pointer'
+																	: ''
+																: 'cursor-pointer'
+														}`}
+														data-id={session.id}
+														onClick={
+															!readyDelete
+																? category === '일정'
+																	? () => {
+																			setSessionId(session.id)
+																			modalVar(true)
+																	  }
+																	: undefined
+																: e => {
+																		if (
+																			e !== null &&
+																			e.target instanceof HTMLElement
+																		) {
+																			// 수업 삭제 step 1
+																			if (e.target.dataset.id) {
+																				const id = +e.target.dataset.id
+																				// 하나만 가능한 조건
+																				if (deleteLists.size > 0) {
+																					setDeleteLists(prev => new Set())
 																				}
-																		  }
-																}>
-																{session.userName} 회원님
-															</div>
-														</div>
-														<div className="ml-3 font-medium">
-															{`${hours}시 ${minutes}분`}
-														</div>
+																				if (deleteLists.has(id)) {
+																					setDeleteLists(
+																						prev =>
+																							new Set(
+																								[...prev].filter(
+																									el => el !== id
+																								)
+																							)
+																					)
+																				} else {
+																					setDeleteLists(
+																						prev => new Set(prev.add(id))
+																					)
+																				}
+																			}
+																		}
+																  }
+														}>
+														{session.userName} 회원
 													</div>
 												</div>
-											</React.Fragment>
-										)
-									})}
-								</div>
-							</React.Fragment>
-						)
-					})}
-				</div>
+												<div>
+													{`${hours}:${minutes === 0 ? '00' : minutes}`}
+												</div>
+											</div>
+										</React.Fragment>
+									)
+								})}
+							</div>
+						</React.Fragment>
+					)
+				})}
+			</Layout>
+			<BottomBar variant="Trainer" />
 
-				{modal ? (
-					<div className="font-IBM font-thin fixed max-w-[450px] w-full bottom-0">
-						<div
-							className="fixed inset-0 z-[-1] bg-black opacity-20"
-							onClick={() => modalVar(false)}></div>
-						<div className="bg-white flex z-[50] h-[200px] flex-col justify-center">
-							<div className="py-3 text-center text-[20px]">
-								수업을 완료하셨습니까?
-							</div>
-							<div className="max-w-[450px] self-end mt-4">
-								<button
-									className="px-4 py-3 bg-gray-100 border font-thin"
-									onClick={() => modalVar(false)}>
-									취소
-								</button>
-								<button
-									className="px-4 py-3 mx-3 bg-yellow-100 border"
-									onClick={async () => {
-										try {
-											await updateSession({
-												variables: {
-													updateSessionInput: {
-														id: sessionId,
-														completedSession: true
+			{modal ? (
+				<div className="fixed bottom-0 w-full font-IBM">
+					<div
+						className="fixed inset-0 z-[-1] bg-black opacity-20"
+						onClick={() => modalVar(false)}></div>
+					<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[1.6rem]">
+						<div className="text-[3.2rem] text-bold">수업을 하셨나요?</div>
+						<div className="flex flex-col justify-between mt-[2.4rem]">
+							<button
+								className="w-full text-center border rounded-3xl shadow-md cursor-pointer h-[5.5rem]"
+								type="submit"
+								onClick={() => modalVar(false)}>
+								노쇼 (No show)
+							</button>
+							<button
+								className="w-full mt-[1.6rem] text-center border rounded-3xl shadow-md cursor-pointer h-[5.5rem] bg-[#FED06E]"
+								type="submit"
+								onClick={async () => {
+									try {
+										await updateSession({
+											variables: {
+												updateSessionInput: {
+													id: sessionId,
+													completedSession: true
+												}
+											},
+											refetchQueries: [
+												{
+													query: TrainerDocument,
+													variables: {
+														id: 21
 													}
-												},
-												refetchQueries: [
-													{
-														query: TrainerDocument,
-														variables: {
-															id: 21
-														}
-													}
-												]
-											})
-											modalVar(false)
-										} catch (error) {
-											console.log(error)
-										}
-									}}>
-									완료
-								</button>
-							</div>
+												}
+											]
+										})
+										modalVar(false)
+									} catch (error) {
+										console.log(error)
+									}
+								}}>
+								완료
+							</button>
 						</div>
 					</div>
-				) : null}
-				<BottomBar variant="Trainer" />
-			</Layout>
+				</div>
+			) : null}
 		</>
 	)
 }

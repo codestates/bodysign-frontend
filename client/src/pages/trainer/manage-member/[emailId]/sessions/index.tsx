@@ -34,74 +34,82 @@ const Sessions: NextPage = () => {
 		<>
 			<Layout>
 				<div className="flex items-center justify-between">
-					<span className="flex text-[25px]">
+					<span className="flex text-[3.2rem] items-center">
 						<Link
 							href="/trainer/manage-member"
 							passHref
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="self-center w-6 h-6 cursor-pointer"
+								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
-									strokeWidth={1.5}
-									d="M15 19l-7-7 7-7"
+									strokeWidth={2}
+									d="M10 19l-7-7m0 0l7-7m-7 7h18"
 								/>
 							</svg>
 						</Link>
-						<div className="font-bold">{data.user.userName} 회원님</div>
+						<div className="ml-[0.8rem] font-bold">
+							{data.user.userName} 회원
+						</div>
 					</span>
-					<span className="flex">
+					<Link
+						href={`/trainer/manage-member/chat`}
+						passHref
+					>
 						<svg
+							className="w-[2.8rem] h-[2.8rem]"
 							xmlns="http://www.w3.org/2000/svg"
-							className="w-6 h-6 mr-3"
 							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor">
+							viewBox="0 0 25 25"
+							stroke="currentColor"
+							onClick={() => {
+								// chatTargetUserIdVar(+member.id)
+							}}>
 							<path
 								strokeLinecap="round"
 								strokeLinejoin="round"
-								strokeWidth={1.5}
+								strokeWidth={2}
 								d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
 							/>
 						</svg>
-					</span>
+					</Link>
 				</div>
 
-				<div className="flex justify-between pr-3 mt-4 text-[18px]">
+				<div className="flex justify-between mt-[2.4rem] text-[2.2rem]">
 					<Link
 						href={`/trainer/manage-member/${managedUserInfo.email}/info`}
 						passHref
 					>
-						<span className="ml-0 cursor-pointer">회원정보</span>
-					</Link>
-					<Link
-						href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}
-						passHref
-					>
-						<span className="pb-1 ml-2 border-b border-black cursor-pointer">
-							수업기록
-						</span>
+						<span className="pb-[0.4rem] cursor-pointer">회원정보</span>
 					</Link>
 					<Link
 						href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}
 						passHref
 					>
-						<span className="ml-2 cursor-pointer">인바디</span>
+						<span className="ml-[0.8rem] cursor-pointer">인바디</span>
+					</Link>
+					<Link
+						href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}
+						passHref
+					>
+						<span className="ml-[0.8rem] border-b-[3px] border-[#FED06E] cursor-pointer">
+							수업기록
+						</span>
 					</Link>
 				</div>
 
-				<div className="flex flex-col mt-4 text-[12px]">
+				<div className="flex flex-col mt-[2.4rem]">
 					{data.user.sessions.map((session: any) => {
 						const date = session.date.split('T')[0]
 						return (
 							<React.Fragment key={session.id}>
 								<div
-									className="flex px-3 py-3 mt-1 border rounded-3xl first:mt-0 text-[12px] justify-around items-center relative cursor-pointer font-thin"
+									className="h-[7rem] flex justify-around items-center mt-[0.4rem] border text-[1.8rem] rounded-full shadow-md bg-white first:mt-0 relative cursor-pointer"
 									onClick={e => {
 										if (e !== null && e.target instanceof HTMLElement) {
 											sessionExerciseInputVar({
@@ -119,32 +127,33 @@ const Sessions: NextPage = () => {
 									<span>{week[new Date(session.date).getDay()]}</span>
 									<span>{session.time}</span>
 									{session.sentFeedback ? (
-										<span className="w-3 h-3 bg-green-300 rounded-full"></span>
+										<span className="w-[1.2rem] h-[1.2rem] bg-green-300 rounded-full"></span>
 									) : (
-										<span className="w-3 h-3 bg-gray-300 rounded-full"></span>
+										<span className="w-[1.2rem] h-[1.2rem] bg-gray-300 rounded-full"></span>
 									)}
 								</div>
 							</React.Fragment>
 						)
 					})}
-
 					<Link
 						href="/trainer/session/add-session"
 						passHref
 					>
-						<svg
-							className="self-center w-6 h-6 mt-4 text-gray-500 cursor-pointer"
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor">
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={1.5}
-								d="M12 4v16m8-8H4"
-							/>
-						</svg>
+						<div className="text-[1.8rem] mt-[0.8rem] flex justify-center py-[2rem] bg-white rounded-full shadow-md border">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="w-[2.8rem] h-[2.8rem] text-[#9F9F9F]"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M12 4v16m8-8H4"
+								/>
+							</svg>
+						</div>
 					</Link>
 				</div>
 			</Layout>
