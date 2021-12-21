@@ -33,6 +33,14 @@ export const UserDocument = gql`
 	}
 `
 
+export const VerifyOwner = gql`
+	query VerifyOwner($id: Int!) {
+		verifyOwner(id: $id) {
+			
+		}
+	}
+`
+
 // TODO: CSS 애니메이션 꾸미기
 // https://codepen.io/Tbgse/pen/dYaJyJ
 // https://codepen.io/CheeseTurtle/pen/jzdgI?editors=1010

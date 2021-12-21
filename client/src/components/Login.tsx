@@ -6,6 +6,7 @@ import Loading from './Loading'
 import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client'
 import { loginTypeVar, accessTokenVar } from '../graphql/vars'
 import Link from 'next/link'
+import { Cookies } from "react-cookie"
 
 // TODO : env로 빼야함
 const GOOGLE_CLIENT_ID =
@@ -84,6 +85,7 @@ const Login: NextPage = () => {
 	const onGoogleLogin = () => {
 		window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=http://localhost:4000/auth/google&response_type=token&scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&
 		include_granted_scopes=true`
+
 	}
 
     return <>

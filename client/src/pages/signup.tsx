@@ -10,6 +10,7 @@ import {
 	CreateTrainerDocument,
 	CreateUserDocument
 } from '../graphql/graphql'
+import { Cookies } from "react-cookie"
 
 interface FormInput {
 	email: string | undefined | string[]
@@ -25,6 +26,7 @@ const labelProperties =
 	'after:absolute after:border after:h-[4.8rem] after:bg-[#FDAD00] after:p-[1.2rem] after:w-full after:-top-0 after:z-[-1] after:transition-[left] after:duration-500 after:rounded-[2rem] peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
 
 const Signup: NextPage<FormInput> = () => {
+
 	const router = useRouter()
 	const logintype = router.query.logintype
 	const googleEmail = router.query.email
@@ -84,7 +86,7 @@ const Signup: NextPage<FormInput> = () => {
 		}
 
 		alert('회원가입이 완료되었습니다.')
-		// location.href = 'http://localhost:3000'
+		location.href = 'http://localhost:3000'
 	}
 
 	return (
@@ -106,6 +108,7 @@ const Signup: NextPage<FormInput> = () => {
 								/>
 							</div>
 						) : (
+							<>
 							<div>
 								<label>이메일</label>
 								<input
@@ -125,25 +128,26 @@ const Signup: NextPage<FormInput> = () => {
 									</div>
 								)}
 							</div>
-						)}
 
-						<div className="mt-[1.6rem]">
-							<label>비밀번호</label>
-							<input
-								className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
-								type="password"
-								disabled={loginType === 'google'}
-								{...register('password', {
-									required: true,
-									minLength: 8
-								})}
-							/>
-							{errors.password?.type === 'minLength' && (
-								<div className="text-[16px] text-red-500 mt-[0.4rem] text-center">
-									비밀번호는 최소 8자 이상으로 입력해주세요.
-								</div>
-							)}
-						</div>
+							<div className="mt-[1.6rem]">
+								<label>비밀번호</label>
+								<input
+									className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
+									type="password"
+									disabled={loginType === 'google'}
+									{...register('password', {
+										required: true,
+										minLength: 8
+									})}
+								/>
+								{errors.password?.type === 'minLength' && (
+									<div className="text-[16px] text-red-500 mt-[0.4rem] text-center">
+										비밀번호는 최소 8자 이상으로 입력해주세요.
+									</div>
+								)}
+							</div>
+							</>
+						)}
 
 						<div className="mt-[1.6rem]">
 							<label>이름</label>
