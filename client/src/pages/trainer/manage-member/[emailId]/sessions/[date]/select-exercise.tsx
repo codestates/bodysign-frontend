@@ -9,7 +9,10 @@ import {
 	CreateSessionExerciseDocument,
 	TrainerDocument
 } from '../../../../../../graphql/graphql'
-import { sessionExerciseInputVar } from '../../../../../../graphql/vars'
+import {
+	sessionExerciseInputVar,
+	userDataVar
+} from '../../../../../../graphql/vars'
 // import { useGetScroll } from '../../../../../../utils/useGetScroll'
 
 interface Exercise {
@@ -19,11 +22,12 @@ interface Exercise {
 
 const Exercise: NextPage = () => {
 	const router = useRouter()
+	const userData = useReactiveVar(userDataVar)
 	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
 	const refs = useRef<(HTMLSpanElement | null)[]>([])
 	// const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
 	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: 21 }
+		variables: { id: userData?.id }
 	})
 	const [createSessionExercise] = useMutation(
 		CreateSessionExerciseDocument
@@ -49,9 +53,7 @@ const Exercise: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[3.2rem]">
-						<Link href={router.asPath.split('select')[0]}
-							passHref
-						>
+						<Link href={router.asPath.split('select')[0]} passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"

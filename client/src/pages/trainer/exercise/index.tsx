@@ -27,8 +27,8 @@ interface FormInput {
 
 const Exercise: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
-	const [checkModal, setCheckModal] = useState('addexercise')
 	const userData = useReactiveVar(userDataVar)
+	const [checkModal, setCheckModal] = useState('addexercise')
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const { loading, data } = useQuery(TrainerDocument, {
@@ -54,7 +54,7 @@ const Exercise: NextPage = () => {
 					refetchQueries: [
 						{
 							query: TrainerDocument,
-							variables: { id: 1 }
+							variables: { id: userData?.id }
 						}
 					]
 				})
@@ -69,14 +69,14 @@ const Exercise: NextPage = () => {
 				await createExerciseCategory({
 					variables: {
 						createExerciseCategoryInput: {
-							trainerId: 21,
+							trainerId: userData?.id,
 							name: data.exerciseCategoryName
 						}
 					},
 					refetchQueries: [
 						{
 							query: TrainerDocument,
-							variables: { id: 21 }
+							variables: { id: userData?.id }
 						}
 					]
 				})
@@ -168,7 +168,7 @@ const Exercise: NextPage = () => {
 												refetchQueries: [
 													{
 														query: TrainerDocument,
-														variables: { id: 21 }
+														variables: { id: userData?.id }
 													}
 												]
 											})

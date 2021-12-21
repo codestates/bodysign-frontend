@@ -7,13 +7,19 @@ import BottomBar from '../../components/BottomBar'
 import Image from 'next/image'
 import axios from 'axios'
 import { getCookies } from 'cookies-next'
-import { userDataVar } from '../../graphql/vars'
+import { accessTokenVar, userDataVar } from '../../graphql/vars'
 // TODO: CSS 애니메이션 꾸미기
 // https://codepen.io/Tbgse/pen/dYaJyJ
 // https://codepen.io/CheeseTurtle/pen/jzdgI?editors=1010
 
 const Main: NextPage = () => {
-	const accessToken = getCookies().accessToken
+	let accessToken: string
+	if (accessTokenVar()) {
+		accessToken = accessTokenVar()
+	} else {
+		accessToken = getCookies().accessToken
+	}
+
 	const getTrainerData = async () => {
 		await axios
 			.get('http://localhost:4000/auth/profile', {

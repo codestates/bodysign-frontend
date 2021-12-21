@@ -3,7 +3,11 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../../components/Layout'
-import { managedUserInfoVar, modalVar } from '../../../../graphql/vars'
+import {
+	managedUserInfoVar,
+	modalVar,
+	userDataVar
+} from '../../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import {
 	CreateSessionHistoryDocument,
@@ -21,60 +25,77 @@ interface FormInput {
 	isGraduate: boolean
 }
 
-const labelProperties =
-	'after:absolute after:border after:h-[2.9rem] after:bg-[#FDAD00] after:w-full after:-top-0 after:z-[-1] after:transition-[left] after:duration-500 after:rounded-[2rem] peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
+// const labelProperties =
+// 	'after:absolute after:border after:h-[2.9rem] after:bg-[#FDAD00] after:w-full after:-top-0 after:z-[-1] after:transition-[left] after:duration-500 after:rounded-[2rem] peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
 
 const Info: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
+	const userData = useReactiveVar(userDataVar)
 	const managedUserInfo = useReactiveVar(managedUserInfoVar)
-	const [isGraduate, setIsGraduate] = useState(false)
+	// const [isGraduate, setIsGraduate] = useState(false)
 	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: 21 }
+		variables: { id: userData?.id }
 	})
-	const { loading: userLoading, data: userData } = useQuery(UserDocument, {
-		variables: { id: managedUserInfo.userId }
-	})
+	const { loading: userLoading, data: memberData } = useQuery(
+		UserDocument,
+		{
+			variables: { id: managedUserInfo.userId }
+		}
+	)
 	const [updateUser] = useMutation(UpdateUserDocument)
 	const [createSessionHistory] = useMutation(CreateSessionHistoryDocument)
-
 	const {
 		register,
 		formState: { errors },
 		handleSubmit
 	} = useForm<FormInput>()
-	const onSubmit: SubmitHandler<FormInput> = data => {
+	const onSubmit: SubmitHandler<FormInput> = async data => {
 		// 세션 추가 API
-		createSessionHistory({
-			variables: {
-				createSessionHistoryInput: {
-					userId: managedUserInfo.userId,
-					date: data.date,
-					costPerSession: +data.costPerSession,
-					totalCount: +data.totalCount,
-					commission: +data.commission
-				}
-			},
-			refetchQueries: [
-				{ query: UserDocument, variables: { id: managedUserInfo.userId } }
-			]
-		})
-	}
-
-	useEffect(() => {
-		// 졸업 유무 변경 API
 		try {
-			updateUser({
+			await createSessionHistory({
 				variables: {
-					updateUserInput: {
-						id: managedUserInfo.userId,
-						graduate: isGraduate
+					createSessionHistoryInput: {
+						userId: managedUserInfo.userId,
+						date: data.date,
+						costPerSession: +data.costPerSession,
+						totalCount: +data.totalCount,
+						commission: +data.commission
 					}
-				}
+				},
+				refetchQueries: [
+					{
+						query: UserDocument,
+						variables: { id: managedUserInfo.userId }
+					}
+				]
 			})
+			modalVar(false)
 		} catch (error) {
 			console.log(error)
 		}
-	}, [updateUser, isGraduate, managedUserInfo.userId])
+	}
+
+	// useEffect(() => {
+	// 	// 졸업 유무 변경 API
+	// 	try {
+	// 		updateUser({
+	// 			variables: {
+	// 				updateUserInput: {
+	// 					id: managedUserInfo.userId,
+	// 					graduate: isGraduate
+	// 				}
+	// 			},
+	// 			refetchQueries: [
+	// 				{
+	// 					query: UserDocument,
+	// 					variables: { id: managedUserInfo.userId }
+	// 				}
+	// 			]
+	// 		})
+	// 	} catch (error) {
+	// 		console.log(error)
+	// 	}
+	// }, [updateUser, isGraduate, managedUserInfo.userId])
 
 	if (loading) return <Loading />
 	if (userLoading) return <Loading />
@@ -83,10 +104,7 @@ const Info: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[3.2rem] items-center">
-						<Link
-							href="/trainer/manage-member"
-							passHref
-						>
+						<Link href="/trainer/manage-member" passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
@@ -102,13 +120,10 @@ const Info: NextPage = () => {
 							</svg>
 						</Link>
 						<div className="ml-[0.8rem] font-bold">
-							{userData.user.userName} 회원
+							{memberData.user.userName} 회원
 						</div>
 					</span>
-					<Link
-						href={`/trainer/manage-member/chat`}
-						passHref
-					>
+					<Link href={`/trainer/manage-member/chat`} passHref>
 						<svg
 							className="w-[2.8rem] h-[2.8rem]"
 							xmlns="http://www.w3.org/2000/svg"
@@ -131,22 +146,19 @@ const Info: NextPage = () => {
 				<div className="flex justify-between mt-[2.4rem] text-[2.2rem]">
 					<Link
 						href={`/trainer/manage-member/${managedUserInfo.email}/info`}
-						passHref
-					>
+						passHref>
 						<span className="pb-[0.4rem] border-b-[3px] border-[#FED06E] cursor-pointer">
 							회원정보
 						</span>
 					</Link>
 					<Link
 						href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}
-						passHref
-					>
+						passHref>
 						<span className="ml-[0.8rem] cursor-pointer">인바디</span>
 					</Link>
 					<Link
 						href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}
-						passHref
-					>
+						passHref>
 						<span className="ml-[0.8rem] cursor-pointer">수업기록</span>
 					</Link>
 				</div>
@@ -155,21 +167,23 @@ const Info: NextPage = () => {
 					<div className="flex flex-col justify-between text-[1.8rem]">
 						<div className="flex justify-between">
 							<span>이름</span>
-							<span>{userData.user.userName}</span>
+							<span>{memberData.user.userName}</span>
 						</div>
 						<div className="flex justify-between mt-[0.8rem]">
 							<span>성별</span>
-							<span>{userData.user.gender}</span>
+							<span>{memberData.user.gender}</span>
 						</div>
 						<div className="flex justify-between mt-[0.8rem]">
 							<span>생년월일</span>
 							<span>
-								{userData.user.birthDate.split('T')[0].replace(/\-/g, '.')}
+								{memberData.user.birthDate
+									.split('T')[0]
+									.replace(/\-/g, '.')}
 							</span>
 						</div>
 						<div className="flex justify-between mt-[0.8rem]">
 							<span>전화번호</span>
-							<span>{userData.user.phoneNumber}</span>
+							<span>{memberData.user.phoneNumber}</span>
 						</div>
 						<div className="flex justify-between mt-[2rem]">
 							<label>카테고리</label>
@@ -188,22 +202,28 @@ const Info: NextPage = () => {
 														id: managedUserInfo.userId,
 														userCategoryId: +e.target.value
 													}
-												}
+												},
+												refetchQueries: [
+													{
+														query: UserDocument,
+														variables: { id: managedUserInfo.userId }
+													}
+												]
 											})
 										} catch (error) {
 											console.log(error)
 										}
 									}}>
-									<option value={`${userData.user.userCategoryId}`}>
+									<option value={`${memberData.user.userCategoryId}`}>
 										{
 											data.trainer.userCategories.filter(
 												(category: any) =>
-													category.id === userData.user.userCategoryId
+													category.id === memberData.user.userCategoryId
 											)[0].name
 										}
 									</option>
 									{data.trainer.userCategories.map((category: any) => {
-										if (category.id !== userData.user.userCategoryId) {
+										if (category.id !== memberData.user.userCategoryId) {
 											return (
 												<option key={category.id} value={`${category.id}`}>
 													{category.name}
@@ -216,14 +236,47 @@ const Info: NextPage = () => {
 						</div>
 						<div className="flex justify-between mt-[0.8rem]">
 							<span>졸업유무</span>
-							<div className="w-[15rem]">
+							<span className="relative inline-block w-[4rem] align-middle select-none">
+								<input
+									className="absolute block w-[2.8rem] h-[2.8rem] bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#FDAD00] peer"
+									type="checkbox"
+									name="toggle"
+									id="toggle"
+									checked={memberData.user.graduate}
+									onChange={async e => {
+										// 피드백 완료 여부 API
+										try {
+											await updateUser({
+												variables: {
+													updateUserInput: {
+														id: managedUserInfo.userId,
+														graduate: e.target.checked
+													}
+												},
+												refetchQueries: [
+													{
+														query: UserDocument,
+														variables: { id: managedUserInfo.userId }
+													}
+												]
+											})
+										} catch (error) {
+											console.log(error)
+										}
+									}}
+								/>
+								<label
+									className="block h-[2.8rem]	bg-gray-200 rounded-full cursor-pointer peer peer-checked:bg-[#FDAD00] overflow-hidden"
+									htmlFor="toggle"
+								/>
+							</span>
+							{/* <div className="w-[15rem]">
 								<span>
 									<input
 										className="hidden peer"
 										type="radio"
 										id="false"
 										value="false"
-										defaultChecked
 										{...register('isGraduate', {
 											required: true
 										})}
@@ -241,22 +294,25 @@ const Info: NextPage = () => {
 									<input
 										className="hidden peer"
 										type="radio"
-										id="user"
-										value="user"
+										id="true"
+										value="true"
+										defaultChecked
 										{...register('isGraduate', {
 											required: true
 										})}
 										onClick={() => {
+											console.log(1111111111)
+
 											setIsGraduate(true)
 										}}
 									/>
 									<label
 										className={`${labelProperties} py-[0.4rem] h-[2.9rem] rounded-r-[2rem] w-1/2 text-center inline-block relative border border-l-0 cursor-pointer after:-left-full`}
-										htmlFor="user">
+										htmlFor="true">
 										졸업
 									</label>
 								</span>
-							</div>
+							</div> */}
 						</div>
 					</div>
 				</div>
@@ -282,7 +338,7 @@ const Info: NextPage = () => {
 							</tr>
 						</thead>
 						<tbody className="bg-white divide-y divide-gray-200">
-							{[...userData.user.sessionHistories]
+							{[...memberData.user.sessionHistories]
 								.sort((a: any, b: any) => {
 									const dateA = new Date(a.date).getTime()
 									const dateB = new Date(b.date).getTime()
@@ -344,7 +400,7 @@ const Info: NextPage = () => {
 							<div className="flex flex-col justify-between">
 								<label className="text-[1.4rem]">날짜</label>
 								<input
-									className="w-full py-[1.2rem] text-center border rounded-3xl shadow-md h-[5.5rem] mt-[0.4rem]"
+									className="w-full py-[1.2rem] text-center border rounded-3xl shadow-md h-[5.5rem] mt-[0.4rem] bg-white"
 									type="date"
 									placeholder="날짜"
 									{...register('date', {

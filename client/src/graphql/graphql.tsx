@@ -215,6 +215,20 @@ export const CreateSocialTrainer = gql`
 	}
 `
 
+export const FindOneUserByPhoneNumberDocument = gql`
+	mutation FindOneUserByPhoneNumberDocument($phoneNumber: String!) {
+		findOneUserByPhoneNumber(phoneNumber: $phoneNumber) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+			graduate
+		}
+	}
+`
+
 export const CreateUserDocument = gql`
 	mutation CreateUser($createUserInput: CreateUserInput!) {
 		createUser(createUserInput: $createUserInput) {

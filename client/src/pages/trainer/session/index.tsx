@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import Layout from '../../../components/Layout'
-import { modalVar } from '../../../graphql/vars'
+import { modalVar, userDataVar } from '../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import BottomBar from '../../../components/BottomBar'
 import {
@@ -22,16 +22,18 @@ interface MemberSession {
 
 const Session: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
+	const userData = useReactiveVar(userDataVar)
 	const [category, setCategory] = useState('일정')
 	const [sessionId, setSessionId] = useState<number>()
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: 1 }
+		variables: { id: userData?.id }
 	})
 	const [updateSession] = useMutation(UpdateSessionDocument)
 	const [removeSession] = useMutation(RemoveSessionDocument)
 
+	// console.log(sessionId)
 	const sessionObject: Record<string, MemberSession[]> = {}
 	const completedSessionObject: Record<string, MemberSession[]> = {}
 	if (!loading && data) {
@@ -130,6 +132,8 @@ const Session: NextPage = () => {
 								onClick={async () => {
 									// 수업 삭제 step 2
 									const deleteItemId = Array.from(deleteLists)[0]
+									console.log(deleteItemId)
+
 									if (deleteItemId) {
 										try {
 											await removeSession({
@@ -140,7 +144,7 @@ const Session: NextPage = () => {
 													{
 														query: TrainerDocument,
 														variables: {
-															id: 21
+															id: userData?.id
 														}
 													}
 												]
@@ -180,7 +184,10 @@ const Session: NextPage = () => {
 									if (hours.length === 1) {
 										hours = 0 + hours
 									}
-									const minutes = date.getMinutes()
+									let minutes = date.getMinutes() + ''
+									if (minutes.length === 1) {
+										minutes = 0 + minutes
+									}
 									return (
 										<React.Fragment key={session.id}>
 											<div
@@ -216,6 +223,8 @@ const Session: NextPage = () => {
 															!readyDelete
 																? category === '일정'
 																	? () => {
+																			// console.log(session.id)
+
 																			setSessionId(session.id)
 																			modalVar(true)
 																	  }
@@ -229,6 +238,8 @@ const Session: NextPage = () => {
 																			if (e.target.dataset.id) {
 																				const id = +e.target.dataset.id
 																				// 하나만 가능한 조건
+																				console.log(id)
+
 																				if (deleteLists.size > 0) {
 																					setDeleteLists(prev => new Set())
 																				}
@@ -254,7 +265,7 @@ const Session: NextPage = () => {
 													</div>
 												</div>
 												<div>
-													{`${hours}:${minutes === 0 ? '00' : minutes}`}
+													{`${hours}:${minutes === '0' ? '00' : minutes}`}
 												</div>
 											</div>
 										</React.Fragment>
@@ -285,6 +296,8 @@ const Session: NextPage = () => {
 								className="w-full mt-[1.6rem] text-center border rounded-3xl shadow-md cursor-pointer h-[5.5rem] bg-[#FED06E]"
 								type="submit"
 								onClick={async () => {
+									console.log(sessionId)
+
 									try {
 										await updateSession({
 											variables: {
@@ -297,7 +310,7 @@ const Session: NextPage = () => {
 												{
 													query: TrainerDocument,
 													variables: {
-														id: 21
+														id: userData?.id
 													}
 												}
 											]

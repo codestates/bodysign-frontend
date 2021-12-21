@@ -58,6 +58,8 @@ const Login: NextPage = () => {
 
 	const onSubmit = async (e: any) => {
 		//? 왜 두번 눌러야 들어오지?
+		console.log(form)
+
 		try {
 			await loginAuth({
 				variables: {
@@ -74,7 +76,6 @@ const Login: NextPage = () => {
 		const accessToken = data.loginAuth.accessToken
 		const userType = data.loginAuth.userType
 		accessTokenVar(accessToken)
-
 		if (userType === 'user') {
 			router.push('http://localhost:3000/user')
 		} else if (userType === 'trainer') {

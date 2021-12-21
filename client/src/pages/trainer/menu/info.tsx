@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { modalVar } from '../../../graphql/vars'
+import { modalVar, userDataVar } from '../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import {
 	RemoveTrainerDocument,
@@ -20,6 +20,7 @@ interface FormInput {
 
 const TrainerInfo: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
+	const userData = useReactiveVar(userDataVar)
 	const [checkModal, setCheckModal] = useState('changepassword')
 	const [isModify, setIsmodify] = useState(false)
 	const [updateTrainerInput, setUpdateTrainerInput] = useState({
@@ -27,7 +28,7 @@ const TrainerInfo: NextPage = () => {
 		phoneNumber: ''
 	})
 	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: 21 }
+		variables: { id: userData?.id }
 	})
 	const [updateTrainer] = useMutation(UpdateTrainerDocument)
 	const [removeTrainer] = useMutation(RemoveTrainerDocument)
@@ -45,7 +46,7 @@ const TrainerInfo: NextPage = () => {
 			await updateTrainer({
 				variables: {
 					updateTrainerInput: {
-						id: 21,
+						id: userData?.id,
 						password: data.newPassword
 					}
 				}
@@ -61,10 +62,7 @@ const TrainerInfo: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[3.2rem]">
-						<Link
-							href="/trainer/menu"
-							passHref
-						>
+						<Link href="/trainer/menu" passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
@@ -112,7 +110,7 @@ const TrainerInfo: NextPage = () => {
 											variables: {
 												updateTrainerInput: {
 													...updateTrainerInput,
-													id: 21
+													id: userData?.id
 												}
 											}
 										})

@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import Layout from '../../../components/Layout'
-import { modalVar } from '../../../graphql/vars'
+import { modalVar, userDataVar } from '../../../graphql/vars'
 import { useQuery, useReactiveVar } from '@apollo/client'
 import Chart from 'chart.js/auto'
 import DatePicker from 'react-datepicker'
@@ -12,13 +12,14 @@ import Loading from '../../../components/Loading'
 
 const Ledger: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
+	const userData = useReactiveVar(userDataVar)
 	const [startDate, setStartDate] = useState(new Date())
 	const [endDate, setEndDate] = useState(new Date())
 	const [rangeFilterResult, setRangeFilterResult] = useState(0)
 	const [date, setDate] = useState('')
 	const canvasRef = useRef(null)
 	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: 21 }
+		variables: { id: userData?.id }
 	})
 
 	let sessionHistories: any[] = []
@@ -147,9 +148,7 @@ const Ledger: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[3.2rem]">
-						<Link href="/trainer/menu"
-							passHref
-						>
+						<Link href="/trainer/menu" passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
