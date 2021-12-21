@@ -81,30 +81,34 @@ const Detail: NextPage = () => {
 		<>
 			<Layout>
 				<div className="flex items-center justify-between">
-					<span className="flex text-[25px] font-bold">
+					<span className="flex text-[3.2rem]">
 						<Link href={router.asPath.split('20')[0]}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="self-center w-6 h-6 cursor-pointer"
+								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
-									strokeWidth={1.5}
-									d="M15 19l-7-7 7-7"
+									strokeWidth={2}
+									d="M10 19l-7-7m0 0l7-7m-7 7h18"
 								/>
 							</svg>
 						</Link>
-						<div className="font-bold">{router.query.date}</div>
+						<div className="ml-[0.8rem] font-bold">
+							{typeof router.query.date === 'string'
+								? router.query.date.replace(/-/g, '.')
+								: ''}
+						</div>
 					</span>
-					<span className="flex items-center">
+					<span className="flex">
 						{!readyDelete ? (
 							<>
-								<span className="relative inline-block w-10 align-middle select-none">
+								<span className="relative inline-block w-[4rem] align-middle select-none">
 									<input
-										className="absolute block w-6 h-6 bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#fde68a] peer"
+										className="absolute block w-[2.8rem] h-[2.8rem] bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#FDAD00] peer"
 										type="checkbox"
 										name="toggle"
 										id="toggle"
@@ -134,13 +138,13 @@ const Detail: NextPage = () => {
 										}}
 									/>
 									<label
-										className="block h-6 bg-gray-300 rounded-full cursor-pointer peer peer-checked:bg-[#fde68a] overflow-hidden"
+										className="block h-[2.8rem]	bg-gray-200 rounded-full cursor-pointer peer peer-checked:bg-[#FDAD00] overflow-hidden"
 										htmlFor="toggle"
 									/>
 								</span>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
-									className="mx-3 w-7 h-7 cursor-pointer"
+									className="ml-[0.8rem] cursor-pointer w-[2.8rem] h-[2.8rem]"
 									fill="none"
 									viewBox="0 0 24 24"
 									stroke="currentColor"
@@ -148,7 +152,7 @@ const Detail: NextPage = () => {
 									<path
 										strokeLinecap="round"
 										strokeLinejoin="round"
-										strokeWidth={1.5}
+										strokeWidth={2}
 										d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
 									/>
 								</svg>
@@ -156,7 +160,7 @@ const Detail: NextPage = () => {
 						) : (
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="mx-3 w-7 h-7 cursor-pointer"
+								className="cursor-pointer w-[3.6rem] h-[3.6rem] text-[#FDAD00]"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
@@ -188,80 +192,88 @@ const Detail: NextPage = () => {
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
-									strokeWidth={1.5}
+									strokeWidth={2}
 									d="M5 13l4 4L19 7"
 								/>
 							</svg>
 						)}
 					</span>
+
+					{/* <span className="text-[1.6rem] text-right">
+								{managedUserInfo.userName} 회원
+							</span> */}
 				</div>
 
-				<div className="flex flex-col mt-4">
+				<div className="flex flex-col mt-[2.4rem]">
 					{data.session.sessionExercises.map((exercise: any) => {
 						const deleteItemId = Array.from(deleteLists)[0]
 						return (
 							<React.Fragment key={exercise.id}>
 								<div
-									className={`"flex px-3 py-3 mt-1 border first:mt-0 text-[16px] flex-col items-center" ${
+									className={`mt-[2.4rem] p-[1.6rem] border rounded-3xl first:mt-0 text-[1.8rem] flex-col items-center text-[#9F9F9F] ${
 										exercise.id === deleteItemId ? 'ring-2' : ''
 									}`}>
 									<div
-										className={`w-full p-3 text-center border bg-gray-50 cursor-pointer ${
+										className={`grid grid-cols-3 justify-items-center items-center w-full text-center border rounded-3xl py-[2rem] px-[0.8rem] bg-gray-50 cursor-pointer ${
 											exercise.id === deleteItemId ? 'ring-2' : ''
 										}`}
 										data-id={exercise.id}
-										onClick={
-											!readyDelete
-												? () => {
-														sessionExerciseInputVar({
-															...sessionExerciseInput,
-															exerciseName: exercise.name,
-															sessionExerciseId: exercise.id
-														})
-														modalVar(true)
-												  }
-												: e => {
-														if (
-															e !== null &&
-															e.target instanceof HTMLElement
-														) {
-															// 운동 종목 삭제 step 1
-															if (e.target.dataset.id) {
-																const id = +e.target.dataset.id
-																// 하나만 가능한 조건
-																if (deleteLists.size > 0) {
-																	setDeleteLists(prev => new Set())
-																}
-																if (deleteLists.has(id)) {
-																	setDeleteLists(
-																		prev =>
-																			new Set(
-																				[...prev].filter(el => el !== id)
-																			)
-																	)
-																} else {
-																	setDeleteLists(
-																		prev => new Set(prev.add(id))
-																	)
-																}
-															}
-														}
-												  }
-										}>
-										{exercise.name}
+										onClick={e => {
+											if (e !== null && e.target instanceof HTMLElement) {
+												// 운동 종목 삭제 step 1
+												if (e.target.dataset.id) {
+													const id = +e.target.dataset.id
+													// 하나만 가능한 조건
+													if (deleteLists.size > 0) {
+														setDeleteLists(prev => new Set())
+													}
+													if (deleteLists.has(id)) {
+														setDeleteLists(
+															prev =>
+																new Set([...prev].filter(el => el !== id))
+														)
+													} else {
+														setDeleteLists(prev => new Set(prev.add(id)))
+													}
+												}
+											}
+										}}>
+										<span>{'카테고리'}</span>
+										<span className="font-semibold text-black">
+											{exercise.name}
+										</span>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											className="w-[2.8rem] h-[2.8rem] text-[#9F9F9F]"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke="currentColor"
+											onClick={
+												!readyDelete
+													? () => {
+															sessionExerciseInputVar({
+																...sessionExerciseInput,
+																exerciseName: exercise.name,
+																sessionExerciseId: exercise.id
+															})
+															modalVar(true)
+													  }
+													: undefined
+											}>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth={2}
+												d="M12 4v16m8-8H4"
+											/>
+										</svg>
 									</div>
 									{exercise.sessionExerciseVolumes.map((volume: any) => {
 										return (
-											<div className="flex justify-around w-full py-1 border-b last:border-b-0">
-												<span className="w-full text-center">
-													{volume.weight}kg
-												</span>
-												<span className="w-full text-center">
-													{volume.reps}회
-												</span>
-												<span className="w-full text-center">
-													{volume.sets}세트
-												</span>
+											<div className="text-black text-[1.6rem] grid grid-cols-3 justify-items-center items-center w-full py-[0.8rem] px-[0.8rem] border-b last:border-b-0">
+												<span>{volume.weight}kg</span>
+												<span>{volume.reps}회</span>
+												<span>{volume.sets}세트</span>
 											</div>
 										)
 									})}
@@ -269,28 +281,31 @@ const Detail: NextPage = () => {
 							</React.Fragment>
 						)
 					})}
-					<Link href={`${router.asPath}/select-exercise`}>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							className="self-center w-6 h-6 mt-4 text-gray-500 cursor-pointer"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor">
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={1.5}
-								d="M12 4v16m8-8H4"
-							/>
-						</svg>
-					</Link>
+					<div className="flex justify-center mt-[2.4rem]">
+						<Link href={`${router.asPath}/select-exercise`}>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="w-[3.2rem] h-[3.2rem] text-black self-center cursor-pointer "
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								onClick={() => modalVar(true)}>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+								/>
+							</svg>
+						</Link>
+					</div>
 				</div>
 
 				<textarea
-					className="w-full px-10 py-3 mt-4 font-IBM"
+					className="text-[1.8rem] w-full h-[10rem] border px-[2rem] py-[1.2rem] mt-[2.4rem] resize-none font-IBM"
 					autoFocus
 					autoSave="true"
-					placeholder="피드백을 입력해주세요."
+					placeholder="수업 피드백을 입력해주세요."
 					defaultValue={data.session.feedback}
 					onBlur={e => {
 						// 피드백 작성 API
@@ -309,19 +324,22 @@ const Detail: NextPage = () => {
 						}
 					}}
 				/>
+			</Layout>
 
-				{modal ? (
-					<div className="font-IBM fixed max-w-[450px] w-full bottom-0">
-						<div
-							className="fixed inset-0 z-[-1] bg-black opacity-20"
-							onClick={() => modalVar(false)}></div>
-						<div className="bg-white flex z-[50] h-full flex-col py-10">
-							<div className="py-3 text-center text-[20px]">볼륨 작성</div>
-							<form
-								className="flex flex-col mt-4"
-								onSubmit={handleSubmit(onSubmit)}>
+			{modal ? (
+				<div className="fixed bottom-0 w-full font-IBM">
+					<div
+						className="fixed inset-0 z-[-1] bg-black opacity-20"
+						onClick={() => modalVar(false)}></div>
+					<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[1.6rem]">
+						<div className="text-[3.2rem] text-bold">볼륨 추가</div>
+						<form
+							className="flex flex-col mt-[2.4rem]"
+							onSubmit={handleSubmit(onSubmit)}>
+							<div className="flex flex-col justify-between">
+								<label className="text-[1.4rem]">중량(kg)</label>
 								<input
-									className="w-full h-12 px-10 border"
+									className="w-full py-[1.2rem] text-center border rounded-3xl shadow-md h-[5.5rem] mt-[0.4rem]"
 									type="text"
 									placeholder="weight"
 									{...register('weight', {
@@ -329,12 +347,15 @@ const Detail: NextPage = () => {
 									})}
 								/>
 								{errors.weight && (
-									<div className="text-[16px] text-red-500 mt-1 text-center">
+									<div className="text-[16px] text-red-500 mt-[0.8rem] text-center">
 										중량(kg)를 입력해주세요.
 									</div>
 								)}
+							</div>
+							<div className="flex flex-col justify-between mt-[1.6rem]">
+								<label className="text-[1.4rem]">횟수</label>
 								<input
-									className="w-full h-12 px-10 mt-1 border"
+									className="w-full py-[1.2rem] text-center border rounded-3xl shadow-md h-[5.5rem] mt-[0.4rem]"
 									type="text"
 									placeholder="reps"
 									{...register('reps', {
@@ -342,12 +363,15 @@ const Detail: NextPage = () => {
 									})}
 								/>
 								{errors.reps && (
-									<div className="text-[16px] text-red-500 mt-1 text-center">
-										반복수를 입력해주세요.
+									<div className="text-[16px] text-red-500 mt-[0.8rem] text-center">
+										횟수를 입력해주세요.
 									</div>
 								)}
+							</div>
+							<div className="flex flex-col justify-between mt-[1.6rem]">
+								<label className="text-[1.4rem]">세트</label>
 								<input
-									className="w-full h-12 px-10 mt-1 border"
+									className="w-full py-[1.2rem] text-center border rounded-3xl shadow-md h-[5.5rem] mt-[0.4rem]"
 									type="text"
 									placeholder="sets"
 									{...register('sets', {
@@ -355,29 +379,28 @@ const Detail: NextPage = () => {
 										minLength: 1
 									})}
 								/>
-								{errors.sets && (
-									<div className="text-[16px] text-red-500 mt-1 text-center">
-										세트 수를 입력해주세요.
-									</div>
-								)}
-
-								<div className="max-w-[450px] self-end mt-4">
-									<button
-										className="px-4 py-3 bg-gray-100 border"
-										onClick={() => modalVar(false)}>
-										취소
-									</button>
-									<button
-										className="px-4 py-3 mx-3 bg-yellow-100 border"
-										type="submit">
-										추가
-									</button>
+							</div>
+							{errors.sets && (
+								<div className="text-[16px] text-red-500 mt-[0.8rem] text-center">
+									세트를 입력해주세요.
 								</div>
-							</form>
-						</div>
+							)}
+							<div className="flex justify-between mt-[2.4rem]">
+								<button
+									className="w-[45%] p-[1.2rem] border shadow-md rounded-3xl"
+									onClick={() => modalVar(false)}>
+									취소
+								</button>
+								<button
+									className="w-[45%] p-[1.2rem] bg-[#FED06E] border shadow-md rounded-3xl "
+									type="submit">
+									추가
+								</button>
+							</div>
+						</form>
 					</div>
-				) : null}
-			</Layout>
+				</div>
+			) : null}
 		</>
 	)
 }

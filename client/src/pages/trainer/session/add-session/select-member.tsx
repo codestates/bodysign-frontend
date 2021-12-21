@@ -6,7 +6,6 @@ import { managedUserInfoVar } from '../../../../graphql/vars'
 import { useQuery } from '@apollo/client'
 import { TrainerDocument } from '../../../../graphql/graphql'
 import Loading from '../../../../components/Loading'
-import { useRouter } from 'next/dist/client/router'
 
 interface MemberSession {
 	id: number
@@ -18,7 +17,6 @@ interface MemberSession {
 }
 
 const SelectMember: NextPage = () => {
-	const router = useRouter()
 	const { loading, data } = useQuery(TrainerDocument, {
 		variables: { id: 21 }
 	})
@@ -53,90 +51,103 @@ const SelectMember: NextPage = () => {
 		<>
 			<Layout>
 				<div className="flex items-center justify-between">
-					<span className="flex text-[20px] font-bold">
+					<span className="flex text-[3.2rem]">
 						<Link href="/trainer/session/add-session">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="w-7 h-7 cursor-pointer"
+								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
-									strokeWidth={1.5}
-									d="M15 19l-7-7 7-7"
+									strokeWidth={2}
+									d="M10 19l-7-7m0 0l7-7m-7 7h18"
 								/>
 							</svg>
 						</Link>
-						<div>회원선택</div>
+						<div className="ml-[0.8rem] font-bold">회원선택</div>
 					</span>
+					<Link href="/trainer/session/add-session">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="cursor-pointer w-[3.6rem] h-[3.6rem] text-[#FDAD00]"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M5 13l4 4L19 7"
+							/>
+						</svg>
+					</Link>
 				</div>
 
+				{/* 
 				<div className="flex justify-between mt-4">
 					<span>
 						{data.trainer.userCategories.map((category: any) => {
 							return (
 								<React.Fragment key={category.id}>
-									<span className="ml-2 first:ml-0 font-thin">
+									<span className="ml-2 font-thin first:ml-0">
 										{category.name}
 									</span>
 								</React.Fragment>
 							)
 						})}
 					</span>
-				</div>
+				</div> */}
 
 				{Object.entries(selectMemberObject).map((entry, idx) => {
 					return (
 						<React.Fragment key={idx}>
-							<div className="mt-4">
-								<div className="text-[16px] font-bold">{entry[0]}</div>
+							<div className="mt-[2.4rem]">
+								<div className="text-[1.8rem] font-semibold">
+									{entry[0]}
+								</div>
 								{entry[1].map((member, idx2) => {
 									return (
 										<React.Fragment key={idx2}>
-											<div className="text-[16px] mt-1">
-												<div className="flex justify-between px-3 py-3 border rounded-3xl">
-													<div className="flex">
-														{member.gender === 'male' ? (
-															<img
-																src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
-																width="25"
-																height="25"
-															/>
-														) : (
-															<img
-																src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
-																width="25"
-																height="25"
-															/>
-														)}
-														<Link href="/trainer/session/add-session">
-															<div
-																className="ml-1 font-thin hover:cursor-pointer"
-																data-id={member.id}
-																onClick={e => {
-																	if (
-																		e !== null &&
-																		e.target instanceof HTMLElement
-																	) {
-																		const userId = e.target.dataset
-																			.id as string
-																		managedUserInfoVar({
-																			userId: +userId,
-																			email: member.email,
-																			userName: member.userName,
-																			gender: member.gender
-																		})
-																	}
-																}}>
-																{member.userName} 회원님
-															</div>
-														</Link>
+											<div
+												className="h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white hover:ring-4 hover:ring-[#FDAD00] cursor-pointer"
+												data-id={member.id}
+												onClick={e => {
+													if (
+														e !== null &&
+														e.target instanceof HTMLElement
+													) {
+														const userId = e.target.dataset.id as string
+														managedUserInfoVar({
+															userId: +userId,
+															email: member.email,
+															userName: member.userName,
+															gender: member.gender
+														})
+													}
+												}}>
+												<div className="flex">
+													{member.gender === 'male' ? (
+														<img
+															src="http://s3.amazonaws.com/pix.iemoji.com/images/emoji/apple/ios-12/256/man-raising-hand-light-skin-tone.png"
+															width="36"
+															height="30"
+														/>
+													) : (
+														<img
+															src="http://s3.amazonaws.com/pix.iemoji.com/images/emoji/apple/ios-12/256/woman-raising-hand-light-skin-tone.png"
+															width="36"
+															height="30"
+														/>
+													)}
+													<div className="self-center ml-[1.2rem]">
+														{member.userName} 회원
 													</div>
-													<div className="font-thin">
-														{`${member.usedCount} / ${member.totalCount}`}
-													</div>
+												</div>
+												<div>
+													{`${member.usedCount} / ${member.totalCount}`}
 												</div>
 											</div>
 										</React.Fragment>

@@ -147,7 +147,7 @@ const Chat: NextPage = () => {
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
-									strokeWidth={1.5}
+									strokeWidth={2}
 									d="M15 19l-7-7 7-7"
 								/>
 							</svg>
@@ -205,7 +205,7 @@ const Chat: NextPage = () => {
 										chat.sender === SenderReceiver.User
 											? 'self-start bg-blue-100'
 											: 'self-end bg-blue-500 text-white'
-									} p-3 mb-[6px] rounded-lg font-IBM text-[12px]`}
+									} p-3 mb-[6px] rounded-lg font-IBM text-[2.2vh]`}
 									key={idx}>
 									{chat.text}
 								</div>
@@ -214,7 +214,7 @@ const Chat: NextPage = () => {
 					</div>
 					<div className="flex flex-col">
 						<div className="p-3 flex">
-							<label className="mt-[10px] mr-2" htmlFor="upload">
+							<label className="mt-[5px] mr-2" htmlFor="upload">
 								<svg
 									viewBox="0 0 15 15"
 									fill="none"
@@ -238,7 +238,7 @@ const Chat: NextPage = () => {
 								}}
 							/>
 							<textarea
-								className="p-3 w-full h-[44px] resize-none bg-gray-50 focus:h-[85px] overflow-hidden mr-2"
+								className="py-2 px-3 w-full h-[4.5vh] text-[2.2vh] resize-none bg-gray-50 focus:h-[10.5vh] overflow-hidden mr-2"
 								autoFocus={true}
 								disabled={img.readyUpload ? true : false}
 								defaultValue=""
@@ -246,7 +246,7 @@ const Chat: NextPage = () => {
 									setMessage(e.target.value)
 								}}
 							/>
-							<button className="mt-1 h-9" type="submit">
+							<button className="h-9" type="submit">
 								<svg
 									className="text-yellow-500"
 									viewBox="0 0 15 15"

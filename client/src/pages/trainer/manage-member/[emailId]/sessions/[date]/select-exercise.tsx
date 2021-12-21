@@ -10,7 +10,7 @@ import {
 	TrainerDocument
 } from '../../../../../../graphql/graphql'
 import { sessionExerciseInputVar } from '../../../../../../graphql/vars'
-import { useGetScroll } from '../../../../../../utils/useGetScroll'
+// import { useGetScroll } from '../../../../../../utils/useGetScroll'
 
 interface Exercise {
 	id: number
@@ -41,64 +41,64 @@ const Exercise: NextPage = () => {
 		}
 	}
 
+	console.log(sessionExerciseInput)
+
 	if (loading) return <Loading />
 	return (
 		<>
 			<Layout>
 				<div className="flex items-center justify-between">
-					<span className="flex text-[20px] font-bold">
+					<span className="flex text-[3.2rem]">
 						<Link href={router.asPath.split('select')[0]}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="self-center w-6 h-6 cursor-pointer"
+								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
-									strokeWidth={1.5}
-									d="M15 19l-7-7 7-7"
+									strokeWidth={2}
+									d="M10 19l-7-7m0 0l7-7m-7 7h18"
 								/>
 							</svg>
 						</Link>
-						<div>운동</div>
+						<div className="ml-[0.8rem] font-bold">운동 추가</div>
 					</span>
-					<span className="flex">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							className="mr-3 cursor-pointer w-7 h-7"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-							onClick={() => {
-								// 운동 종목 추가 API
-								// 어떤 사람의, 어떤 세션의, 어떤 운동의, 어떤 볼륨을 update한다.
-								try {
-									createSessionExercise({
-										variables: {
-											createSessionExerciseInput: {
-												name: sessionExerciseInput.exerciseName,
-												sessionId: sessionExerciseInput.sessionId
-											}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						className="cursor-pointer w-[3.6rem] h-[3.6rem] text-[#FDAD00]"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+						onClick={() => {
+							// 운동 종목 추가 API
+							// 어떤 사람의, 어떤 세션의, 어떤 운동의, 어떤 볼륨을 update한다.
+							try {
+								createSessionExercise({
+									variables: {
+										createSessionExerciseInput: {
+											name: sessionExerciseInput.exerciseName,
+											sessionId: sessionExerciseInput.sessionId
 										}
-									})
-									router.push(router.asPath.split('select')[0])
-								} catch (error) {
-									console.log(error)
-								}
-							}}>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={1.5}
-								d="M5 13l4 4L19 7"
-							/>
-						</svg>
-					</span>
+									}
+								})
+								router.push(router.asPath.split('select')[0])
+							} catch (error) {
+								console.log(error)
+							}
+						}}>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth={2}
+							d="M5 13l4 4L19 7"
+						/>
+					</svg>
 				</div>
 
-				{/* <div className="flex justify-around mt-4 border-b-1 top-0 sticky z-10 bg-white">
+				{/* <div className="sticky top-0 z-10 flex justify-around mt-4 bg-white border-b-1">
 					{data.trainer.exerciseCategories.map(
 						(category: any, idx: number) => {
 							return (
@@ -130,9 +130,9 @@ const Exercise: NextPage = () => {
 				{Object.entries(selectExerciseObject).map((category, idx) => {
 					return (
 						<React.Fragment key={idx}>
-							<div className="mt-4">
+							<div className="mt-[2.4rem]">
 								<div
-									className="text-[12px] font-bold"
+									className="text-[1.8rem] font-semibold"
 									ref={span => {
 										refs.current[idx] = span
 									}}>
@@ -141,32 +141,25 @@ const Exercise: NextPage = () => {
 								{category[1].map(exercise => {
 									return (
 										<React.Fragment key={exercise.id}>
-											<div className="text-[12px] mt-1">
-												<div
-													className={`flex justify-center px-3 py-3 border ${
-														exercise.name ===
-														sessionExerciseInput.exerciseName
-															? 'ring-2'
-															: ''
-													}`}>
-													<div className="flex">
-														<div
-															className="cursor-pointer"
-															onClick={e => {
-																if (
-																	e !== null &&
-																	e.target instanceof HTMLElement
-																) {
-																	sessionExerciseInputVar({
-																		...sessionExerciseInput,
-																		exerciseName: exercise.name
-																	})
-																}
-															}}>
-															{exercise.name}
-														</div>
-													</div>
-												</div>
+											<div
+												className={`h-[7rem] flex justify-center items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md hover:ring-4 hover:ring-[#FDAD00] cursor-pointer ${
+													exercise.name ===
+													sessionExerciseInput.exerciseName
+														? 'bg-[#FDAD00]'
+														: ''
+												}`}
+												onClick={e => {
+													if (
+														e !== null &&
+														e.target instanceof HTMLElement
+													) {
+														sessionExerciseInputVar({
+															...sessionExerciseInput,
+															exerciseName: exercise.name
+														})
+													}
+												}}>
+												<div>{exercise.name}</div>
 											</div>
 										</React.Fragment>
 									)
