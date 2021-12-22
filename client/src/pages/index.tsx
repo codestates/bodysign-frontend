@@ -6,14 +6,14 @@ import Layout from '../components/Layout'
 
 const Home: NextPage = () => {
 	return (
-		<div>
-			<Layout>
+		<div className='flex flex-col items-center justify-center'>
+			{/* <Layout> */}
 				<Head>
 					<title>Bodysign</title>
 				</Head>
 				<Login />
 				<Landing />
-			</Layout>
+			{/* </Layout> */}
 		</div>
 	)
 }
