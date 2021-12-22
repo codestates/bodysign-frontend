@@ -23,6 +23,7 @@ const Main: NextPage = () => {
 	// if (!loading && data) {
 	// 	console.log(data)
 	// }
+	// 2
 
 	let accessToken: string
 	if (accessTokenVar()) {
