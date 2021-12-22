@@ -111,8 +111,6 @@ const SelectMember: NextPage = () => {
 									{entry[0]}
 								</div>
 								{entry[1].map((member, idx2) => {
-									console.log(member.id, managedUserInfoVar().userId)
-
 									return (
 										<React.Fragment key={idx2}>
 											<div
@@ -121,7 +119,6 @@ const SelectMember: NextPage = () => {
 											h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white hover:ring-2`}
 												data-id={member.id}
 												onClick={e => {
-													console.log(managedUserInfoVar())
 													if (
 														e !== null &&
 														e.target instanceof HTMLElement

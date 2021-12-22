@@ -22,10 +22,8 @@ const Main: NextPage = () => {
 		variables: { id: userId }
 	})
 	if (!loading && data) {
-		console.log(data)
+		// console.log(data)
 	}
-
-	console.log(accessTokenVar())
 
 	let accessToken: string
 	if (accessTokenVar()) {

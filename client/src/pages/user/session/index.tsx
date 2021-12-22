@@ -27,8 +27,6 @@ const Session: NextPage = () => {
 	const sessionObject: Record<string, MemberSession[]> = {}
 	const completedSessionObject: Record<string, MemberSession[]> = {}
 	if (!loading && data) {
-		console.log(userData, data)
-
 		let $Data = [...data.user.sessions]
 		$Data
 			.sort((a, b) => {
@@ -57,7 +55,6 @@ const Session: NextPage = () => {
 				}
 			})
 	}
-	console.log(sessionObject)
 
 	if (loading) return <Loading />
 	return (

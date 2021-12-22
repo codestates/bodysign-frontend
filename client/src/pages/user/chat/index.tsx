@@ -39,7 +39,6 @@ const Chat: NextPage = () => {
 	const { loading, data } = useQuery(UserDocument, {
 		variables: { id: userData?.id }
 	})
-	console.log(loading, data)
 
 	const socket = io('https://api.bodysign.link/socket')
 	useEffect(() => {

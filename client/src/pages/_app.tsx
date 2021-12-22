@@ -19,6 +19,7 @@ const httpLink = new HttpLink({
 	uri: process.env.NEXT_PUBLIC_API_DOMAIN_GRAPHQL,
 	credentials: 'same-origin'
 })
+
 const authMiddleware = new ApolloLink((operation, forward) => {
 	// add the authorization to the headers
 	operation.setContext(({ headers = {} }) => ({

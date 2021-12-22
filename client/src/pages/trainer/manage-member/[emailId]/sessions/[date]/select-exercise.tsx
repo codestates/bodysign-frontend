@@ -45,8 +45,6 @@ const Exercise: NextPage = () => {
 		}
 	}
 
-	console.log(sessionExerciseInput)
-
 	if (loading) return <Loading />
 	return (
 		<>
