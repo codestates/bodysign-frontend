@@ -60,6 +60,8 @@ const Login: NextPage = () => {
 		//? 왜 두번 눌러야 들어오지?
 		console.log(form)
 
+		console.log(11)
+
 		try {
 			await loginAuth({
 				variables: {
@@ -78,14 +80,14 @@ const Login: NextPage = () => {
 
 		const userType = data.loginAuth.userType
 		if (userType === 'user') {
-			router.push('https://bodysign.link/user')
+			router.push('localhost:3000/user')
 		} else if (userType === 'trainer') {
-			router.push('https://bodysign.link/trainer')
+			router.push('localhost:3000/trainer')
 		}
 	}
 
 	const onGoogleLogin = () => {
-		window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=https://bodysign.link/auth/google&response_type=token&scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&
+		window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=https://api.bodysign.link//auth/google&response_type=token&scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&
 		include_granted_scopes=true`
 	}
 

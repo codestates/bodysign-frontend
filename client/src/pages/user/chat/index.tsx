@@ -98,7 +98,7 @@ const Chat: NextPage = () => {
 			formData.append('image', files[0], files[0].name)
 
 			await axios
-				.post('https://bodysign.link/imgs', formData)
+				.post('https://api.bodysign.link//imgs', formData)
 				.then(res => {
 					const imgData = res.data
 					setImg(prev => {
