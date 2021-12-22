@@ -32,7 +32,7 @@ const Main: NextPage = () => {
 	}
 	const getTrainerData = async () => {
 		await axios
-			.get('http://localhost:4000/auth/profile', {
+			.get('https://bodysign.link/auth/profile', {
 				headers: {
 					authorization: `Bearer ${accessToken}`
 				}
@@ -46,7 +46,7 @@ const Main: NextPage = () => {
 
 	useEffect(() => {
 		getTrainerData()
-	}, [])
+	}, [getTrainerData])
 
 	const [inbodyList, setInbodyList] = useState([
 		{

@@ -161,7 +161,7 @@ const ManageMember: NextPage = () => {
 			// console.log(data)
 			// 회원 추가 기능 구현하고 다시 데이터를 봐야 한다.
 		})
-	}, [])
+	}, [socket])
 
 	if (loading) return <Loading />
 	return (

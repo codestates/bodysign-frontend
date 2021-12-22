@@ -35,7 +35,7 @@ const Main: NextPage = () => {
 	}
 	const getUserData = async () => {
 		await axios
-			.get('http://localhost:4000/auth/profile', {
+			.get('https://bodysign.link/auth/profile', {
 				headers: {
 					authorization: `Bearer ${accessToken}`
 				}
@@ -49,7 +49,7 @@ const Main: NextPage = () => {
 
 	useEffect(() => {
 		getUserData()
-	}, [])
+	}, [getUserData])
 
 	const [inbodyList, setInbodyList] = useState([
 		{

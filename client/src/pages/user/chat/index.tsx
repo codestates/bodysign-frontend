@@ -7,7 +7,7 @@ import Layout from '../../../components/Layout'
 import axios from 'axios'
 import { useQuery, useReactiveVar } from '@apollo/client'
 import { userDataVar } from '../../../graphql/vars'
-import { UserDocument } from '..'
+import { UserDocument } from '../../../graphql/graphql'
 
 enum SenderReceiver {
 	User = 'User',
@@ -98,7 +98,7 @@ const Chat: NextPage = () => {
 			formData.append('image', files[0], files[0].name)
 
 			await axios
-				.post('http://localhost:4000/imgs', formData)
+				.post('https://bodysign.link/imgs', formData)
 				.then(res => {
 					const imgData = res.data
 					setImg(prev => {

@@ -16,7 +16,7 @@ import { chatTargetUserIdVar } from '../graphql/vars'
 import { accessTokenVar } from '../graphql/vars'
 
 const httpLink = new HttpLink({
-	uri: 'http://localhost:4000/graphql',
+	uri: 'https://bodysign.link/graphql',
 	credentials: 'same-origin'
 })
 const authMiddleware = new ApolloLink((operation, forward) => {

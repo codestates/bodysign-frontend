@@ -64,7 +64,7 @@ const Chat: NextPage = () => {
 				return el
 			})
 		})
-	}, [chatTargetUserId, socket])
+	}, [chatTargetUserId, socket, userData?.id])
 
 	useEffect(() => {
 		socket.on('receiveChat', chat => {
@@ -94,7 +94,7 @@ const Chat: NextPage = () => {
 			formData.append('image', files[0], files[0].name)
 
 			await axios
-				.post('http://localhost:4000/imgs', formData)
+				.post('https://bodysign.link/imgs', formData)
 				.then(res => {
 					const imgData = res.data
 					setImg(prev => {
