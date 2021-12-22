@@ -8,13 +8,14 @@ import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import {
 	RemoveTrainerDocument,
 	TrainerDocument,
+	UpdatePasswordTrainerDocument,
 	UpdateTrainerDocument
 } from '../../../graphql/graphql'
 import Loading from '../../../components/Loading'
 
 interface FormInput {
-	password: string
-	newPassword: string
+	prevPassword: string
+	nowPassword: string
 	checkPassword: string
 }
 
@@ -24,7 +25,6 @@ const TrainerInfo: NextPage = () => {
 	const [checkModal, setCheckModal] = useState('changepassword')
 	const [isModify, setIsmodify] = useState(false)
 	const [updateTrainerInput, setUpdateTrainerInput] = useState({
-		email: '',
 		phoneNumber: ''
 	})
 	const { loading, data } = useQuery(TrainerDocument, {
@@ -32,6 +32,9 @@ const TrainerInfo: NextPage = () => {
 	})
 	const [updateTrainer] = useMutation(UpdateTrainerDocument)
 	const [removeTrainer] = useMutation(RemoveTrainerDocument)
+	const [updatePasswordTrainer] = useMutation(
+		UpdatePasswordTrainerDocument
+	)
 
 	const {
 		register,
@@ -39,15 +42,18 @@ const TrainerInfo: NextPage = () => {
 		handleSubmit,
 		formState: { errors }
 	} = useForm<FormInput>()
-	const newPassword = watch('newPassword', '')
+	const nowPassword = watch('nowPassword', '')
 	const onSubmit: SubmitHandler<FormInput> = async data => {
 		// 비밀번호 변경 API
+		console.log(data)
+
 		try {
-			await updateTrainer({
+			await updatePasswordTrainer({
 				variables: {
-					updateTrainerInput: {
+					updatePasswordTrainerInput: {
 						id: userData?.id,
-						password: data.newPassword
+						prevPassword: data.prevPassword,
+						nowPassword: data.nowPassword
 					}
 				}
 			})
@@ -142,20 +148,7 @@ const TrainerInfo: NextPage = () => {
 						</div>
 						<div className="flex justify-between mt-[0.4rem]">
 							<span>이메일</span>
-							{!isModify ? (
-								<span className="font-thin">{data.trainer.email}</span>
-							) : (
-								<input
-									type="text"
-									defaultValue={data.trainer.email}
-									onChange={e => {
-										setUpdateTrainerInput({
-											...updateTrainerInput,
-											email: e.target.value
-										})
-									}}
-								/>
-							)}
+							<span className="font-thin">{data.trainer.email}</span>
 						</div>
 						<div className="flex justify-between mt-[0.4rem]">
 							<span>생년월일</span>
@@ -229,7 +222,7 @@ const TrainerInfo: NextPage = () => {
 										className="w-full text-center border rounded-3xl shadow-md h-[5.5rem]"
 										type="password"
 										placeholder="기존 비밀번호"
-										{...register('password', {
+										{...register('prevPassword', {
 											required: true
 										})}
 									/>{' '}
@@ -240,13 +233,13 @@ const TrainerInfo: NextPage = () => {
 										className="w-full text-center border rounded-3xl shadow-md h-[5.5rem]"
 										type="password"
 										placeholder="새 비밀번호"
-										{...register('newPassword', {
+										{...register('nowPassword', {
 											required: true,
 											minLength: 8
 										})}
 									/>{' '}
 								</div>
-								{errors.newPassword?.type === 'minLength' && (
+								{errors.nowPassword?.type === 'minLength' && (
 									<p className="text-[16px] text-red-500 mt-[0.8rem] text-center">
 										비밀번호는 최소 8자 이상으로 입력해주세요.
 									</p>
@@ -260,7 +253,7 @@ const TrainerInfo: NextPage = () => {
 										{...register('checkPassword', {
 											required: true,
 											// minLength: 8
-											validate: value => value === newPassword
+											validate: value => value === nowPassword
 										})}
 									/>{' '}
 								</div>

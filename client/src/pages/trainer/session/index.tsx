@@ -32,8 +32,6 @@ const Session: NextPage = () => {
 	})
 	const [updateSession] = useMutation(UpdateSessionDocument)
 	const [removeSession] = useMutation(RemoveSessionDocument)
-
-	// console.log(sessionId)
 	const sessionObject: Record<string, MemberSession[]> = {}
 	const completedSessionObject: Record<string, MemberSession[]> = {}
 	if (!loading && data) {
@@ -132,8 +130,6 @@ const Session: NextPage = () => {
 								onClick={async () => {
 									// 수업 삭제 step 2
 									const deleteItemId = Array.from(deleteLists)[0]
-									console.log(deleteItemId)
-
 									if (deleteItemId) {
 										try {
 											await removeSession({
@@ -223,8 +219,6 @@ const Session: NextPage = () => {
 															!readyDelete
 																? category === '일정'
 																	? () => {
-																			// console.log(session.id)
-
 																			setSessionId(session.id)
 																			modalVar(true)
 																	  }
@@ -238,8 +232,6 @@ const Session: NextPage = () => {
 																			if (e.target.dataset.id) {
 																				const id = +e.target.dataset.id
 																				// 하나만 가능한 조건
-																				console.log(id)
-
 																				if (deleteLists.size > 0) {
 																					setDeleteLists(prev => new Set())
 																				}
@@ -296,8 +288,6 @@ const Session: NextPage = () => {
 								className="w-full mt-[1.6rem] text-center border rounded-3xl shadow-md cursor-pointer h-[5.5rem] bg-[#FED06E]"
 								type="submit"
 								onClick={async () => {
-									console.log(sessionId)
-
 									try {
 										await updateSession({
 											variables: {

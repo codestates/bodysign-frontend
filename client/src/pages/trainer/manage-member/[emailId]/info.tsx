@@ -25,14 +25,14 @@ interface FormInput {
 	isGraduate: boolean
 }
 
-// const labelProperties =
-// 	'after:absolute after:border after:h-[2.9rem] after:bg-[#FDAD00] after:w-full after:-top-0 after:z-[-1] after:transition-[left] after:duration-500 after:rounded-[2rem] peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
+const labelProperties =
+	'after:absolute after:border after:h-[2.9rem] after:bg-[#FDAD00] after:w-full after:-top-0 after:z-[-1] after:transition-[left] after:duration-500 after:rounded-[2rem] peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
 
 const Info: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
 	const userData = useReactiveVar(userDataVar)
 	const managedUserInfo = useReactiveVar(managedUserInfoVar)
-	// const [isGraduate, setIsGraduate] = useState(false)
+	// const [isGraduate, setIsGraduate] = useState<boolean | null>(null)
 	const { loading, data } = useQuery(TrainerDocument, {
 		variables: { id: userData?.id }
 	})
@@ -74,6 +74,13 @@ const Info: NextPage = () => {
 			console.log(error)
 		}
 	}
+
+	// console.log(isGraduate)
+	// useEffect(() => {
+	// 	if (!loading && memberData) {
+	// 		setIsGraduate(memberData.user.graduate)
+	// 	}
+	// }, [])
 
 	// useEffect(() => {
 	// 	// 졸업 유무 변경 API
@@ -277,6 +284,7 @@ const Info: NextPage = () => {
 										type="radio"
 										id="false"
 										value="false"
+										checked={!isGraduate}
 										{...register('isGraduate', {
 											required: true
 										})}
@@ -297,12 +305,11 @@ const Info: NextPage = () => {
 										id="true"
 										value="true"
 										defaultChecked
+										checked={isGraduate}
 										{...register('isGraduate', {
 											required: true
 										})}
 										onClick={() => {
-											console.log(1111111111)
-
 											setIsGraduate(true)
 										}}
 									/>

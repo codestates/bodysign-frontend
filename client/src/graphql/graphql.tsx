@@ -184,6 +184,38 @@ export const SessionHistoriesDocument = gql`
 	}
 `
 
+export const UpdatePasswordUserDocument = gql`
+	mutation UpdatePasswordUser(
+		$updatePasswordUserInput: UpdatePasswordUserInput!
+	) {
+		updatePasswordUser(updatePasswordUserInput: $updatePasswordUserInput) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+		}
+	}
+`
+
+export const UpdatePasswordTrainerDocument = gql`
+	mutation UpdatePasswordTrainer(
+		$updatePasswordTrainerInput: UpdatePasswordTrainerInput!
+	) {
+		updatePasswordTrainer(
+			updatePasswordTrainerInput: $updatePasswordTrainerInput
+		) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+		}
+	}
+`
+
 export const CreateSocialUser = gql`
 	mutation CreateSocialUser(
 		$createSocialUserInput: CreateSocialUserInput!
@@ -216,7 +248,7 @@ export const CreateSocialTrainer = gql`
 `
 
 export const FindOneUserByPhoneNumberDocument = gql`
-	mutation FindOneUserByPhoneNumberDocument($phoneNumber: String!) {
+	mutation FindOneUserByPhoneNumber($phoneNumber: String!) {
 		findOneUserByPhoneNumber(phoneNumber: $phoneNumber) {
 			id
 			email
