@@ -79,8 +79,13 @@ const Landing: NextPage = () => {
 						alt="image"
 					/>
 				</div>
-				<div className="footer mt-[5rem] bg-[#FED06E]">
-					<div className="text-right">© 2021 Bodysign. All rights reserved.</div>
+				<div className="footer mt-[5rem] bg-[#FED06E] flex items-center justify-between">
+					<Image 
+						src="/../public/logo3.svg"
+						width="50"
+						height="50"
+					/>
+					<div>© 2021 Bodysign. All rights reserved.</div>
 				</div>
 			</div>
 		</Layout>

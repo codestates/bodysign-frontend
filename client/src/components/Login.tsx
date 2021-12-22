@@ -94,8 +94,8 @@ const Login: NextPage = () => {
 	return (
 		<>
 			<Layout>
-				<div className="flex flex-col text-[15px] items-center justify-center">
-					<div className="max-w-screen-md mx-auto justify-center">
+				<div className="flex flex-col text-[15px] items-center justify-center mx-auto">
+					<div className="max-w-screen-md">
 						<input
 							className="w-4/5 p-1 m-1 font-thin border font-IBM rounded-xl"
 							type="text"
