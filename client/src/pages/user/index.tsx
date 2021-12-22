@@ -35,7 +35,8 @@ const Main: NextPage = () => {
 	}
 	const getUserData = async () => {
 		await axios
-			.get('https://api.bodysign.link//auth/profile', {
+
+			.get(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/profile`, {
 				headers: {
 					authorization: `Bearer ${accessToken}`
 				}

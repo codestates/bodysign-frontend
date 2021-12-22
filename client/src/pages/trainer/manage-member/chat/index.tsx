@@ -37,7 +37,7 @@ const Chat: NextPage = () => {
 		readyUpload: false
 	})
 
-	const socket = io('localhost:5000')
+	const socket = io('https://api.bodysign.link/socket')
 	useEffect(() => {
 		socket.emit('joinRoom', `${chatTargetUserId}|${userData?.id}`)
 		socket.on('joinedRoom', data => {
@@ -94,7 +94,7 @@ const Chat: NextPage = () => {
 			formData.append('image', files[0], files[0].name)
 
 			await axios
-				.post('https://api.bodysign.link//imgs', formData)
+				.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}/imgs`, formData)
 				.then(res => {
 					const imgData = res.data
 					setImg(prev => {

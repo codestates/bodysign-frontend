@@ -154,7 +154,7 @@ const ManageMember: NextPage = () => {
 		})
 	}
 
-	const socket = io('localhost:5000')
+	const socket = io('https://api.bodysign.link/socket')
 	useEffect(() => {
 		socket.emit('joinLounge', 21)
 		socket.on('joinedLounge', data => {

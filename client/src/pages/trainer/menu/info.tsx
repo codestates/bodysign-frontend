@@ -45,8 +45,6 @@ const TrainerInfo: NextPage = () => {
 	const nowPassword = watch('nowPassword', '')
 	const onSubmit: SubmitHandler<FormInput> = async data => {
 		// 비밀번호 변경 API
-		console.log(data)
-
 		try {
 			await updatePasswordTrainer({
 				variables: {

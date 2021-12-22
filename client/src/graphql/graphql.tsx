@@ -343,6 +343,31 @@ export const RemoveTrainerDocument = gql`
 		}
 	}
 `
+
+export const CreateInbody = gql`
+	mutation CreateInbody($createInbodyInput: CreateInbodyInput!) {
+		createInbody(createInbodyInput: $createInbodyInput) {
+			id
+			bodyWeight
+			muscleWeight
+			bodyFat
+		}
+	}
+`
+
+export const RemoveUserDocument = gql`
+	mutation RemoveUser($id: Int!) {
+		removeUser(id: $id) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+		}
+	}
+`
+
 export const CreateSessionDocument = gql`
 	mutation CreateSession($createSessionInput: CreateSessionInput!) {
 		createSession(createSessionInput: $createSessionInput) {

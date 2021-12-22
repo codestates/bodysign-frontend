@@ -10,7 +10,6 @@ import Loading from '../../../../components/Loading'
 import { useRouter } from 'next/dist/client/router'
 
 const Inbody: NextPage = () => {
-	const router = useRouter()
 	const managedUserInfo = useReactiveVar(managedUserInfoVar)
 	const { loading, data } = useQuery(UserDocument, {
 		variables: { id: managedUserInfo.userId }
@@ -69,9 +68,7 @@ const Inbody: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[3.2rem] items-center">
-						<Link href="/trainer/manage-member"
-							passHref
-						>
+						<Link href="/trainer/manage-member" passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
@@ -90,9 +87,7 @@ const Inbody: NextPage = () => {
 							{data.user.userName} 회원
 						</div>
 					</span>
-					<Link href={`/trainer/manage-member/chat`}
-						passHref
-					>
+					<Link href={`/trainer/manage-member/chat`} passHref>
 						<svg
 							className="w-[2.8rem] h-[2.8rem]"
 							xmlns="http://www.w3.org/2000/svg"
@@ -115,22 +110,19 @@ const Inbody: NextPage = () => {
 				<div className="flex justify-between mt-[2.4rem] text-[2.2rem]">
 					<Link
 						href={`/trainer/manage-member/${managedUserInfo.email}/info`}
-						passHref
-					>
+						passHref>
 						<span className="pb-[0.4rem] cursor-pointer">회원정보</span>
 					</Link>
 					<Link
 						href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}
-						passHref
-					>
+						passHref>
 						<span className="ml-[0.8rem] border-b-[3px] border-[#FED06E] cursor-pointer">
 							인바디
 						</span>
 					</Link>
 					<Link
 						href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}
-						passHref
-					>
+						passHref>
 						<span className="ml-[0.8rem] cursor-pointer">수업기록</span>
 					</Link>
 				</div>

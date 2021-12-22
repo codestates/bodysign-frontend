@@ -80,14 +80,14 @@ const Login: NextPage = () => {
 
 		const userType = data.loginAuth.userType
 		if (userType === 'user') {
-			router.push('localhost:3000/user')
+			router.push('/user')
 		} else if (userType === 'trainer') {
-			router.push('localhost:3000/trainer')
+			router.push('/trainer')
 		}
 	}
 
 	const onGoogleLogin = () => {
-		window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=https://api.bodysign.link//auth/google&response_type=token&scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&
+		window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=https://api.bodysign.link/auth/google&response_type=token&scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&
 		include_granted_scopes=true`
 	}
 

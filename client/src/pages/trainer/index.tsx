@@ -32,7 +32,7 @@ const Main: NextPage = () => {
 	}
 	const getTrainerData = async () => {
 		await axios
-			.get('https://api.bodysign.link//auth/profile', {
+			.get(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/profile`, {
 				headers: {
 					authorization: `Bearer ${accessToken}`
 				}
@@ -105,7 +105,7 @@ const Main: NextPage = () => {
 					<div className="font-extrabold text-[2.4rem] mt-[4rem]">
 						{/* 체중, 골격근량, 체지방 보여주기 */}
 						{/* 이 때 CSS 애니메이션 추가가 필요 */}
-						{`안녕하세요. ${data.trainer.userName} 선생님!`}
+						{`안녕하세요. 김창동 선생님!`}
 						<br />
 						<br />
 						{`이번 달 정산 금액은`}
