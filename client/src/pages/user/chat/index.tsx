@@ -5,6 +5,9 @@ import Link from 'next/link'
 import { io } from 'socket.io-client'
 import Layout from '../../../components/Layout'
 import axios from 'axios'
+import { useQuery, useReactiveVar } from '@apollo/client'
+import { userDataVar } from '../../../graphql/vars'
+import { UserDocument } from '..'
 
 enum SenderReceiver {
 	User = 'User',
@@ -24,6 +27,7 @@ interface Chat {
 }
 
 const Chat: NextPage = () => {
+	const userData = useReactiveVar(userDataVar)
 	const [message, setMessage] = useState('')
 	const [chats, setChat] = useState<Chat[]>([])
 	const [dataUrl, setDataUrl] = useState('')
@@ -32,6 +36,10 @@ const Chat: NextPage = () => {
 		url: '',
 		readyUpload: false
 	})
+	const { loading, data } = useQuery(UserDocument, {
+		variables: { id: userData?.id }
+	})
+	console.log(loading, data)
 
 	const socket = io('localhost:5000')
 	useEffect(() => {
@@ -130,10 +138,7 @@ const Chat: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[25px]">
-						<Link
-							href="/user"
-							passHref
-						>
+						<Link href="/user" passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-6 h-6 cursor-pointer"
@@ -178,7 +183,7 @@ const Chat: NextPage = () => {
 					</span>
 				</div> */}
 
-				<div className="flex flex-col border mt-4">
+				<div className="flex flex-col mt-4 border">
 					<div className="p-3 flex flex-col overflow-y-scroll no-scrollbar h-[calc(100vh-37px-16px-68px)]">
 						{chats.map((chat, idx) => {
 							const url = chat.imgs[0]?.url
@@ -213,7 +218,7 @@ const Chat: NextPage = () => {
 						})}
 					</div>
 					<div className="flex flex-col">
-						<div className="p-3 flex">
+						<div className="flex p-3">
 							<label className="mt-[10px] mr-2" htmlFor="upload">
 								<svg
 									viewBox="0 0 15 15"

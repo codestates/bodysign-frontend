@@ -5,50 +5,11 @@ import logo from '../../../public/logo3.svg'
 import { gql, useQuery, useReactiveVar } from '@apollo/client'
 import Image from 'next/image'
 import axios from 'axios'
-import { userDataVar } from '../../graphql/vars'
+import { accessTokenVar, userDataVar } from '../../graphql/vars'
 import { getCookies } from 'cookies-next'
-
-export const UserDocument = gql`
-	query User($id: Int!) {
-		user(id: $id) {
-			__typename
-			id
-			email
-			userName
-			birthDate
-			phoneNumber
-			gender
-			graduate
-			inbodies {
-				id
-				bodyWeight
-				muscleWeight
-				bodyFat
-				measuredDate
-			}
-			sessionHistories {
-				id
-				date
-				status
-			}
-			userCategoryId
-		}
-	}
-`
-
-export const VerifyOwner = gql`
-	query VerifyOwner {
-		verifyOwner {
-			__typename
-			id
-			email
-			userName
-			birthDate
-			phoneNumber
-			gender
-		}
-	}
-`
+import Loading from '../../components/Loading'
+import BottomBar from '../../components/BottomBar'
+import { UserDocument } from '../../graphql/graphql'
 
 // TODO: CSS 애니메이션 꾸미기
 // https://codepen.io/Tbgse/pen/dYaJyJ
@@ -56,9 +17,22 @@ export const VerifyOwner = gql`
 
 // TODO : 이름 받아오기
 const Main: NextPage = () => {
-	const userData = useReactiveVar(userDataVar)
+	const [userId, setUserId] = useState<number>()
+	const { loading, data } = useQuery(UserDocument, {
+		variables: { id: userId }
+	})
+	if (!loading && data) {
+		console.log(data)
+	}
 
-	const accessToken = getCookies().accessToken
+	console.log(accessTokenVar())
+
+	let accessToken: string
+	if (accessTokenVar()) {
+		accessToken = accessTokenVar()
+	} else {
+		accessToken = getCookies().accessToken
+	}
 	const getUserData = async () => {
 		await axios
 			.get('http://localhost:4000/auth/profile', {
@@ -68,6 +42,7 @@ const Main: NextPage = () => {
 			})
 			.then(res => {
 				userDataVar(res.data)
+				setUserId(res.data.id)
 			})
 			.catch(error => console.log(error))
 	}
@@ -75,12 +50,6 @@ const Main: NextPage = () => {
 	useEffect(() => {
 		getUserData()
 	}, [])
-	const { loading, data: queryUserData } = useQuery(UserDocument, {
-		variables: { id: userData?.id }
-	})
-	if (!loading && queryUserData) {
-		console.log(queryUserData)
-	}
 
 	const [inbodyList, setInbodyList] = useState([
 		{
@@ -125,14 +94,15 @@ const Main: NextPage = () => {
 		]
 	}
 
+	if (loading) return <Loading />
 	return (
 		<Layout>
-			<div className="mb-2.5 flex flex-col w-full mx-4 my-5 text-[12px] font-IBM">
+			<div className="flex w-full text-[3.2rem] font-IBM">
 				<Image src={logo} width="50" height="50" alt="logo" />
+				<span className="ml-[0.8rem] text-[#FDAD00] font-bold">
+					Bodysign
+				</span>
 			</div>
-
-			<div className="m-5 font-thin font-IBM"></div>
-
 			<div className="font-IBM font-extrabold text-[25px]">
 				{/* 체중, 골격근량, 체지방 보여주기 */}
 				{/* 이 때 CSS 애니메이션 추가가 필요 */}
@@ -158,6 +128,7 @@ const Main: NextPage = () => {
 					</div>
 				</div>
 			</div>
+			<BottomBar variant="User" />
 		</Layout>
 	)
 }

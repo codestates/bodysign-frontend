@@ -74,8 +74,9 @@ const Login: NextPage = () => {
 	}
 	if (!loading && data) {
 		const accessToken = data.loginAuth.accessToken
-		const userType = data.loginAuth.userType
 		accessTokenVar(accessToken)
+
+		const userType = data.loginAuth.userType
 		if (userType === 'user') {
 			router.push('http://localhost:3000/user')
 		} else if (userType === 'trainer') {

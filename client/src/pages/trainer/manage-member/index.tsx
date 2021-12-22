@@ -46,7 +46,6 @@ const ManageMember: NextPage = () => {
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const [phoneNumber, setPhoneNumber] = useState('')
-
 	const { loading, data } = useQuery(TrainerDocument, {
 		variables: { id: userData?.id }
 	})
