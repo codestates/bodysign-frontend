@@ -127,6 +127,7 @@ const Signup: NextPage<FormInput> = () => {
 			}
 		}
 
+		// 1
 		// alert('회원가입이 완료되었습니다.')
 		// location.href = 'http://localhost:3000'
 	}

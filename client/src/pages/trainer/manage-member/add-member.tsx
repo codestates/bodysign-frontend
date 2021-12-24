@@ -46,12 +46,11 @@ const AddMember: NextPage = () => {
 			userCategoryId: +data.userCategoryId,
 			graduate: +data.graduate === 0 ? false : true
 		}
-		console.log(input)
 		try {
 			await createNonRegisteredUser({
 				variables: {
 					createNonRegisteredUserInput: {
-						trainerId: 21,
+						trainerId: userData?.id,
 						userName: input.userName,
 						phoneNumber: input.phoneNumber,
 						gender: input.gender,

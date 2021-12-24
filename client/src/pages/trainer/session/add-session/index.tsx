@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import Layout from '../../../../components/Layout'
 import { useMutation, useReactiveVar } from '@apollo/client'
-import { managedUserInfoVar } from '../../../../graphql/vars'
+import { managedUserInfoVar, userDataVar } from '../../../../graphql/vars'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useRouter } from 'next/dist/client/router'
@@ -12,6 +12,7 @@ import Image from 'next/image'
 
 const AddSession: NextPage = () => {
 	const router = useRouter()
+	const userData = useReactiveVar(userDataVar)
 	const managedUserInfo = useReactiveVar(managedUserInfoVar)
 	const [startDate, setStartDate] = useState(new Date())
 	const [createSession] = useMutation(CreateSessionDocument)
@@ -21,10 +22,7 @@ const AddSession: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[3.2rem]">
-						<Link
-							href="/trainer/session"
-							passHref
-						>
+						<Link href="/trainer/session" passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
@@ -61,7 +59,7 @@ const AddSession: NextPage = () => {
 									variables: {
 										createSessionInput: {
 											userId: managedUserInfo.userId,
-											trainerId: 21,
+											trainerId: userData?.id,
 											date: startDate,
 											status: 'active',
 											feedback: ''
@@ -93,8 +91,7 @@ const AddSession: NextPage = () => {
 					{managedUserInfo.userName === '' ? (
 						<Link
 							href="/trainer/session/add-session/select-member"
-							passHref
-						>
+							passHref>
 							<button className="w-full h-[7rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white">
 								회원 선택
 							</button>
@@ -102,15 +99,10 @@ const AddSession: NextPage = () => {
 					) : (
 						<div className="h-[7rem] flex items-center justify-center mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white ">
 							{managedUserInfoVar().gender === 'male' ? (
-								<Image
-									src="https://img.icons8.com/emoji/48/000000/man-raising-hand.png"
-									width="25"
-									height="25"
-									alt="image"
-								/>
+								<Image src="/man.png" width="25" height="25" alt="image" />
 							) : (
 								<Image
-									src="https://img.icons8.com/emoji/48/000000/woman-raising-hand.png"
+									src="/woman.png"
 									width="25"
 									height="25"
 									alt="image"

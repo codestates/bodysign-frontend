@@ -3,7 +3,6 @@ import { gql } from '@apollo/client'
 export const UserDocument = gql`
 	query User($id: Int!) {
 		user(id: $id) {
-			__typename
 			id
 			email
 			userName
@@ -184,6 +183,38 @@ export const SessionHistoriesDocument = gql`
 	}
 `
 
+export const UpdatePasswordUserDocument = gql`
+	mutation UpdatePasswordUser(
+		$updatePasswordUserInput: UpdatePasswordUserInput!
+	) {
+		updatePasswordUser(updatePasswordUserInput: $updatePasswordUserInput) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+		}
+	}
+`
+
+export const UpdatePasswordTrainerDocument = gql`
+	mutation UpdatePasswordTrainer(
+		$updatePasswordTrainerInput: UpdatePasswordTrainerInput!
+	) {
+		updatePasswordTrainer(
+			updatePasswordTrainerInput: $updatePasswordTrainerInput
+		) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+		}
+	}
+`
+
 export const CreateSocialUser = gql`
 	mutation CreateSocialUser(
 		$createSocialUserInput: CreateSocialUserInput!
@@ -211,6 +242,20 @@ export const CreateSocialTrainer = gql`
 			userName
 			birthDate
 			gender
+		}
+	}
+`
+
+export const FindOneUserByPhoneNumberDocument = gql`
+	mutation FindOneUserByPhoneNumber($phoneNumber: String!) {
+		findOneUserByPhoneNumber(phoneNumber: $phoneNumber) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+			graduate
 		}
 	}
 `
@@ -297,6 +342,31 @@ export const RemoveTrainerDocument = gql`
 		}
 	}
 `
+
+export const CreateInbody = gql`
+	mutation CreateInbody($createInbodyInput: CreateInbodyInput!) {
+		createInbody(createInbodyInput: $createInbodyInput) {
+			id
+			bodyWeight
+			muscleWeight
+			bodyFat
+		}
+	}
+`
+
+export const RemoveUserDocument = gql`
+	mutation RemoveUser($id: Int!) {
+		removeUser(id: $id) {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+		}
+	}
+`
+
 export const CreateSessionDocument = gql`
 	mutation CreateSession($createSessionInput: CreateSessionInput!) {
 		createSession(createSessionInput: $createSessionInput) {

@@ -8,7 +8,7 @@ import { loginTypeVar, accessTokenVar } from '../graphql/vars'
 import Link from 'next/link'
 import { useRouter } from 'next/dist/client/router'
 import axios from 'axios'
-import { Cookies } from "react-cookie"
+// import { Cookies } from 'react-cookie'
 
 // TODO : env로 빼야함
 const GOOGLE_CLIENT_ID =
@@ -26,7 +26,6 @@ const LOGIN = gql`
 `
 
 const Login: NextPage = () => {
-
 	console.log(process.env.NEXT_PUBLIC_API_DOMAIN)
 	const [form, setForm] = useState({
 		email: '',
@@ -61,6 +60,7 @@ const Login: NextPage = () => {
 
 	const onSubmit = async (e: any) => {
 		//? 왜 두번 눌러야 들어오지?
+
 		try {
 			await loginAuth({
 				variables: {
@@ -79,16 +79,15 @@ const Login: NextPage = () => {
 		accessTokenVar(accessToken)
 
 		if (userType === 'user') {
-			router.push(`${process.env.NEXT_PUBLIC_API_DOMAIN}/user`)
+			router.push(`${process.env.NEXT_PUBLIC_CLIENT_DOMAIN}/user`)
 		} else if (userType === 'trainer') {
-			router.push(`${process.env.NEXT_PUBLIC_API_DOMAIN}/trainer`)
+			router.push(`${process.env.NEXT_PUBLIC_CLIENT_DOMAIN}/trainer`)
 		}
 	}
 
 	const onGoogleLogin = () => {
 		window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=http://localhost:4000/auth/google&response_type=token&scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&
 		include_granted_scopes=true`
-
 	}
 
 	return (

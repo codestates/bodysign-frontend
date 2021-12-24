@@ -3,34 +3,38 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { modalVar } from '../../../graphql/vars'
+import { modalVar, userDataVar } from '../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import {
 	RemoveTrainerDocument,
 	TrainerDocument,
+	UpdatePasswordTrainerDocument,
 	UpdateTrainerDocument
 } from '../../../graphql/graphql'
 import Loading from '../../../components/Loading'
 
 interface FormInput {
-	password: string
-	newPassword: string
+	prevPassword: string
+	nowPassword: string
 	checkPassword: string
 }
 
 const TrainerInfo: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
+	const userData = useReactiveVar(userDataVar)
 	const [checkModal, setCheckModal] = useState('changepassword')
 	const [isModify, setIsmodify] = useState(false)
 	const [updateTrainerInput, setUpdateTrainerInput] = useState({
-		email: '',
 		phoneNumber: ''
 	})
 	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: 21 }
+		variables: { id: userData?.id }
 	})
 	const [updateTrainer] = useMutation(UpdateTrainerDocument)
 	const [removeTrainer] = useMutation(RemoveTrainerDocument)
+	const [updatePasswordTrainer] = useMutation(
+		UpdatePasswordTrainerDocument
+	)
 
 	const {
 		register,
@@ -38,15 +42,16 @@ const TrainerInfo: NextPage = () => {
 		handleSubmit,
 		formState: { errors }
 	} = useForm<FormInput>()
-	const newPassword = watch('newPassword', '')
+	const nowPassword = watch('nowPassword', '')
 	const onSubmit: SubmitHandler<FormInput> = async data => {
 		// 비밀번호 변경 API
 		try {
-			await updateTrainer({
+			await updatePasswordTrainer({
 				variables: {
-					updateTrainerInput: {
-						id: 21,
-						password: data.newPassword
+					updatePasswordTrainerInput: {
+						id: userData?.id,
+						prevPassword: data.prevPassword,
+						nowPassword: data.nowPassword
 					}
 				}
 			})
@@ -61,10 +66,7 @@ const TrainerInfo: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[3.2rem]">
-						<Link
-							href="/trainer/menu"
-							passHref
-						>
+						<Link href="/trainer/menu" passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
@@ -112,7 +114,7 @@ const TrainerInfo: NextPage = () => {
 											variables: {
 												updateTrainerInput: {
 													...updateTrainerInput,
-													id: 21
+													id: userData?.id
 												}
 											}
 										})
@@ -136,40 +138,27 @@ const TrainerInfo: NextPage = () => {
 					<div className="flex flex-col justify-between">
 						<div className="flex justify-between">
 							<span>이름</span>
-							<span className="font-thin">{"data.trainer.userName"}</span>
+							<span className="font-thin">{data.trainer.userName}</span>
 						</div>
 						<div className="flex justify-between mt-[0.4rem]">
 							<span>성별</span>
-							<span className="font-thin">{"data.trainer.gender"}</span>
+							<span className="font-thin">{data.trainer.gender}</span>
 						</div>
 						<div className="flex justify-between mt-[0.4rem]">
 							<span>이메일</span>
-							{!isModify ? (
-								<span className="font-thin">{"data.trainer.email"}</span>
-							) : (
-								<input
-									type="text"
-									defaultValue={data.trainer.email}
-									onChange={e => {
-										setUpdateTrainerInput({
-											...updateTrainerInput,
-											email: e.target.value
-										})
-									}}
-								/>
-							)}
+							<span className="font-thin">{data.trainer.email}</span>
 						</div>
 						<div className="flex justify-between mt-[0.4rem]">
 							<span>생년월일</span>
 							<span className="font-thin">
-								{"data.trainer.birthDate.split('T')[0]"}
+								{data.trainer.birthDate.split('T')[0]}
 							</span>
 						</div>
 						<div className="flex justify-between mt-[0.4rem]">
 							<span>전화번호</span>
 							{!isModify ? (
 								<span className="font-thin">
-									{"data.trainer.phoneNumber"}
+									{data.trainer.phoneNumber}
 								</span>
 							) : (
 								<input
@@ -231,7 +220,7 @@ const TrainerInfo: NextPage = () => {
 										className="w-full text-center border rounded-3xl shadow-md h-[5.5rem]"
 										type="password"
 										placeholder="기존 비밀번호"
-										{...register('password', {
+										{...register('prevPassword', {
 											required: true
 										})}
 									/>{' '}
@@ -242,13 +231,13 @@ const TrainerInfo: NextPage = () => {
 										className="w-full text-center border rounded-3xl shadow-md h-[5.5rem]"
 										type="password"
 										placeholder="새 비밀번호"
-										{...register('newPassword', {
+										{...register('nowPassword', {
 											required: true,
 											minLength: 8
 										})}
 									/>{' '}
 								</div>
-								{errors.newPassword?.type === 'minLength' && (
+								{errors.nowPassword?.type === 'minLength' && (
 									<p className="text-[16px] text-red-500 mt-[0.8rem] text-center">
 										비밀번호는 최소 8자 이상으로 입력해주세요.
 									</p>
@@ -262,7 +251,7 @@ const TrainerInfo: NextPage = () => {
 										{...register('checkPassword', {
 											required: true,
 											// minLength: 8
-											validate: value => value === newPassword
+											validate: value => value === nowPassword
 										})}
 									/>{' '}
 								</div>

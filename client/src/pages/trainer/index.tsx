@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/dist/client/router'
 import type { NextPage } from 'next'
 import Layout from '../../components/Layout'
@@ -7,25 +7,46 @@ import BottomBar from '../../components/BottomBar'
 import Image from 'next/image'
 import axios from 'axios'
 import { getCookies } from 'cookies-next'
-import { userDataVar } from '../../graphql/vars'
+import { accessTokenVar, userDataVar } from '../../graphql/vars'
+import { TrainerDocument } from '../../graphql/graphql'
+import { useQuery } from '@apollo/client'
+import Loading from '../../components/Loading'
 // TODO: CSS 애니메이션 꾸미기
 // https://codepen.io/Tbgse/pen/dYaJyJ
 // https://codepen.io/CheeseTurtle/pen/jzdgI?editors=1010
 
 const Main: NextPage = () => {
-	const accessToken = getCookies().accessToken
-	const getTrainerData = async () => {
+	const [trainerId, setTrainerId] = useState<number>()
+	const { loading, data } = useQuery(TrainerDocument, {
+		variables: { id: trainerId }
+	})
+	console.log(data)
+
+	// if (!loading && data) {
+	// 	console.log(data)
+	// }
+	// 2
+
+	let accessToken: string
+	if (accessTokenVar()) {
+		accessToken = accessTokenVar()
+	} else {
+		accessToken = getCookies().accessToken
+	}
+
+	const getTrainerData = useCallback(async () => {
 		await axios
-			.get('http://localhost:4000/auth/profile', {
+			.get(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/profile`, {
 				headers: {
 					authorization: `Bearer ${accessToken}`
 				}
 			})
 			.then(res => {
 				userDataVar(res.data)
+				setTrainerId(res.data.id)
 			})
 			.catch(error => console.log(error))
-	}
+	}, [accessToken])
 
 	useEffect(() => {
 		getTrainerData()
@@ -74,14 +95,18 @@ const Main: NextPage = () => {
 		]
 	}
 
+	if (loading) return <Loading />
 	return (
 		<>
 			<Layout>
-				<div className="mb-2.5 flex flex-col w-full mx-4 my-5 text-[12px] font-IBM">
+				<div className="flex w-full text-[3.2rem] font-IBM">
 					<Image src={logo} width="50" height="50" alt="logo" />
+					<span className="ml-[0.8rem] text-[#FDAD00] font-bold">
+						Bodysign
+					</span>
 				</div>
-				<div className="m-5 font-thin font-IBM">
-					<div className="font-IBM font-extrabold text-[25px]">
+				<div className="flex flex-col font-IBM">
+					<div className="font-extrabold text-[2.4rem] mt-[4rem]">
 						{/* 체중, 골격근량, 체지방 보여주기 */}
 						{/* 이 때 CSS 애니메이션 추가가 필요 */}
 						{`안녕하세요. 김창동 선생님!`}
@@ -92,10 +117,10 @@ const Main: NextPage = () => {
 						{`2,000,000원 입니다.`}
 					</div>
 					<div className="bottom-2 mt-[300px] mb-2 width-full">
-						<div className="font-IBM font-bold text-[20px] mb-3">
+						<div className="font-bold text-[20px] mb-3">
 							오늘 예정된 수업
 						</div>
-						<div className="text-[22px] font-IBM font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
+						<div className="text-[22px] font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
 							<div className="inline-block p-1 mx-3 font-bold">
 								{'권오연 회원님'}
 							</div>
@@ -103,7 +128,7 @@ const Main: NextPage = () => {
 								{classData.time}
 							</div>
 						</div>
-						<div className="text-[22px] font-IBM font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
+						<div className="text-[22px] font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
 							<div className="inline-block p-1 mx-3 font-bold">
 								{'장수민 회원님'}
 							</div>
@@ -111,7 +136,7 @@ const Main: NextPage = () => {
 								{'17:00'}
 							</div>
 						</div>
-						<div className="text-[22px] font-IBM font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
+						<div className="text-[22px] font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
 							<div className="inline-block p-1 mx-3 font-bold">
 								{'최원준 회원님'}
 							</div>
@@ -119,7 +144,7 @@ const Main: NextPage = () => {
 								{'19:00'}
 							</div>
 						</div>
-						<div className="text-[22px] font-IBM font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
+						<div className="text-[22px] font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
 							<div className="inline-block p-1 mx-3 font-bold">
 								{'황현수 회원님'}
 							</div>

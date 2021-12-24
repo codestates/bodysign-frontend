@@ -6,12 +6,14 @@ import Layout from '../../../components/Layout'
 import {
 	chatTargetUserIdVar,
 	managedUserInfoVar,
-	modalVar
+	modalVar,
+	userDataVar
 } from '../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import Loading from '../../../components/Loading'
 import {
 	CreateUserCategoryDocument,
+	FindOneUserByPhoneNumberDocument,
 	TrainerDocument,
 	UpdateUserDocument
 } from '../../../graphql/graphql'
@@ -35,19 +37,24 @@ interface FormInput {
 	userCategoryName: string
 }
 
-const socket = io('localhost:5000')
 const ManageMember: NextPage = () => {
 	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
+	const userData = useReactiveVar(userDataVar)
 	const [category, setCategory] = useState('관리중')
 	const [checkModal, setCheckModal] = useState('addmember')
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
+	const [phoneNumber, setPhoneNumber] = useState('')
 	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: 1 }
+		variables: { id: userData?.id }
 	})
 	const [createUserCategory] = useMutation(CreateUserCategoryDocument)
 	const [updateUser] = useMutation(UpdateUserDocument)
+	const [
+		findOneUserByPhoneNumber,
+		{ loading: isUserLoading, data: isUserData }
+	] = useMutation(FindOneUserByPhoneNumberDocument)
 	const {
 		register,
 		formState: { errors },
@@ -57,16 +64,22 @@ const ManageMember: NextPage = () => {
 		// 회원 추가 API
 		if (checkModal === 'linktraineruser') {
 			try {
-				// updateUser({
-				// 	variables: {
-				// 		updateUserInput: {
-				// 			id: 2,
-				// 			trainerId: 21,
-				// 			userCategoryId: +data.userCategoryId
-				// 		}
-				// 	}
-				// })
-				// modalVar(false)
+				await updateUser({
+					variables: {
+						updateUserInput: {
+							id: isUserData.findOneUserByPhoneNumber.id,
+							trainerId: userData?.id,
+							userCategoryId: +data.userCategoryId
+						}
+					},
+					refetchQueries: [
+						{
+							query: TrainerDocument,
+							variables: { id: userData?.id }
+						}
+					]
+				})
+				modalVar(false)
 			} catch (error) {
 				console.log(error)
 			}
@@ -77,14 +90,14 @@ const ManageMember: NextPage = () => {
 				await createUserCategory({
 					variables: {
 						createUserCategoryInput: {
-							trainerId: 1,
+							trainerId: userData?.id,
 							name: data.userCategoryName
 						}
 					},
 					refetchQueries: [
 						{
 							query: TrainerDocument,
-							variables: { id: 1 }
+							variables: { id: userData?.id }
 						}
 					]
 				})
@@ -99,6 +112,15 @@ const ManageMember: NextPage = () => {
 	const graduateManageMemberObject: Record<string, Member[]> = {}
 	if (!loading && data) {
 		const userCategories = data.trainer.userCategories
+		for (let i = 0; i < userCategories.length; i++) {
+			const userCategoryName = userCategories[i]?.name
+			if (graduateManageMemberObject[userCategoryName] === undefined) {
+				graduateManageMemberObject[userCategoryName] = []
+			}
+			if (manageMemberObject[userCategoryName] === undefined) {
+				manageMemberObject[userCategoryName] = []
+			}
+		}
 
 		data.trainer.users.forEach((user: any) => {
 			let sumUsedCount = 0
@@ -110,10 +132,11 @@ const ManageMember: NextPage = () => {
 
 			const userCategoryName =
 				userCategories[user.userCategoryId - 1]?.name
+			// userCategories의 갯수는 각 트레이너마다 0번부터 시작인데,
+			// user.userCategoryId 값은 전체 유저 카테고리의 row id값이라서 일치하지 않는다.
+			// console.log(userCategoryName, user.userCategoryId)
+
 			if (user.graduate) {
-				if (graduateManageMemberObject[userCategoryName] === undefined) {
-					graduateManageMemberObject[userCategoryName] = []
-				}
 				graduateManageMemberObject[userCategoryName].push({
 					id: user.id,
 					email: user.email,
@@ -123,9 +146,6 @@ const ManageMember: NextPage = () => {
 					count: `${sumUsedCount} / ${sumTotalCount}`
 				})
 			} else {
-				if (manageMemberObject[userCategoryName] === undefined) {
-					manageMemberObject[userCategoryName] = []
-				}
 				manageMemberObject[userCategoryName].push({
 					id: user.id,
 					email: user.email,
@@ -138,13 +158,14 @@ const ManageMember: NextPage = () => {
 		})
 	}
 
+	const socket = io(process.env.NEXT_PUBLIC_API_DOMAIN_SOCKET as string)
 	useEffect(() => {
 		socket.emit('joinLounge', 21)
 		socket.on('joinedLounge', data => {
 			// console.log(data)
 			// 회원 추가 기능 구현하고 다시 데이터를 봐야 한다.
 		})
-	}, [])
+	}, [socket])
 
 	if (loading) return <Loading />
 	return (
@@ -247,7 +268,7 @@ const ManageMember: NextPage = () => {
 												refetchQueries: [
 													{
 														query: TrainerDocument,
-														variables: { id: 21 }
+														variables: { id: userData?.id }
 													}
 												]
 											})
@@ -507,24 +528,59 @@ const ManageMember: NextPage = () => {
 								onSubmit={handleSubmit(onSubmit)}>
 								<div className="flex flex-col justify-between">
 									<label className="text-[1.4rem]">휴대폰 번호</label>
-									<input
-										className="w-full py-[1.2rem] text-center border rounded-3xl shadow-md h-[5.5rem] mt-[0.4rem]"
-										type="text"
-										placeholder="회원님의 휴대폰 번호를 입력해주세요."
-										{...register('phoneNumber', {
-											required: true,
-											pattern: /^([0-9]{3,4})([0-9]{4})$/
-										})}
-										onBlur={async e => {
-											// 트레이너와 회원을 연결하는 API
-											// 값이 트루인지 확인하고 추가 버튼 disabled
-											// setPhoneNumber(e.target.value)
-										}}
-									/>
+									<div className="flex items-center justify-between">
+										<input
+											className="w-[75%] py-[1.2rem] px-[2rem] border rounded-3xl shadow-md h-[5.5rem] mt-[0.4rem]"
+											type="text"
+											placeholder="회원님의 휴대폰 번호를 입력해주세요."
+											{...register('phoneNumber', {
+												// required: true
+												// pattern: /^([0-9]{3,4})([0-9]{4})$/
+											})}
+											onChange={e => {
+												setPhoneNumber(e.target.value)
+											}}
+										/>
+										<button
+											className="w-[20%] p-[1rem] bg-[#FED06E] border shadow-md rounded-3xl h-[5.5rem] mt-[0.4rem]"
+											// disabled={isUserData ? false : true}
+											type="submit"
+											onClick={async e => {
+												// 트레이너와 회원을 연결하는 API
+												// 값이 트루인지 확인하고 추가 버튼 disabled
+												// setPhoneNumber(e.target.value)
+												try {
+													if (
+														e !== null &&
+														e.target instanceof HTMLElement
+													) {
+														await findOneUserByPhoneNumber({
+															variables: {
+																phoneNumber: phoneNumber
+															}
+														})
+													}
+												} catch (error) {
+													console.log(error)
+												}
+											}}>
+											검색
+										</button>
+									</div>
 								</div>
 								{errors.phoneNumber && (
 									<div className="text-[16px] text-red-500 mt-[0.8rem] text-center">
-										붙임표(-)를 제외한 휴대폰 번호 7~8자리를 입력해주세요.
+										휴대폰 번호 10~11자리를 입력해주세요.
+									</div>
+								)}
+								{!isUserLoading && isUserData !== undefined && (
+									<div className="text-[16px] text-blue-500 mt-[0.8rem] text-left">
+										{`검색완료: ${isUserData.findOneUserByPhoneNumber.userName}`}
+									</div>
+								)}
+								{!isUserLoading && isUserData === undefined && (
+									<div className="text-[16px] text-red-500 mt-[0.8rem] text-left">
+										회원님을 찾을 수 없습니다.
 									</div>
 								)}
 								<div className="flex flex-col justify-between mt-[1.6rem]">
@@ -548,7 +604,8 @@ const ManageMember: NextPage = () => {
 										취소
 									</button>
 									<button
-										className="w-[45%] p-[1.2rem] bg-[#FED06E] border shadow-md rounded-3xl "
+										className="w-[45%] p-[1.2rem] bg-[#FED06E] border shadow-md rounded-3xl disabled:opacity-50"
+										disabled={!isUserLoading && isUserData ? false : true}
 										type="submit">
 										추가
 									</button>

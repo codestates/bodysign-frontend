@@ -2,11 +2,10 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import React from 'react'
 import Layout from '../../../../components/Layout'
-import { managedUserInfoVar } from '../../../../graphql/vars'
-import { useQuery } from '@apollo/client'
+import { managedUserInfoVar, userDataVar } from '../../../../graphql/vars'
+import { useQuery, useReactiveVar } from '@apollo/client'
 import { TrainerDocument } from '../../../../graphql/graphql'
 import Loading from '../../../../components/Loading'
-import { useRouter } from 'next/dist/client/router'
 import Image from 'next/image'
 
 interface MemberSession {
@@ -19,8 +18,9 @@ interface MemberSession {
 }
 
 const SelectMember: NextPage = () => {
+	const userData = useReactiveVar(userDataVar)
 	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: 21 }
+		variables: { id: userData?.id }
 	})
 
 	const selectMemberObject: Record<string, MemberSession[]> = {}
@@ -114,7 +114,9 @@ const SelectMember: NextPage = () => {
 									return (
 										<React.Fragment key={idx2}>
 											<div
-												className="h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white hover:ring-4 hover:ring-[#FDAD00] cursor-pointer"
+												className={`
+											${managedUserInfoVar().userId === member.id ? 'bg-[#FDAD00]' : 'bg-black'}
+											h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white hover:ring-2`}
 												data-id={member.id}
 												onClick={e => {
 													if (
@@ -122,6 +124,8 @@ const SelectMember: NextPage = () => {
 														e.target instanceof HTMLElement
 													) {
 														const userId = e.target.dataset.id as string
+														console.log(userId)
+
 														managedUserInfoVar({
 															userId: +userId,
 															email: member.email,
@@ -146,7 +150,7 @@ const SelectMember: NextPage = () => {
 															alt="image"
 														/>
 													)}
-													<div className="self-center ml-[1.2rem]">
+													<div className="self-center ml-[1.2rem] cursor-pointer ">
 														{member.userName} 회원
 													</div>
 												</div>

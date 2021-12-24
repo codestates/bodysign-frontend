@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import Layout from '../../../components/Layout'
-import { modalVar } from '../../../graphql/vars'
+import { modalVar, userDataVar } from '../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import BottomBar from '../../../components/BottomBar'
 import {
@@ -22,16 +22,16 @@ interface MemberSession {
 
 const Session: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
+	const userData = useReactiveVar(userDataVar)
 	const [category, setCategory] = useState('일정')
 	const [sessionId, setSessionId] = useState<number>()
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: 1 }
+		variables: { id: userData?.id }
 	})
 	const [updateSession] = useMutation(UpdateSessionDocument)
 	const [removeSession] = useMutation(RemoveSessionDocument)
-
 	const sessionObject: Record<string, MemberSession[]> = {}
 	const completedSessionObject: Record<string, MemberSession[]> = {}
 	if (!loading && data) {
@@ -140,7 +140,7 @@ const Session: NextPage = () => {
 													{
 														query: TrainerDocument,
 														variables: {
-															id: 21
+															id: userData?.id
 														}
 													}
 												]
@@ -180,7 +180,10 @@ const Session: NextPage = () => {
 									if (hours.length === 1) {
 										hours = 0 + hours
 									}
-									const minutes = date.getMinutes()
+									let minutes = date.getMinutes() + ''
+									if (minutes.length === 1) {
+										minutes = 0 + minutes
+									}
 									return (
 										<React.Fragment key={session.id}>
 											<div
@@ -254,7 +257,7 @@ const Session: NextPage = () => {
 													</div>
 												</div>
 												<div>
-													{`${hours}:${minutes === 0 ? '00' : minutes}`}
+													{`${hours}:${minutes === '0' ? '00' : minutes}`}
 												</div>
 											</div>
 										</React.Fragment>
@@ -297,7 +300,7 @@ const Session: NextPage = () => {
 												{
 													query: TrainerDocument,
 													variables: {
-														id: 21
+														id: userData?.id
 													}
 												}
 											]

@@ -1,74 +1,56 @@
-import type { NextPage } from 'next'
-import { useState } from 'react'
-import ChangePasswordModal from '../../../components/changePasswordModal'
-import Layout from '../../../components/Layout'
+import { NextPage } from 'next'
 import Link from 'next/link'
-import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client';
+import React, { useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import Layout from '../../../components/Layout'
+import { modalVar, userDataVar } from '../../../graphql/vars'
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
+import {
+	RemoveUserDocument,
+	UpdatePasswordUserDocument,
+	UpdateUserDocument,
+	UserDocument
+} from '../../../graphql/graphql'
+import Loading from '../../../components/Loading'
 
-// TODO: 비밀번호 변경
+interface FormInput {
+	prevPassword: string
+	nowPassword: string
+	checkPassword: string
+}
 
-export const UserDocument = gql`
-	query User($id: Int!) {
-		user(id: $id) {
-			__typename
-			id
-			email
-			userName
-			birthDate
-			phoneNumber
-			gender
-			graduate
-		}
-	}
-`
-
-export const RemoveUserDocument = gql`
-	mutation RemoveUser($id: Int!) {
-		removeUser(id: $id) {
-			id
-			email
-			userName
-			birthDate
-			phoneNumber
-			gender
-			graduate
-		}
-	}
-`
-
-const Info: NextPage = () => {
-	const { loading, data } = useQuery(UserDocument, {
-        variables: { id: 2 }
-    })
-
-	if(loading) {
-
-	} else {
-		console.log(data)
-	}
-
-	const [removeUser] = useMutation(RemoveUserDocument)
-	
-	const [userInfo, setUserInfo] = useState({
-		name: '홍길동',
-		gender: '남',
-		email: 'c.designer@kakao',
-		birth: '2000.01.01',
-		phone: '010-1234-5678'
+const UserInfo: NextPage = () => {
+	const modal = useReactiveVar(modalVar)
+	const userData = useReactiveVar(userDataVar)
+	const [checkModal, setCheckModal] = useState('changepassword')
+	const [isModify, setIsmodify] = useState(false)
+	const [updateUserInput, setUpdateUserInput] = useState({
+		phoneNumber: ''
 	})
-	const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
+	const { loading, data } = useQuery(UserDocument, {
+		variables: { id: userData?.id }
+	})
+	const [updateUser] = useMutation(UpdateUserDocument)
+	const [removeUser] = useMutation(RemoveUserDocument)
+	const [updatePasswordUser] = useMutation(UpdatePasswordUserDocument)
 
-	const changePasswordModal = () => {
-		setIsPasswordModalOpen(!isPasswordModalOpen)
-
-	}
-
-	const deleteUserHandler = async () => {
-		alert('정말 탈퇴하시겠습니까?')
+	const {
+		register,
+		watch,
+		handleSubmit,
+		formState: { errors }
+	} = useForm<FormInput>()
+	const nowPassword = watch('nowPassword', '')
+	const onSubmit: SubmitHandler<FormInput> = async data => {
+		// 비밀번호 변경 API
 		try {
-			await removeUser({
+			await updatePasswordUser({
 				variables: {
-					id: 2
+					updatePasswordUserInput: {
+						id: userData?.id,
+						prevPassword: data.prevPassword,
+						nowPassword: data.nowPassword
+					}
 				}
 			})
 		} catch (error) {
@@ -76,21 +58,13 @@ const Info: NextPage = () => {
 		}
 	}
 
+	if (loading) return <Loading />
 	return (
-		<Layout>
-			<div className="font-IBM flex flex-col justify-center mx-4 my-5 text-[15px]">
-				{isPasswordModalOpen ? (
-					<ChangePasswordModal
-						isOpen={isPasswordModalOpen}
-						passwordModalOpenhandler={changePasswordModal}
-					/>
-				) : null}
+		<>
+			<Layout>
 				<div className="flex items-center justify-between">
-						<span className="flex text-[3.2rem]">
-							<Link
-								href="/user/menu"
-								passHref
-							>
+					<span className="flex text-[3.2rem]">
+						<Link href="/user/menu" passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
@@ -105,14 +79,11 @@ const Info: NextPage = () => {
 								/>
 							</svg>
 						</Link>
-						<div className="font-bold">내 정보</div>
+						<div className="ml-[0.8rem] font-bold">내 정보</div>
 					</span>
-					<Link
-						href="/user/menu/modify"
-						passHref
-					>
-						<span className="flex">
-						<svg
+					<span className="flex">
+						{!isModify ? (
+							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="w-[2.8rem] h-[2.8rem]"
 								viewBox="0 0 20 20"
@@ -127,48 +98,220 @@ const Info: NextPage = () => {
 									clipRule="evenodd"
 								/>
 							</svg>
-						</span>
-					</Link>
+						) : (
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="ml-[0.8rem] w-[2.8rem] h-[2.8rem]"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								onClick={async () => {
+									// 정보 수정 API
+									try {
+										await updateUser({
+											variables: {
+												updateUserInput: {
+													...updateUserInput,
+													id: userData?.id
+												}
+											}
+										})
+									} catch (error) {
+										console.log(error)
+									}
+									setIsmodify(false)
+								}}>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M5 13l4 4L19 7"
+								/>
+							</svg>
+						)}
+					</span>
 				</div>
 				<div className="mt-4 text-[1.8rem]">
 					<div className="flex flex-col justify-between">
 						<div className="flex justify-between">
 							<span>이름</span>
-							<span className="font-thin">{userInfo.name}</span>
+							<span className="font-thin">{data.user.userName}</span>
 						</div>
-						<div className="flex justify-between mt-1">
+						<div className="flex justify-between mt-[0.4rem]">
 							<span>성별</span>
-							<span className="font-thin">{userInfo.gender}</span>
+							<span className="font-thin">{data.user.gender}</span>
 						</div>
-						<div className="flex justify-between mt-1">
+						<div className="flex justify-between mt-[0.4rem]">
 							<span>이메일</span>
-							<span className="font-thin">{userInfo.email}</span>
+							<span className="font-thin">{data.user.email}</span>
 						</div>
-						<div className="flex justify-between mt-1">
+						<div className="flex justify-between mt-[0.4rem]">
 							<span>생년월일</span>
-							<span className="font-thin">{userInfo.birth}</span>
+							<span className="font-thin">
+								{data.user.birthDate.split('T')[0]}
+							</span>
 						</div>
-						<div className="flex justify-between mt-1">
+						<div className="flex justify-between mt-[0.4rem]">
 							<span>전화번호</span>
-							<span className="font-thin">{userInfo.phone}</span>
+							{!isModify ? (
+								<span className="font-thin">{data.user.phoneNumber}</span>
+							) : (
+								<input
+									type="text"
+									defaultValue={data.user.phoneNumber}
+									onChange={e => {
+										setUpdateUserInput({
+											...updateUserInput,
+											phoneNumber: e.target.value
+										})
+									}}
+								/>
+							)}
 						</div>
-							<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[1.6rem]">
-								<div
-									onClick={changePasswordModal}
-									className="font-thin w-20 p-1 my-2 text-[12px] border float-right hover:bg-gray-50">
-									비밀번호 변경
+					</div>
+					<button
+						data-check-modal="changepassword"
+						onClick={e => {
+							if (e !== null && e.target instanceof HTMLButtonElement) {
+								{
+									setCheckModal(e.target.dataset.checkModal as string)
+								}
+							}
+							modalVar(true)
+						}}
+						className="font-thin w-[14rem] p-[1.2rem] mt-[0.8rem] text-[10px] border float-right">
+						비밀번호 변경
+					</button>
+				</div>
+				<div
+					className="text-[1.8rem] text-red-600 hover:text-gray-400 cursor-pointer"
+					data-check-modal="deleteaccount"
+					onClick={e => {
+						if (e !== null && e.target instanceof HTMLElement) {
+							{
+								setCheckModal(e.target.dataset.checkModal as string)
+							}
+						}
+						modalVar(true)
+					}}>
+					회원탈퇴
+				</div>
+			</Layout>
+
+			{modal ? (
+				checkModal === 'changepassword' ? (
+					<div className="fixed bottom-0 w-full font-IBM">
+						<div
+							className="fixed inset-0 z-[-1] bg-black opacity-20"
+							onClick={() => modalVar(false)}></div>
+						<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[1.6rem]">
+							<div className="text-[3.2rem] text-bold">비밀번호 변경</div>
+							<form
+								className="flex flex-col mt-[2.4rem]"
+								onSubmit={handleSubmit(onSubmit)}>
+								<div className="flex flex-col justify-between">
+									<label className="text-[1.4rem]">현재 비밀번호</label>
+									<input
+										className="w-full text-center border rounded-3xl shadow-md h-[5.5rem]"
+										type="password"
+										placeholder="기존 비밀번호"
+										{...register('prevPassword', {
+											required: true
+										})}
+									/>{' '}
 								</div>
-								<div
-									onClick={deleteUserHandler}
-									className="text-[1.8rem] text-red-600 hover:text-gray-400 cursor-pointer">
-									회원탈퇴
+								<div className="flex flex-col justify-between mt-[1.6rem]">
+									<label className="text-[1.4rem]">새 비밀번호</label>
+									<input
+										className="w-full text-center border rounded-3xl shadow-md h-[5.5rem]"
+										type="password"
+										placeholder="새 비밀번호"
+										{...register('nowPassword', {
+											required: true,
+											minLength: 8
+										})}
+									/>{' '}
 								</div>
+								{errors.nowPassword?.type === 'minLength' && (
+									<p className="text-[16px] text-red-500 mt-[0.8rem] text-center">
+										비밀번호는 최소 8자 이상으로 입력해주세요.
+									</p>
+								)}
+								<div className="flex flex-col justify-between mt-[1.6rem]">
+									<label className="text-[1.4rem]">비밀번호 확인</label>
+									<input
+										className="w-full text-center border rounded-3xl shadow-md h-[5.5rem]"
+										type="password"
+										placeholder="비밀번호 확인"
+										{...register('checkPassword', {
+											required: true,
+											// minLength: 8
+											validate: value => value === nowPassword
+										})}
+									/>{' '}
+								</div>
+								{errors.checkPassword && (
+									<p className="text-[16px] text-red-500 mt-[0.8rem] text-center">
+										비밀번호가 일치하지 않습니다.
+									</p>
+								)}
+								<div className="flex justify-between mt-[2.4rem]">
+									<button
+										className="w-[45%] p-[1.2rem] border shadow-md rounded-3xl"
+										onClick={() => modalVar(false)}>
+										취소
+									</button>
+									<button
+										className="w-[45%] p-[1.2rem] bg-[#FED06E] border shadow-md rounded-3xl "
+										type="submit">
+										추가
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				) : (
+					<div className="fixed bottom-0 w-full font-IBM">
+						<div
+							className="fixed inset-0 z-[-1] bg-black opacity-20"
+							onClick={() => modalVar(false)}></div>
+						<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[1.6rem]">
+							<div className="text-[2.4rem] text-bold">
+								회원탈퇴를 진행하시겠습니까?
+							</div>
+
+							<div className="flex flex-col justify-between mt-[2.4rem]">
+								<button
+									className="w-full text-center border rounded-3xl shadow-md cursor-pointer h-[5.5rem]"
+									type="submit"
+									onClick={() => modalVar(false)}>
+									취소
+								</button>
+								<button
+									className="w-full mt-[1.6rem] text-center border rounded-3xl shadow-md cursor-pointer h-[5.5rem] bg-[#FED06E]"
+									type="submit"
+									onClick={async () => {
+										// 회원탈퇴 API
+										try {
+											await removeUser({
+												variables: {
+													id: userData?.id
+												}
+											})
+										} catch (error) {
+											console.log(error)
+										}
+										modalVar(false)
+									}}>
+									완료
+								</button>
 							</div>
 						</div>
 					</div>
-				</div>
-		</Layout>
+				)
+			) : null}
+		</>
 	)
 }
 
-export default Info
+export default UserInfo
