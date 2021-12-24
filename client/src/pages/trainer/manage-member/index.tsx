@@ -132,6 +132,10 @@ const ManageMember: NextPage = () => {
 
 			const userCategoryName =
 				userCategories[user.userCategoryId - 1]?.name
+			// userCategories의 갯수는 각 트레이너마다 0번부터 시작인데,
+			// user.userCategoryId 값은 전체 유저 카테고리의 row id값이라서 일치하지 않는다.
+			// console.log(userCategoryName, user.userCategoryId)
+
 			if (user.graduate) {
 				graduateManageMemberObject[userCategoryName].push({
 					id: user.id,
@@ -154,7 +158,7 @@ const ManageMember: NextPage = () => {
 		})
 	}
 
-	const socket = io('https://api.bodysign.link/socket')
+	const socket = io(process.env.NEXT_PUBLIC_API_DOMAIN_SOCKET as string)
 	useEffect(() => {
 		socket.emit('joinLounge', 21)
 		socket.on('joinedLounge', data => {

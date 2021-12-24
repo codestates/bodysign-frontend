@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import Layout from '../../components/Layout'
 import logo from '../../../public/logo3.svg'
@@ -22,7 +22,7 @@ const Main: NextPage = () => {
 		variables: { id: userId }
 	})
 	if (!loading && data) {
-		// console.log(data)
+		// console.log(loading, data)
 	}
 
 	let accessToken: string
@@ -31,9 +31,8 @@ const Main: NextPage = () => {
 	} else {
 		accessToken = getCookies().accessToken
 	}
-	const getUserData = async () => {
+	const getUserData = useCallback(async () => {
 		await axios
-
 			.get(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/profile`, {
 				headers: {
 					authorization: `Bearer ${accessToken}`
@@ -44,7 +43,7 @@ const Main: NextPage = () => {
 				setUserId(res.data.id)
 			})
 			.catch(error => console.log(error))
-	}
+	}, [accessToken])
 
 	useEffect(() => {
 		getUserData()

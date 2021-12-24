@@ -109,7 +109,7 @@ const BottomBar = ({ variant = 'Trainer' }: BottomBarProps) => {
 			</Link>
 		</div>
 	) : (
-		<div className="sticky bottom-0 flex justify-between px-8 py-2 text-gray-400 border-t bg-gray-50">
+		<div className="sticky bottom-0 flex justify-between px-8 py-2 text-gray-400 border-t bg-gray-50 sm:w-[450px] m-auto">
 			<Link href="/user" passHref>
 				<span
 					className={`flex flex-col items-center cursor-pointer ${

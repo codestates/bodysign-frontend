@@ -8,7 +8,7 @@ import { loginTypeVar, accessTokenVar } from '../graphql/vars'
 import Link from 'next/link'
 import { useRouter } from 'next/dist/client/router'
 import axios from 'axios'
-import { Cookies } from 'react-cookie'
+// import { Cookies } from 'react-cookie'
 
 // TODO : env로 빼야함
 const GOOGLE_CLIENT_ID =

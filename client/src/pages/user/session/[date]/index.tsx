@@ -54,25 +54,12 @@ const Detail: NextPage = () => {
 								<div
 									className={`mt-[2.4rem] p-[1.6rem] border rounded-3xl first:mt-0 text-[1.8rem] flex-col items-center text-[#9F9F9F] `}>
 									<div
-										className={`grid grid-cols-3 justify-items-center items-center w-full text-center border rounded-3xl py-[2rem] px-[0.8rem] bg-gray-50 cursor-pointer `}
+										className={`grid grid-cols-2 justify-items-center items-center w-full text-center border rounded-3xl py-[2rem] px-[0.8rem] bg-gray-50 cursor-pointer `}
 										data-id={exercise.id}>
 										<span>{'카테고리'}</span>
 										<span className="font-semibold text-black">
 											{exercise.name}
 										</span>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											className="w-[2.8rem] h-[2.8rem] text-[#9F9F9F]"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke="currentColor">
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M12 4v16m8-8H4"
-											/>
-										</svg>
 									</div>
 									{exercise.sessionExerciseVolumes.map(
 										(volume: any, index: any) => {

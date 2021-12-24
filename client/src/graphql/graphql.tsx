@@ -3,7 +3,6 @@ import { gql } from '@apollo/client'
 export const UserDocument = gql`
 	query User($id: Int!) {
 		user(id: $id) {
-			__typename
 			id
 			email
 			userName

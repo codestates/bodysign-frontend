@@ -31,14 +31,16 @@ const Inbody: NextPage = () => {
 	} = useForm<FormInput>()
 	const onSubmit: SubmitHandler<FormInput> = async data => {
 		// 인바디 추가 API
+		console.log(data)
+
 		try {
 			await createInbody({
 				variables: {
-					createInbody: {
+					createInbodyInput: {
 						userId: userData?.id,
-						bodyWeight: data.bodyWeight,
-						muscleWeight: data.muscleWeight,
-						bodyFat: data.bodyFat,
+						bodyWeight: +data.bodyWeight,
+						muscleWeight: +data.muscleWeight,
+						bodyFat: +data.bodyFat,
 						measuredDate: data.date
 					}
 				},

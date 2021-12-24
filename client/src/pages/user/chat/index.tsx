@@ -39,10 +39,11 @@ const Chat: NextPage = () => {
 	const { loading, data } = useQuery(UserDocument, {
 		variables: { id: userData?.id }
 	})
+	console.log(userData, data)
 
-	const socket = io('https://api.bodysign.link/socket')
+	const socket = io(process.env.NEXT_PUBLIC_API_DOMAIN_SOCKET as string)
 	useEffect(() => {
-		socket.emit('joinRoom', '13|21')
+		socket.emit('joinRoom', `${userData?.id}|${userData?.trainerId}`)
 		socket.on('joinedRoom', data => {
 			data.reverse().map((el: any) => {
 				if (el.sender === 'Trainer') {
@@ -67,7 +68,7 @@ const Chat: NextPage = () => {
 				return el
 			})
 		})
-	}, [socket])
+	}, [])
 
 	useEffect(() => {
 		socket.on('receiveChat', chat => {
@@ -80,7 +81,7 @@ const Chat: NextPage = () => {
 				})
 			)
 		})
-	}, [socket])
+	}, [])
 
 	const fileChange = async (target: HTMLInputElement) => {
 		const { files } = target
@@ -115,7 +116,7 @@ const Chat: NextPage = () => {
 	const sendChat = async () => {
 		try {
 			socket.emit('sendChat', {
-				room: '13|21',
+				room: `${userData?.id}|${userData?.trainerId}`,
 				text: message,
 				sender: 'User',
 				imgIds: img.id ? [img.id] : []
@@ -145,7 +146,10 @@ const Chat: NextPage = () => {
 								viewBox="0 0 24 24"
 								stroke="currentColor"
 								onClick={() => {
-									socket.emit('leaveRoom', '13|21')
+									socket.emit(
+										'leaveRoom',
+										`${userData?.id}|${userData?.trainerId}`
+									)
 								}}>
 								<path
 									strokeLinecap="round"

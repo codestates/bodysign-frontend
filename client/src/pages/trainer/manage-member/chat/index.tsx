@@ -37,9 +37,14 @@ const Chat: NextPage = () => {
 		readyUpload: false
 	})
 
-	const socket = io('https://api.bodysign.link/socket')
+	console.log(`${chatTargetUserId}|${userData?.id}`, 111)
+
+	const socket = io(process.env.NEXT_PUBLIC_API_DOMAIN_SOCKET as string)
 	useEffect(() => {
 		socket.emit('joinRoom', `${chatTargetUserId}|${userData?.id}`)
+	}, [chatTargetUserId, socket, userData?.id])
+
+	useEffect(() => {
 		socket.on('joinedRoom', data => {
 			data.reverse().map((el: any) => {
 				if (el.sender === 'Trainer') {
@@ -64,7 +69,7 @@ const Chat: NextPage = () => {
 				return el
 			})
 		})
-	}, [chatTargetUserId, socket, userData?.id])
+	}, [])
 
 	useEffect(() => {
 		socket.on('receiveChat', chat => {
@@ -77,7 +82,7 @@ const Chat: NextPage = () => {
 				})
 			)
 		})
-	}, [socket])
+	}, [])
 
 	const fileChange = async (target: HTMLInputElement) => {
 		const { files } = target

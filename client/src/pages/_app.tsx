@@ -37,17 +37,18 @@ function MyApp({ Component, pageProps }: AppProps) {
 	const client = new ApolloClient({
 		link: concat(authMiddleware, httpLink),
 		cache: new InMemoryCache({
-			typePolicies: {
-				Query: {
-					fields: {
-						chatTargetUserId: {
-							read(_, {}) {
-								return chatTargetUserIdVar()
-							}
-						}
-					}
-				}
-			}
+			addTypename: true
+			// typePolicies: {
+			// 	Query: {
+			// 		fields: {
+			// 			chatTargetUserId: {
+			// 				read(_, {}) {
+			// 					return chatTargetUserIdVar()
+			// 				}
+			// 			}
+			// 		}
+			// 	}
+			// }
 		}),
 		connectToDevTools: true
 	})

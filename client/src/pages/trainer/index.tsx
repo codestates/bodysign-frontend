@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/dist/client/router'
 import type { NextPage } from 'next'
 import Layout from '../../components/Layout'
@@ -20,6 +20,8 @@ const Main: NextPage = () => {
 	const { loading, data } = useQuery(TrainerDocument, {
 		variables: { id: trainerId }
 	})
+	console.log(data)
+
 	// if (!loading && data) {
 	// 	console.log(data)
 	// }
@@ -31,7 +33,8 @@ const Main: NextPage = () => {
 	} else {
 		accessToken = getCookies().accessToken
 	}
-	const getTrainerData = async () => {
+
+	const getTrainerData = useCallback(async () => {
 		await axios
 			.get(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/profile`, {
 				headers: {
@@ -43,7 +46,7 @@ const Main: NextPage = () => {
 				setTrainerId(res.data.id)
 			})
 			.catch(error => console.log(error))
-	}
+	}, [accessToken])
 
 	useEffect(() => {
 		getTrainerData()
