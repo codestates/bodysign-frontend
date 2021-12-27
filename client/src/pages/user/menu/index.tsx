@@ -1,7 +1,7 @@
 import { NextPage } from 'next'
 import Link from 'next/link'
 import React from 'react'
-import BottomBar from '../../../components/BottomBar'
+import BottomBar from '../../../components/organisms/BottomBar'
 import Layout from '../../../components/Layout'
 
 const Menu: NextPage = () => {
@@ -51,7 +51,7 @@ const Menu: NextPage = () => {
 					</Link>
 				</div>
 			</Layout>
-			<BottomBar variant="User" />
+			<BottomBar variant="Member" />
 		</>
 	)
 }

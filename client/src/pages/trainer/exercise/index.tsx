@@ -11,7 +11,7 @@ import {
 	TrainerDocument
 } from '../../../graphql/graphql'
 import Loading from '../../../components/Loading'
-import BottomBar from '../../../components/BottomBar'
+import BottomBar from '../../../components/organisms/BottomBar'
 
 interface Exercise {
 	id: number

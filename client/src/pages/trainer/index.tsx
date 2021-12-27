@@ -3,7 +3,7 @@ import { useRouter } from 'next/dist/client/router'
 import type { NextPage } from 'next'
 import Layout from '../../components/Layout'
 import logo from '../../../public/logo.svg'
-import BottomBar from '../../components/BottomBar'
+import BottomBar from '../../components/organisms/BottomBar'
 import Image from 'next/image'
 import axios from 'axios'
 import { getCookies } from 'cookies-next'
@@ -154,8 +154,8 @@ const Main: NextPage = () => {
 						</div>
 					</div>
 				</div>
-				<BottomBar variant="Trainer" />
 			</Layout>
+			<BottomBar variant="Trainer" />
 		</>
 	)
 }
