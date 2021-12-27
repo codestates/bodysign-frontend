@@ -1,7 +1,7 @@
 import { NextPage } from 'next'
 import Link from 'next/link'
 import React from 'react'
-import BottomBar from '../../../components/BottomBar'
+import BottomBar from '../../../components/organisms/BottomBar'
 import Layout from '../../../components/Layout'
 
 const Menu: NextPage = () => {
@@ -15,10 +15,7 @@ const Menu: NextPage = () => {
 				</div>
 
 				<div className="mt-[2.4rem] text-[2rem]">
-					<Link
-						href="/trainer/menu/info"
-						passHref
-					>
+					<Link href="/trainer/menu/info" passHref>
 						<div className="flex items-center justify-between cursor-pointer">
 							<li className="text-[#9F9F9F] list-none">내 정보</li>
 							<svg
@@ -35,10 +32,7 @@ const Menu: NextPage = () => {
 							</svg>
 						</div>
 					</Link>
-					<Link
-						href="/trainer/menu/sales"
-						passHref
-					>
+					<Link href="/trainer/menu/sales" passHref>
 						<div className="flex items-center justify-between mt-[2.4rem] cursor-pointer">
 							<li className="text-[#9F9F9F] list-none">매출 조회</li>
 							<svg
@@ -55,10 +49,7 @@ const Menu: NextPage = () => {
 							</svg>
 						</div>
 					</Link>
-					<Link
-						href="/trainer/menu/ledger"
-						passHref
-					>
+					<Link href="/trainer/menu/ledger" passHref>
 						<div className="flex items-center justify-between mt-[2.4rem] cursor-pointer hover:bg-gray-100">
 							<li className="text-[#9F9F9F] list-none">수업료 정산</li>
 							<svg

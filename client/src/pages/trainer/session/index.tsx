@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import Layout from '../../../components/Layout'
 import { modalVar, userDataVar } from '../../../graphql/vars'
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
-import BottomBar from '../../../components/BottomBar'
+import BottomBar from '../../../components/organisms/BottomBar'
 import {
 	TrainerDocument,
 	UpdateSessionDocument,

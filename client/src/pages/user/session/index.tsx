@@ -6,7 +6,7 @@ import {
 	userDataVar
 } from '../../../graphql/vars'
 import { useQuery, useReactiveVar } from '@apollo/client'
-import BottomBar from '../../../components/BottomBar'
+import BottomBar from '../../../components/organisms/BottomBar'
 import { UserDocument } from '../../../graphql/graphql'
 import Loading from '../../../components/Loading'
 import { useRouter } from 'next/dist/client/router'
@@ -123,7 +123,7 @@ const Session: NextPage = () => {
 					)
 				})}
 			</Layout>
-			<BottomBar variant="User" />
+			<BottomBar variant="Member" />
 		</>
 	)
 }

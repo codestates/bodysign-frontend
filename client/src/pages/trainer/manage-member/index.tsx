@@ -1,26 +1,34 @@
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
+import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { io } from 'socket.io-client'
+import Avatar from '../../../components/atoms/Avatar'
+import AddCategoryIcon from '../../../components/atoms/icons/AddCategoryIcon'
+import AddMemberIcon from '../../../components/atoms/icons/AddMemberIcon'
+import CheckIcon from '../../../components/atoms/icons/CheckIcon'
+import DeleteIcon from '../../../components/atoms/icons/DeleteIcon'
 import Layout from '../../../components/Layout'
-import {
-	chatTargetUserIdVar,
-	managedUserInfoVar,
-	modalVar,
-	userDataVar
-} from '../../../graphql/vars'
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import Loading from '../../../components/Loading'
+import ColMemberGroup from '../../../components/molecules/Entities/ColMemberGroup'
+import RowMemberItem from '../../../components/molecules/Entities/RowMemberItem'
+import ChatLink from '../../../components/molecules/Link/ChatLink'
+import BottomBar from '../../../components/organisms/BottomBar'
+import Entities from '../../../components/organisms/Entities'
+import Header from '../../../components/organisms/Header'
 import {
 	CreateUserCategoryDocument,
 	FindOneUserByPhoneNumberDocument,
 	TrainerDocument,
 	UpdateUserDocument
 } from '../../../graphql/graphql'
-import { useRouter } from 'next/dist/client/router'
-import BottomBar from '../../../components/BottomBar'
-import { io } from 'socket.io-client'
-import Image from 'next/image'
+import {
+	managedUserInfoVar,
+	modalVar,
+	userDataVar
+} from '../../../graphql/vars'
 
 interface Member {
 	id: string
@@ -167,128 +175,79 @@ const ManageMember: NextPage = () => {
 		})
 	}, [socket])
 
+	const handleCategory = (category: string) => {
+		setCategory(category)
+	}
+
+	const handleModal = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+		if (e !== null && e.target instanceof SVGElement) {
+			setCheckModal(e.target.dataset.checkModal as string)
+			modalVar(true)
+		}
+	}
+
+	const handleReadyDelete = () => {
+		console.log(1)
+
+		setReadyDelete(true)
+	}
+
+	const handleManagedMember = (
+		member: {
+			id: string
+			email: string
+			userName: string
+			gender: string
+		},
+		e: React.MouseEvent<HTMLDivElement, MouseEvent>
+	) => {
+		if (!readyDelete) {
+			managedUserInfoVar({
+				userId: +member.id,
+				email: member.email.split('@')[0],
+				userName: member.userName,
+				gender: member.gender
+			})
+			const url = `/trainer/manage-member/${
+				member.email.split('@')[0]
+			}/info`
+			router.push(url)
+		} else {
+			if (e !== null && e.target instanceof HTMLElement) {
+				// 회원 삭제 step 1
+				if (e.target.dataset.id) {
+					const id = +e.target.dataset.id
+					// 하나만 가능한 조건
+					if (deleteLists.size > 0) {
+						setDeleteLists(prev => new Set())
+					}
+					if (deleteLists.has(id)) {
+						setDeleteLists(
+							prev => new Set([...prev].filter(el => el !== id))
+						)
+					} else {
+						setDeleteLists(prev => new Set(prev.add(id)))
+					}
+				}
+			}
+		}
+	}
+
 	if (loading) return <Loading />
 	return (
 		<>
 			<Layout>
-				<div className="flex items-center justify-between">
-					<span className="flex text-[3.2rem]">
-						<div
-							className={`${
-								category === '관리중' ? 'font-bold' : 'text-[#9F9F9F]'
-							} cursor-pointer`}
-							onClick={() => setCategory('관리중')}>
-							관리중
-						</div>
-						<div
-							className={`ml-[0.8rem] ${
-								category === '졸업' ? 'font-bold' : 'text-[#9F9F9F]'
-							} cursor-pointer`}
-							onClick={() => setCategory('졸업')}>
-							졸업
-						</div>
-					</span>
-					<span className="flex">
-						{!readyDelete ? (
-							<>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="cursor-pointer w-[2.8rem] h-[2.8rem]"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									data-check-modal="addmember"
-									onClick={e => {
-										if (e !== null && e.target instanceof SVGElement) {
-											setCheckModal(e.target.dataset.checkModal as string)
-											modalVar(true)
-										}
-									}}>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-									/>
-								</svg>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="ml-[0.8rem] cursor-pointer w-[2.8rem] h-[2.8rem]"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									data-check-modal="addcategory"
-									onClick={e => {
-										if (e !== null && e.target instanceof SVGElement) {
-											setCheckModal(e.target.dataset.checkModal as string)
-										}
-										modalVar(true)
-									}}>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-									/>
-								</svg>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="ml-[0.8rem] cursor-pointer w-[2.8rem] h-[2.8rem]"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									onClick={() => setReadyDelete(true)}>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-									/>
-								</svg>
-							</>
-						) : (
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								className="cursor-pointer w-[3.6rem] h-[3.6rem] text-[#FDAD00]"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
-								onClick={async () => {
-									// 회원 삭제 step 2
-									const deleteItemId = Array.from(deleteLists)[0]
-									if (deleteItemId) {
-										try {
-											await updateUser({
-												variables: {
-													updateUserInput: {
-														id: deleteItemId,
-														trainerId: null
-													}
-												},
-												refetchQueries: [
-													{
-														query: TrainerDocument,
-														variables: { id: userData?.id }
-													}
-												]
-											})
-											deleteLists.clear()
-										} catch (error) {
-											console.log(error)
-										}
-									}
-									setReadyDelete(false)
-								}}>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M5 13l4 4L19 7"
-								/>
-							</svg>
-						)}
-					</span>
-				</div>
+				<Header category={category} handleSetCategory={handleCategory}>
+					{!readyDelete ? (
+						<>
+							<AddMemberIcon handleModal={handleModal} />
+							<AddCategoryIcon handleModal={handleModal} />
+							<DeleteIcon handleReadyDelete={handleReadyDelete} />
+						</>
+					) : (
+						<CheckIcon />
+					)}
+				</Header>
 
 				{Object.entries(
 					category === '관리중'
@@ -296,153 +255,47 @@ const ManageMember: NextPage = () => {
 						: graduateManageMemberObject
 				).map((entry, idx) => {
 					return (
-						<React.Fragment key={idx}>
-							<div className="mt-[2.4rem]">
-								<div className="text-[1.8rem] font-semibold">
-									{entry[0]}
-								</div>
-								{entry[1].map(member => {
-									return (
-										<React.Fragment key={member.id}>
-											<div className="h-[7rem] flex justify-between pt-[1.2rem] pb-[2rem] px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white">
-												<div className="flex">
-													{member.gender === 'male' ? (
-														<Image
-															src="/man.png"
-															width="36"
-															height="30"
-															alt="image"
-														/>
-													) : (
-														<Image
-															src="/woman.png"
-															width="36"
-															height="30"
-															alt="image"
-														/>
-													)}
-													<div className="flex flex-col h-[0.4rem] ml-[1.2rem]">
-														<div
-															className="text-left cursor-pointer"
-															data-id={member.id}
-															onClick={
-																!readyDelete
-																	? () => {
-																			managedUserInfoVar({
-																				userId: +member.id,
-																				email: member.email.split('@')[0],
-																				userName: member.userName,
-																				gender: member.gender
-																			})
-																			const url = `/trainer/manage-member/${
-																				member.email.split('@')[0]
-																			}/info`
-																			router.push(url)
-																	  }
-																	: e => {
-																			if (
-																				e !== null &&
-																				e.target instanceof HTMLElement
-																			) {
-																				// 회원 삭제 step 1
-																				if (e.target.dataset.id) {
-																					const id = +e.target.dataset.id
-																					// 하나만 가능한 조건
-																					if (deleteLists.size > 0) {
-																						setDeleteLists(
-																							prev => new Set()
-																						)
-																					}
-																					if (deleteLists.has(id)) {
-																						setDeleteLists(
-																							prev =>
-																								new Set(
-																									[...prev].filter(
-																										el => el !== id
-																									)
-																								)
-																						)
-																					} else {
-																						setDeleteLists(
-																							prev => new Set(prev.add(id))
-																						)
-																					}
-																				}
-																			}
-																	  }
-															}>
-															{member.userName} 회원
-														</div>
-														<div className="ml-[0.4rem] text-[1.4rem] text-left text-[#9F9F9F]">
-															{member.count}회
-														</div>
+						<Entities idx={idx} userCategory={entry[0]}>
+							{entry[1].map(member => {
+								console.log(readyDelete)
+
+								return (
+									<>
+										<RowMemberItem memberId={member.id}>
+											<div className="flex">
+												<Avatar gender={member.gender} />
+												<ColMemberGroup>
+													<div
+														className="text-left cursor-pointer"
+														data-id={member.id}
+														onClick={e => handleManagedMember(member, e)}>
+														{member.userName} 회원
 													</div>
-												</div>
-												{!readyDelete ? (
-													<Link
-														href={`/trainer/manage-member/chat`}
-														passHref>
-														<svg
-															className="w-[2.8rem] h-[2.8rem] mt-[0.4rem]"
-															data-id={member.id}
-															xmlns="http://www.w3.org/2000/svg"
-															fill="none"
-															viewBox="0 0 25 25"
-															stroke="currentColor"
-															onClick={() => {
-																chatTargetUserIdVar(+member.id)
-															}}>
-															<path
-																strokeLinecap="round"
-																strokeLinejoin="round"
-																strokeWidth={2}
-																d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
-															/>
-														</svg>
-													</Link>
-												) : deleteLists.has(+member.id) ? (
-													<svg
-														className="text-green-600"
-														viewBox="0 0 15 15"
-														fill="none"
-														xmlns="http://www.w3.org/2000/svg"
-														width="20"
-														height="20">
-														<path
-															d="M4 7.5L7 10l4-5m-3.5 9.5a7 7 0 110-14 7 7 0 010 14z"
-															stroke="currentColor"></path>
-													</svg>
-												) : null}
+													<div className="text-[1.4rem] text-left text-[#9F9F9F]">
+														{member.count}회
+													</div>
+												</ColMemberGroup>
 											</div>
-										</React.Fragment>
-									)
-								})}
-								{/* <div className="text-[1.8rem] mt-[0.8rem] flex justify-center py-[2rem] bg-white rounded-full shadow-md border">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										className="w-[2.8rem] h-[2.8rem] text-[#9F9F9F]"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
-										data-check-modal="addmember"
-										onClick={e => {
-											if (e !== null && e.target instanceof SVGElement) {
-												setCheckModal(
-													e.target.dataset.checkModal as string
-												)
-												modalVar(true)
-											}
-										}}>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M12 4v16m8-8H4"
-										/>
-									</svg>
-								</div> */}
-							</div>
-						</React.Fragment>
+											{!readyDelete ? (
+												<ChatLink />
+											) : deleteLists.has(+member.id) ? (
+												<svg
+													className="text-green-600"
+													viewBox="0 0 15 15"
+													fill="none"
+													xmlns="http://www.w3.org/2000/svg"
+													width="20"
+													height="20">
+													<path
+														d="M4 7.5L7 10l4-5m-3.5 9.5a7 7 0 110-14 7 7 0 010 14z"
+														stroke="currentColor"></path>
+												</svg>
+											) : null}
+										</RowMemberItem>
+									</>
+								)
+							})}
+						</Entities>
 					)
 				})}
 			</Layout>
