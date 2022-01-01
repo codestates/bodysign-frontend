@@ -1,21 +1,21 @@
+import { useQuery, useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../../components/Layout'
+import Loading from '../../../../components/Loading'
+import {
+	useCreateSessionHistoryMutation,
+	useTrainerQuery,
+	useUpdateUserMutation
+} from '../../../../generated/graphql'
+import { UserDocument } from '../../../../graphql/graphql'
 import {
 	managedUserInfoVar,
 	modalVar,
 	userDataVar
 } from '../../../../graphql/vars'
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
-import {
-	CreateSessionHistoryDocument,
-	TrainerDocument,
-	UpdateUserDocument,
-	UserDocument
-} from '../../../../graphql/graphql'
-import Loading from '../../../../components/Loading'
 
 interface FormInput {
 	date: string
@@ -33,8 +33,8 @@ const Info: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
 	const managedUserInfo = useReactiveVar(managedUserInfoVar)
 	// const [isGraduate, setIsGraduate] = useState<boolean | null>(null)
-	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: userData?.id }
+	const { loading, data } = useTrainerQuery({
+		variables: { id: userData?.id as number }
 	})
 	const { loading: userLoading, data: memberData } = useQuery(
 		UserDocument,
@@ -42,8 +42,8 @@ const Info: NextPage = () => {
 			variables: { id: managedUserInfo.userId }
 		}
 	)
-	const [updateUser] = useMutation(UpdateUserDocument)
-	const [createSessionHistory] = useMutation(CreateSessionHistoryDocument)
+	const [updateUser] = useUpdateUserMutation()
+	const [createSessionHistory] = useCreateSessionHistoryMutation()
 	const {
 		register,
 		formState: { errors },
@@ -222,22 +222,33 @@ const Info: NextPage = () => {
 										}
 									}}>
 									<option value={`${memberData.user.userCategoryId}`}>
-										{
-											data.trainer.userCategories.filter(
-												(category: any) =>
+										{data &&
+											data.trainer.userCategories &&
+											data.trainer.userCategories.filter(category => {
+												if (
+													category &&
 													category.id === memberData.user.userCategoryId
-											)[0].name
-										}
+												) {
+													return category
+												}
+											})[0]?.name}
 									</option>
-									{data.trainer.userCategories.map((category: any) => {
-										if (category.id !== memberData.user.userCategoryId) {
-											return (
-												<option key={category.id} value={`${category.id}`}>
-													{category.name}
-												</option>
-											)
-										}
-									})}
+									{data &&
+										data.trainer.userCategories &&
+										data.trainer.userCategories.map(category => {
+											if (
+												category &&
+												category.id !== memberData.user.userCategoryId
+											) {
+												return (
+													<option
+														key={category.id}
+														value={`${category.id}`}>
+														{category.name}
+													</option>
+												)
+											}
+										})}
 								</select>
 							)}
 						</div>

@@ -1,0 +1,11 @@
+query SessionHistories {
+	sessionHistories {
+		id
+		date
+		costPerSession
+		totalCount
+		usedCount
+		commission
+		userId
+	}
+}

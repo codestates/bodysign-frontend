@@ -2,7 +2,7 @@ interface DeleteIconProps {
 	handleReadyDelete: () => void
 }
 
-const DeleteIcon = (handleReadyDelete: DeleteIconProps) => {
+const DeleteIcon = ({ handleReadyDelete }: DeleteIconProps) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -10,7 +10,7 @@ const DeleteIcon = (handleReadyDelete: DeleteIconProps) => {
 			fill="none"
 			viewBox="0 0 24 24"
 			stroke="currentColor"
-			onClick={() => handleReadyDelete}>
+			onClick={() => handleReadyDelete()}>
 			<path
 				strokeLinecap="round"
 				strokeLinejoin="round"

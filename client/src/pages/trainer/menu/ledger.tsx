@@ -1,14 +1,14 @@
+import { useReactiveVar } from '@apollo/client'
+import Chart from 'chart.js/auto'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
-import Layout from '../../../components/Layout'
-import { modalVar, userDataVar } from '../../../graphql/vars'
-import { useQuery, useReactiveVar } from '@apollo/client'
-import Chart from 'chart.js/auto'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import { TrainerDocument } from '../../../graphql/graphql'
+import Layout from '../../../components/Layout'
 import Loading from '../../../components/Loading'
+import { useTrainerQuery } from '../../../generated/graphql'
+import { modalVar, userDataVar } from '../../../graphql/vars'
 
 const Ledger: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
@@ -18,16 +18,18 @@ const Ledger: NextPage = () => {
 	const [rangeFilterResult, setRangeFilterResult] = useState(0)
 	const [date, setDate] = useState('')
 	const canvasRef = useRef(null)
-	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: userData?.id }
+	const { loading, data } = useTrainerQuery({
+		variables: { id: userData?.id as number }
 	})
 
 	let sessionHistories: any[] = []
-	if (!loading && data) {
+	if (!loading && data && data.trainer.users) {
 		let users = [...data.trainer.users]
 		users.forEach(user => {
-			const userSessionHistories = user.sessionHistories
-			sessionHistories.push(...userSessionHistories)
+			if (user) {
+				const userSessionHistories = user.sessionHistories
+				sessionHistories.push(...userSessionHistories)
+			}
 		})
 		sessionHistories.sort((a, b): any => {
 			const dateA = new Date(a.date).getTime()

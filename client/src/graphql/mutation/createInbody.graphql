@@ -1,0 +1,8 @@
+mutation CreateInbody($createInbodyInput: CreateInbodyInput!) {
+	createInbody(createInbodyInput: $createInbodyInput) {
+		id
+		bodyWeight
+		muscleWeight
+		bodyFat
+	}
+}

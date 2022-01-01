@@ -1,21 +1,21 @@
+import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
+import { useRouter } from 'next/dist/client/router'
+import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
-import Layout from '../../../../components/Layout'
-import { useMutation, useReactiveVar } from '@apollo/client'
-import { managedUserInfoVar, userDataVar } from '../../../../graphql/vars'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import { useRouter } from 'next/dist/client/router'
-import { CreateSessionDocument } from '../../../../graphql/graphql'
-import Image from 'next/image'
+import Layout from '../../../../components/Layout'
+import { useCreateSessionMutation } from '../../../../generated/graphql'
+import { managedUserInfoVar, userDataVar } from '../../../../graphql/vars'
 
 const AddSession: NextPage = () => {
 	const router = useRouter()
 	const userData = useReactiveVar(userDataVar)
 	const managedUserInfo = useReactiveVar(managedUserInfoVar)
 	const [startDate, setStartDate] = useState(new Date())
-	const [createSession] = useMutation(CreateSessionDocument)
+	const [createSession] = useCreateSessionMutation()
 
 	return (
 		<>
@@ -59,7 +59,7 @@ const AddSession: NextPage = () => {
 									variables: {
 										createSessionInput: {
 											userId: managedUserInfo.userId,
-											trainerId: userData?.id,
+											trainerId: userData?.id as number,
 											date: startDate,
 											status: 'active',
 											feedback: ''

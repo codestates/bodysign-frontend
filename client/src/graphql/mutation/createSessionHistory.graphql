@@ -1,0 +1,16 @@
+mutation CreateSessionHistory(
+	$createSessionHistoryInput: CreateSessionHistoryInput!
+) {
+	createSessionHistory(
+		createSessionHistoryInput: $createSessionHistoryInput
+	) {
+		id
+		date
+		costPerSession
+		totalCount
+		usedCount
+		commission
+		usedCount
+		userId
+	}
+}

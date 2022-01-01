@@ -1,23 +1,25 @@
+import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { modalVar, userDataVar } from '../../../graphql/vars'
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
-import {
-	CreateExerciseCategoryDocument,
-	CreateExerciseDocument,
-	RemoveExerciseDocument,
-	TrainerDocument
-} from '../../../graphql/graphql'
 import Loading from '../../../components/Loading'
 import BottomBar from '../../../components/organisms/BottomBar'
+import {
+	Exercise as ExerciseType,
+	TrainerDocument,
+	useCreateExerciseCategoryMutation,
+	useCreateExerciseMutation,
+	useRemoveExerciseMutation,
+	useTrainerQuery
+} from '../../../generated/graphql'
+import { modalVar, userDataVar } from '../../../graphql/vars'
 
-interface Exercise {
-	id: number
-	name: string
-	isChecked: boolean
-}
+// interface Exercise {
+// 	id: number
+// 	name: string
+// 	isChecked: boolean
+// }
 
 interface FormInput {
 	exerciseName: string
@@ -31,14 +33,12 @@ const Exercise: NextPage = () => {
 	const [checkModal, setCheckModal] = useState('addexercise')
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
-	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: userData?.id }
+	const { loading, data } = useTrainerQuery({
+		variables: { id: userData?.id as number }
 	})
-	const [createExerciseCategory] = useMutation(
-		CreateExerciseCategoryDocument
-	)
-	const [createExercise] = useMutation(CreateExerciseDocument)
-	const [removeExercise] = useMutation(RemoveExerciseDocument)
+	const [createExerciseCategory] = useCreateExerciseCategoryMutation()
+	const [createExercise] = useCreateExerciseMutation()
+	const [removeExercise] = useRemoveExerciseMutation()
 	const { register, handleSubmit } = useForm<FormInput>()
 	const onSubmit: SubmitHandler<FormInput> = async data => {
 		// 운동 추가 API
@@ -69,7 +69,7 @@ const Exercise: NextPage = () => {
 				await createExerciseCategory({
 					variables: {
 						createExerciseCategoryInput: {
-							trainerId: userData?.id,
+							trainerId: userData?.id as number,
 							name: data.exerciseCategoryName
 						}
 					},
@@ -87,14 +87,19 @@ const Exercise: NextPage = () => {
 		}
 	}
 
-	const exerciseObject: Record<string, Exercise[]> = {}
-	if (!loading) {
+	const exerciseObject: Record<string, any> = {}
+	if (!loading && data) {
 		const exerciseCategories = data.trainer.exerciseCategories
-		for (let i = 0; i < exerciseCategories.length; i++) {
-			if (exerciseObject[exerciseCategories[i].name] === undefined) {
-				exerciseObject[exerciseCategories[i].name] = [
-					...exerciseCategories[i].exercises
-				]
+		if (exerciseCategories) {
+			for (let i = 0; i < exerciseCategories.length; i++) {
+				const exerciseCategoryName = exerciseCategories[i]?.name as string
+				if (exerciseObject[exerciseCategoryName] === undefined) {
+					exerciseObject[exerciseCategoryName] = []
+				}
+				const exercise = exerciseCategories[i]?.exercises
+				if (exercise) {
+					exerciseObject[exerciseCategoryName] = [...exercise!]
+				}
 			}
 		}
 	}
@@ -198,7 +203,7 @@ const Exercise: NextPage = () => {
 								<div className="font-semibold text-[1.8rem]">
 									{category[0]}
 								</div>
-								{category[1].map(exercise => {
+								{category[1].map((exercise: ExerciseType) => {
 									return (
 										<React.Fragment key={exercise.id}>
 											<div
@@ -310,13 +315,16 @@ const Exercise: NextPage = () => {
 											required: true
 										})}>
 										<option value="">운동 카테고리를 선택해주세요.</option>
-										{data.trainer.exerciseCategories.map(
-											(category: any) => (
-												<option value={category.id} key={category.id}>
-													{category.name}
-												</option>
-											)
-										)}
+										{data &&
+											data.trainer &&
+											data.trainer.exerciseCategories &&
+											data.trainer.exerciseCategories.map(
+												(category: any) => (
+													<option value={category.id} key={category.id}>
+														{category.name}
+													</option>
+												)
+											)}
 									</select>
 								</div>
 								<div className="flex justify-between mt-[2.4rem]">

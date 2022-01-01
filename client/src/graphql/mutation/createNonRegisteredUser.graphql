@@ -1,0 +1,13 @@
+mutation CreateNonRegisteredUser(
+	$createNonRegisteredUserInput: CreateNonRegisteredUserInput!
+) {
+	createNonRegisteredUser(
+		createNonRegisteredUserInput: $createNonRegisteredUserInput
+	) {
+		id
+		userName
+		phoneNumber
+		gender
+		trainerId
+	}
+}

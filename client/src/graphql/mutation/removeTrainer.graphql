@@ -1,0 +1,10 @@
+mutation RemoveTrainer($id: Int!) {
+	removeTrainer(id: $id) {
+		id
+		email
+		userName
+		birthDate
+		phoneNumber
+		gender
+	}
+}

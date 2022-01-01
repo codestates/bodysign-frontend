@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
+import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
@@ -19,11 +19,12 @@ import BottomBar from '../../../components/organisms/BottomBar'
 import Entities from '../../../components/organisms/Entities'
 import Header from '../../../components/organisms/Header'
 import {
-	CreateUserCategoryDocument,
-	FindOneUserByPhoneNumberDocument,
 	TrainerDocument,
-	UpdateUserDocument
-} from '../../../graphql/graphql'
+	useCreateUserCategoryMutation,
+	useFindOneUserByPhoneNumberMutation,
+	useTrainerQuery,
+	useUpdateUserMutation
+} from '../../../generated/graphql'
 import {
 	managedUserInfoVar,
 	modalVar,
@@ -34,7 +35,6 @@ interface Member {
 	id: string
 	email: string
 	userName: string
-	phoneNumber: string
 	gender: string
 	count: string
 }
@@ -54,15 +54,15 @@ const ManageMember: NextPage = () => {
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const [phoneNumber, setPhoneNumber] = useState('')
-	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: userData?.id }
+	const { loading, data } = useTrainerQuery({
+		variables: { id: userData?.id as number }
 	})
-	const [createUserCategory] = useMutation(CreateUserCategoryDocument)
-	const [updateUser] = useMutation(UpdateUserDocument)
+	const [createUserCategory] = useCreateUserCategoryMutation()
+	const [updateUser] = useUpdateUserMutation()
 	const [
 		findOneUserByPhoneNumber,
 		{ loading: isUserLoading, data: isUserData }
-	] = useMutation(FindOneUserByPhoneNumberDocument)
+	] = useFindOneUserByPhoneNumberMutation()
 	const {
 		register,
 		formState: { errors },
@@ -75,7 +75,7 @@ const ManageMember: NextPage = () => {
 				await updateUser({
 					variables: {
 						updateUserInput: {
-							id: isUserData.findOneUserByPhoneNumber.id,
+							id: isUserData?.findOneUserByPhoneNumber.id as number,
 							trainerId: userData?.id,
 							userCategoryId: +data.userCategoryId
 						}
@@ -98,7 +98,7 @@ const ManageMember: NextPage = () => {
 				await createUserCategory({
 					variables: {
 						createUserCategoryInput: {
-							trainerId: userData?.id,
+							trainerId: userData?.id as number,
 							name: data.userCategoryName
 						}
 					},
@@ -120,50 +120,55 @@ const ManageMember: NextPage = () => {
 	const graduateManageMemberObject: Record<string, Member[]> = {}
 	if (!loading && data) {
 		const userCategories = data.trainer.userCategories
-		for (let i = 0; i < userCategories.length; i++) {
-			const userCategoryName = userCategories[i]?.name
-			if (graduateManageMemberObject[userCategoryName] === undefined) {
-				graduateManageMemberObject[userCategoryName] = []
-			}
-			if (manageMemberObject[userCategoryName] === undefined) {
-				manageMemberObject[userCategoryName] = []
+		if (userCategories) {
+			for (let i = 0; i < userCategories.length; i++) {
+				const userCategoryName = userCategories[i]?.name as string
+				if (graduateManageMemberObject[userCategoryName] === undefined) {
+					graduateManageMemberObject[userCategoryName] = []
+				}
+				if (manageMemberObject[userCategoryName] === undefined) {
+					manageMemberObject[userCategoryName] = []
+				}
 			}
 		}
 
-		data.trainer.users.forEach((user: any) => {
-			let sumUsedCount = 0
-			let sumTotalCount = 0
-			for (let i = 0; i < user.sessionHistories.length; i++) {
-				sumUsedCount = sumUsedCount + user.sessionHistories[i].usedCount
-				sumTotalCount = sumTotalCount + user.sessionHistories[i].totalCount
-			}
+		if (userCategories && data.trainer.users) {
+			data.trainer.users.forEach((user: any) => {
+				let sumUsedCount = 0
+				let sumTotalCount = 0
+				for (let i = 0; i < user.sessionHistories.length; i++) {
+					sumUsedCount = sumUsedCount + user.sessionHistories[i].usedCount
+					sumTotalCount =
+						sumTotalCount + user.sessionHistories[i].totalCount
+				}
 
-			const userCategoryName =
-				userCategories[user.userCategoryId - 1]?.name
-			// userCategories의 갯수는 각 트레이너마다 0번부터 시작인데,
-			// user.userCategoryId 값은 전체 유저 카테고리의 row id값이라서 일치하지 않는다.
-			// console.log(userCategoryName, user.userCategoryId)
+				const userCategoryName = userCategories[user.userCategoryId - 1]
+					?.name as string
+				// userCategories의 갯수는 각 트레이너마다 0번부터 시작인데,
+				// user.userCategoryId 값은 전체(모든 트레이너) 유저 카테고리의 row id값이라서 일치하지 않는다.
+				// console.log(userCategories, user.userCategoryId)
 
-			if (user.graduate) {
-				graduateManageMemberObject[userCategoryName].push({
-					id: user.id,
-					email: user.email,
-					userName: user.userName,
-					phoneNumber: user.phoneNumber,
-					gender: user.gender,
-					count: `${sumUsedCount} / ${sumTotalCount}`
-				})
-			} else {
-				manageMemberObject[userCategoryName].push({
-					id: user.id,
-					email: user.email,
-					userName: user.userName,
-					phoneNumber: user.phoneNumber,
-					gender: user.gender,
-					count: `${sumUsedCount} / ${sumTotalCount}`
-				})
-			}
-		})
+				if (user.graduate) {
+					graduateManageMemberObject[userCategoryName].push({
+						id: user.id,
+						email: user.email,
+						userName: user.userName,
+
+						gender: user.gender,
+						count: `${sumUsedCount} / ${sumTotalCount}`
+					})
+				} else {
+					manageMemberObject[userCategoryName].push({
+						id: user.id,
+						email: user.email,
+						userName: user.userName,
+
+						gender: user.gender,
+						count: `${sumUsedCount} / ${sumTotalCount}`
+					})
+				}
+			})
+		}
 	}
 
 	const socket = io(process.env.NEXT_PUBLIC_API_DOMAIN_SOCKET as string)
@@ -187,9 +192,33 @@ const ManageMember: NextPage = () => {
 	}
 
 	const handleReadyDelete = () => {
-		console.log(1)
-
 		setReadyDelete(true)
+	}
+
+	const handleDelete = async () => {
+		const deleteItemId = Array.from(deleteLists)[0]
+		if (deleteItemId) {
+			try {
+				await updateUser({
+					variables: {
+						updateUserInput: {
+							id: deleteItemId,
+							trainerId: null
+						}
+					},
+					refetchQueries: [
+						{
+							query: TrainerDocument,
+							variables: { id: userData?.id as number }
+						}
+					]
+				})
+				deleteLists.clear()
+			} catch (error) {
+				console.log(error)
+			}
+		}
+		setReadyDelete(false)
 	}
 
 	const handleManagedMember = (
@@ -245,7 +274,7 @@ const ManageMember: NextPage = () => {
 							<DeleteIcon handleReadyDelete={handleReadyDelete} />
 						</>
 					) : (
-						<CheckIcon />
+						<CheckIcon handleDelete={handleDelete} />
 					)}
 				</Header>
 
@@ -257,8 +286,6 @@ const ManageMember: NextPage = () => {
 					return (
 						<Entities idx={idx} userCategory={entry[0]}>
 							{entry[1].map(member => {
-								console.log(readyDelete)
-
 								return (
 									<>
 										<RowMemberItem memberId={member.id}>
@@ -428,7 +455,7 @@ const ManageMember: NextPage = () => {
 								)}
 								{!isUserLoading && isUserData !== undefined && (
 									<div className="text-[16px] text-blue-500 mt-[0.8rem] text-left">
-										{`검색완료: ${isUserData.findOneUserByPhoneNumber.userName}`}
+										{`검색완료: ${isUserData?.findOneUserByPhoneNumber.userName}`}
 									</div>
 								)}
 								{!isUserLoading && isUserData === undefined && (
@@ -443,11 +470,15 @@ const ManageMember: NextPage = () => {
 										{...register('userCategoryId', {
 											required: true
 										})}>
-										{data.trainer.userCategories.map((category: any) => (
-											<option value={category.id} key={category.id}>
-												{category.name}
-											</option>
-										))}
+										{data && data.trainer && data.trainer.userCategories
+											? data.trainer.userCategories.map(
+													(category: any) => (
+														<option value={category.id} key={category.id}>
+															{category.name}
+														</option>
+													)
+											  )
+											: null}
 									</select>
 								</div>
 								<div className="flex justify-between mt-[2.4rem]">

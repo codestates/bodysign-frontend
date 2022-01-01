@@ -1,0 +1,10 @@
+mutation CreateSocialUser($createSocialUserInput: CreateSocialUserInput!) {
+	createSocialUser(createSocialUserInput: $createSocialUserInput) {
+		id
+		email
+		userName
+		birthDate
+		phoneNumber
+		gender
+	}
+}
