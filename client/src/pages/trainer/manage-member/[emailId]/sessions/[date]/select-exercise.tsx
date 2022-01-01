@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
+import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
@@ -6,19 +6,15 @@ import React, { useRef } from 'react'
 import Layout from '../../../../../../components/Layout'
 import Loading from '../../../../../../components/Loading'
 import {
-	CreateSessionExerciseDocument,
-	TrainerDocument
-} from '../../../../../../graphql/graphql'
+	Exercise,
+	useCreateSessionExerciseMutation,
+	useTrainerQuery
+} from '../../../../../../generated/graphql'
 import {
 	sessionExerciseInputVar,
 	userDataVar
 } from '../../../../../../graphql/vars'
 // import { useGetScroll } from '../../../../../../utils/useGetScroll'
-
-interface Exercise {
-	id: number
-	name: string
-}
 
 const Exercise: NextPage = () => {
 	const router = useRouter()
@@ -26,21 +22,24 @@ const Exercise: NextPage = () => {
 	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
 	const refs = useRef<(HTMLSpanElement | null)[]>([])
 	// const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
-	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: userData?.id }
+	const { loading, data } = useTrainerQuery({
+		variables: { id: userData?.id as number }
 	})
-	const [createSessionExercise] = useMutation(
-		CreateSessionExerciseDocument
-	)
+	const [createSessionExercise] = useCreateSessionExerciseMutation()
 
-	const selectExerciseObject: Record<string, Exercise[]> = {}
-	if (!loading) {
+	const selectExerciseObject: Record<string, any> = {}
+	if (!loading && data) {
 		const exerciseCategories = data.trainer.exerciseCategories
-		for (let i = 0; i < exerciseCategories.length; i++) {
-			if (selectExerciseObject[exerciseCategories[i].name] === undefined) {
-				selectExerciseObject[exerciseCategories[i].name] = [
-					...exerciseCategories[i].exercises
-				]
+		if (exerciseCategories) {
+			for (let i = 0; i < exerciseCategories.length; i++) {
+				const exerciseCategoryName = exerciseCategories[i]?.name as string
+				if (selectExerciseObject[exerciseCategoryName] === undefined) {
+					selectExerciseObject[exerciseCategoryName] = []
+				}
+				const exercise = exerciseCategories[i]?.exercises
+				if (exercise) {
+					selectExerciseObject[exerciseCategoryName] = [...exercise!]
+				}
 			}
 		}
 	}
@@ -140,7 +139,7 @@ const Exercise: NextPage = () => {
 									}}>
 									{category[0]}
 								</div>
-								{category[1].map(exercise => {
+								{category[1].map((exercise: Exercise) => {
 									return (
 										<React.Fragment key={exercise.id}>
 											<div

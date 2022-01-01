@@ -1,24 +1,22 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/dist/client/router'
-import type { NextPage } from 'next'
-import Layout from '../../components/Layout'
-import logo from '../../../public/logo.svg'
-import BottomBar from '../../components/organisms/BottomBar'
-import Image from 'next/image'
 import axios from 'axios'
 import { getCookies } from 'cookies-next'
-import { accessTokenVar, userDataVar } from '../../graphql/vars'
-import { TrainerDocument } from '../../graphql/graphql'
-import { useQuery } from '@apollo/client'
+import type { NextPage } from 'next'
+import Image from 'next/image'
+import React, { useCallback, useEffect, useState } from 'react'
+import logo from '../../../public/logo.svg'
+import Layout from '../../components/Layout'
 import Loading from '../../components/Loading'
+import BottomBar from '../../components/organisms/BottomBar'
+import { useTrainerQuery } from '../../generated/graphql'
+import { accessTokenVar, userDataVar } from '../../graphql/vars'
 // TODO: CSS 애니메이션 꾸미기
 // https://codepen.io/Tbgse/pen/dYaJyJ
 // https://codepen.io/CheeseTurtle/pen/jzdgI?editors=1010
 
 const Main: NextPage = () => {
 	const [trainerId, setTrainerId] = useState<number>()
-	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: trainerId }
+	const { loading, data } = useTrainerQuery({
+		variables: { id: trainerId as number }
 	})
 	console.log(data)
 

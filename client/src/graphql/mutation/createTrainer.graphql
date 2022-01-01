@@ -1,0 +1,10 @@
+mutation CreateTrainer($createTrainerInput: CreateTrainerInput!) {
+	createTrainer(createTrainerInput: $createTrainerInput) {
+		id
+		email
+		userName
+		birthDate
+		phoneNumber
+		gender
+	}
+}

@@ -1,17 +1,17 @@
+import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { modalVar, userDataVar } from '../../../graphql/vars'
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
-import {
-	RemoveTrainerDocument,
-	TrainerDocument,
-	UpdatePasswordTrainerDocument,
-	UpdateTrainerDocument
-} from '../../../graphql/graphql'
 import Loading from '../../../components/Loading'
+import {
+	useRemoveTrainerMutation,
+	useTrainerQuery,
+	useUpdatePasswordTrainerMutation,
+	useUpdateTrainerMutation
+} from '../../../generated/graphql'
+import { modalVar, userDataVar } from '../../../graphql/vars'
 
 interface FormInput {
 	prevPassword: string
@@ -27,15 +27,12 @@ const TrainerInfo: NextPage = () => {
 	const [updateTrainerInput, setUpdateTrainerInput] = useState({
 		phoneNumber: ''
 	})
-	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: userData?.id }
+	const { loading, data } = useTrainerQuery({
+		variables: { id: userData?.id as number }
 	})
-	const [updateTrainer] = useMutation(UpdateTrainerDocument)
-	const [removeTrainer] = useMutation(RemoveTrainerDocument)
-	const [updatePasswordTrainer] = useMutation(
-		UpdatePasswordTrainerDocument
-	)
-
+	const [updateTrainer] = useUpdateTrainerMutation()
+	const [removeTrainer] = useRemoveTrainerMutation()
+	const [updatePasswordTrainer] = useUpdatePasswordTrainerMutation()
 	const {
 		register,
 		watch,
@@ -49,7 +46,7 @@ const TrainerInfo: NextPage = () => {
 			await updatePasswordTrainer({
 				variables: {
 					updatePasswordTrainerInput: {
-						id: userData?.id,
+						id: userData?.id as number,
 						prevPassword: data.prevPassword,
 						nowPassword: data.nowPassword
 					}
@@ -114,7 +111,7 @@ const TrainerInfo: NextPage = () => {
 											variables: {
 												updateTrainerInput: {
 													...updateTrainerInput,
-													id: userData?.id
+													id: userData?.id as number
 												}
 											}
 										})
@@ -135,45 +132,51 @@ const TrainerInfo: NextPage = () => {
 				</div>
 
 				<div className="mt-4 text-[1.8rem]">
-					<div className="flex flex-col justify-between">
-						<div className="flex justify-between">
-							<span>이름</span>
-							<span className="font-thin">{data.trainer.userName}</span>
-						</div>
-						<div className="flex justify-between mt-[0.4rem]">
-							<span>성별</span>
-							<span className="font-thin">{data.trainer.gender}</span>
-						</div>
-						<div className="flex justify-between mt-[0.4rem]">
-							<span>이메일</span>
-							<span className="font-thin">{data.trainer.email}</span>
-						</div>
-						<div className="flex justify-between mt-[0.4rem]">
-							<span>생년월일</span>
-							<span className="font-thin">
-								{data.trainer.birthDate.split('T')[0]}
-							</span>
-						</div>
-						<div className="flex justify-between mt-[0.4rem]">
-							<span>전화번호</span>
-							{!isModify ? (
+					{data && data.trainer && (
+						<div className="flex flex-col justify-between">
+							<div className="flex justify-between">
+								<span>이름</span>
+								<span className="font-thin">{data.trainer.userName}</span>
+							</div>
+							<div className="flex justify-between mt-[0.4rem]">
+								<span>성별</span>
+								<span className="font-thin">{data.trainer.gender}</span>
+							</div>
+							<div className="flex justify-between mt-[0.4rem]">
+								<span>이메일</span>
+								<span className="font-thin">{data.trainer.email}</span>
+							</div>
+							<div className="flex justify-between mt-[0.4rem]">
+								<span>생년월일</span>
 								<span className="font-thin">
-									{data.trainer.phoneNumber}
+									{data.trainer.birthDate.split('T')[0]}
 								</span>
-							) : (
-								<input
-									type="text"
-									defaultValue={data.trainer.phoneNumber}
-									onChange={e => {
-										setUpdateTrainerInput({
-											...updateTrainerInput,
-											phoneNumber: e.target.value
-										})
-									}}
-								/>
-							)}
+							</div>
+							<div className="flex justify-between mt-[0.4rem]">
+								<span>전화번호</span>
+								{!isModify ? (
+									<span className="font-thin">
+										{data.trainer.phoneNumber}
+									</span>
+								) : (
+									<input
+										type="text"
+										defaultValue={
+											data.trainer.phoneNumber
+												? data.trainer.phoneNumber
+												: undefined
+										}
+										onChange={e => {
+											setUpdateTrainerInput({
+												...updateTrainerInput,
+												phoneNumber: e.target.value
+											})
+										}}
+									/>
+								)}
+							</div>
 						</div>
-					</div>
+					)}
 					<button
 						data-check-modal="changepassword"
 						onClick={e => {

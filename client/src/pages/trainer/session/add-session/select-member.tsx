@@ -1,12 +1,12 @@
+import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import Layout from '../../../../components/Layout'
-import { managedUserInfoVar, userDataVar } from '../../../../graphql/vars'
-import { useQuery, useReactiveVar } from '@apollo/client'
-import { TrainerDocument } from '../../../../graphql/graphql'
 import Loading from '../../../../components/Loading'
-import Image from 'next/image'
+import { useTrainerQuery } from '../../../../generated/graphql'
+import { managedUserInfoVar, userDataVar } from '../../../../graphql/vars'
 
 interface MemberSession {
 	id: number
@@ -19,33 +19,37 @@ interface MemberSession {
 
 const SelectMember: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
-	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: userData?.id }
+	const { loading, data } = useTrainerQuery({
+		variables: { id: userData?.id as number }
 	})
 
 	const selectMemberObject: Record<string, MemberSession[]> = {}
-	if (!loading) {
+	if (!loading && data && data.trainer.users) {
 		const userCategories = data.trainer.userCategories
-		for (let i = 0; i < userCategories.length; i++) {
-			if (selectMemberObject[userCategories[i].name] === undefined) {
-				selectMemberObject[userCategories[i].name] = []
+		if (userCategories) {
+			for (let i = 0; i < userCategories.length; i++) {
+				const userCategoryName = userCategories[i]?.name as string
+				if (selectMemberObject[userCategoryName] === undefined) {
+					selectMemberObject[userCategoryName] = []
+				}
 			}
-		}
-		data.trainer.users.forEach((user: any) => {
-			const userCategoryName =
-				userCategories[user.userCategoryId - 1]?.name
-			const userSessionHistory = user.sessionHistories[0]
-			// 식별이 필요하다. 진행중, 완료, 취소 등
 
-			selectMemberObject[userCategoryName].push({
-				id: user.id,
-				email: user.email,
-				userName: user.userName,
-				gender: user.gender,
-				usedCount: userSessionHistory.usedCount,
-				totalCount: userSessionHistory.totalCount
+			data.trainer.users.forEach((user: any) => {
+				const userCategoryName = userCategories[user.userCategoryId - 1]
+					?.name as string
+				const userSessionHistory = user.sessionHistories[0]
+				// 식별이 필요하다. 진행중, 완료, 취소 등
+
+				selectMemberObject[userCategoryName].push({
+					id: user.id,
+					email: user.email,
+					userName: user.userName,
+					gender: user.gender,
+					usedCount: userSessionHistory.usedCount,
+					totalCount: userSessionHistory.totalCount
+				})
 			})
-		})
+		}
 	}
 
 	if (loading) return <Loading />

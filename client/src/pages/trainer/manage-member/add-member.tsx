@@ -1,15 +1,15 @@
+import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
+import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
 import Loading from '../../../components/Loading'
 import {
-	CreateNonRegisteredUserDocument,
-	TrainerDocument
-} from '../../../graphql/graphql'
-import { useRouter } from 'next/dist/client/router'
+	useCreateNonRegisteredUserMutation,
+	useTrainerQuery
+} from '../../../generated/graphql'
 import { userDataVar } from '../../../graphql/vars'
 
 interface FormInput {
@@ -26,13 +26,10 @@ const labelProperties =
 const AddMember: NextPage = () => {
 	const router = useRouter()
 	const userData = useReactiveVar(userDataVar)
-	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: userData?.id }
+	const { loading, data } = useTrainerQuery({
+		variables: { id: userData?.id as number }
 	})
-	const [createNonRegisteredUser] = useMutation(
-		CreateNonRegisteredUserDocument
-	)
-
+	const [createNonRegisteredUser] = useCreateNonRegisteredUserMutation()
 	const {
 		register,
 		formState: { errors },
@@ -50,7 +47,7 @@ const AddMember: NextPage = () => {
 			await createNonRegisteredUser({
 				variables: {
 					createNonRegisteredUserInput: {
-						trainerId: userData?.id,
+						trainerId: userData?.id as number,
 						userName: input.userName,
 						phoneNumber: input.phoneNumber,
 						gender: input.gender,
@@ -129,11 +126,19 @@ const AddMember: NextPage = () => {
 							<select
 								className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem] bg-white"
 								{...register('userCategoryId')}>
-								{data.trainer.userCategories.map((category: any) => (
-									<option key={category.id} value={category.id}>
-										{category.name}
-									</option>
-								))}
+								{data &&
+									data.trainer.userCategories &&
+									data.trainer.userCategories.map(category => {
+										if (category) {
+											return (
+												<option
+													key={category.id}
+													value={category.id as number}>
+													{category.name}
+												</option>
+											)
+										}
+									})}
 							</select>
 						)}
 					</div>

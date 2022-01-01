@@ -1,23 +1,24 @@
+import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
+import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../../../../components/Layout'
+import Loading from '../../../../../../components/Loading'
+import {
+	SessionDocument,
+	useCreateSessionExerciseVolumeMutation,
+	useRemoveSessionExerciseMutation,
+	useSessionQuery,
+	useUpdateSessionMutation
+} from '../../../../../../generated/graphql'
+import { UserDocument } from '../../../../../../graphql/graphql'
 import {
 	managedUserInfoVar,
 	modalVar,
 	sessionExerciseInputVar
 } from '../../../../../../graphql/vars'
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
-import { useRouter } from 'next/dist/client/router'
-import {
-	CreateSessionExerciseVolumeDocument,
-	RemoveSessionExerciseDocument,
-	SessionDocument,
-	UpdateSessionDocument,
-	UserDocument
-} from '../../../../../../graphql/graphql'
-import Loading from '../../../../../../components/Loading'
 
 interface FormInput {
 	weight: string
@@ -32,16 +33,13 @@ const Detail: NextPage = () => {
 	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
-	const { loading, data } = useQuery(SessionDocument, {
+	const { loading, data } = useSessionQuery({
 		variables: { id: sessionExerciseInput.sessionId }
 	})
-	const [createSessionExerciseVolume] = useMutation(
-		CreateSessionExerciseVolumeDocument
-	)
-	const [updateSession] = useMutation(UpdateSessionDocument)
-	const [removeSessionExercise] = useMutation(
-		RemoveSessionExerciseDocument
-	)
+	const [createSessionExerciseVolume] =
+		useCreateSessionExerciseVolumeMutation()
+	const [updateSession] = useUpdateSessionMutation()
+	const [removeSessionExercise] = useRemoveSessionExerciseMutation()
 	const {
 		register,
 		formState: { errors },
@@ -82,10 +80,7 @@ const Detail: NextPage = () => {
 			<Layout>
 				<div className="flex items-center justify-between">
 					<span className="flex text-[3.2rem]">
-						<Link
-							href={router.asPath.split('20')[0]}
-							passHref
-						>
+						<Link href={router.asPath.split('20')[0]} passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
@@ -115,7 +110,7 @@ const Detail: NextPage = () => {
 										type="checkbox"
 										name="toggle"
 										id="toggle"
-										checked={data.session.sentFeedback}
+										checked={data && data.session.sentFeedback}
 										onChange={async e => {
 											// 피드백 완료 여부 API
 											try {
@@ -208,86 +203,101 @@ const Detail: NextPage = () => {
 				</div>
 
 				<div className="flex flex-col mt-[2.4rem]">
-					{data.session.sessionExercises.map((exercise: any) => {
-						const deleteItemId = Array.from(deleteLists)[0]
-						return (
-							<React.Fragment key={exercise.id}>
-								<div
-									className={`mt-[2.4rem] p-[1.6rem] border rounded-3xl first:mt-0 text-[1.8rem] flex-col items-center text-[#9F9F9F] ${
-										exercise.id === deleteItemId ? 'ring-2' : ''
-									}`}>
-									<div
-										className={`grid grid-cols-3 justify-items-center items-center w-full text-center border rounded-3xl py-[2rem] px-[0.8rem] bg-gray-50 cursor-pointer ${
-											exercise.id === deleteItemId ? 'ring-2' : ''
-										}`}
-										data-id={exercise.id}
-										onClick={e => {
-											if (e !== null && e.target instanceof HTMLElement) {
-												// 운동 종목 삭제 step 1
-												if (e.target.dataset.id) {
-													const id = +e.target.dataset.id
-													// 하나만 가능한 조건
-													if (deleteLists.size > 0) {
-														setDeleteLists(prev => new Set())
+					{data &&
+						data.session.sessionExercises &&
+						data.session.sessionExercises.map(exercise => {
+							const deleteItemId = Array.from(deleteLists)[0]
+							if (exercise) {
+								return (
+									<React.Fragment key={exercise.id}>
+										<div
+											className={`mt-[2.4rem] p-[1.6rem] border rounded-3xl first:mt-0 text-[1.8rem] flex-col items-center text-[#9F9F9F] ${
+												exercise.id === deleteItemId ? 'ring-2' : ''
+											}`}>
+											<div
+												className={`grid grid-cols-3 justify-items-center items-center w-full text-center border rounded-3xl py-[2rem] px-[0.8rem] bg-gray-50 cursor-pointer ${
+													exercise.id === deleteItemId ? 'ring-2' : ''
+												}`}
+												data-id={exercise.id}
+												onClick={e => {
+													if (
+														e !== null &&
+														e.target instanceof HTMLElement
+													) {
+														// 운동 종목 삭제 step 1
+														if (e.target.dataset.id) {
+															const id = +e.target.dataset.id
+															// 하나만 가능한 조건
+															if (deleteLists.size > 0) {
+																setDeleteLists(prev => new Set())
+															}
+															if (deleteLists.has(id)) {
+																setDeleteLists(
+																	prev =>
+																		new Set(
+																			[...prev].filter(el => el !== id)
+																		)
+																)
+															} else {
+																setDeleteLists(
+																	prev => new Set(prev.add(id))
+																)
+															}
+														}
 													}
-													if (deleteLists.has(id)) {
-														setDeleteLists(
-															prev =>
-																new Set([...prev].filter(el => el !== id))
-														)
-													} else {
-														setDeleteLists(prev => new Set(prev.add(id)))
-													}
-												}
-											}
-										}}>
-										<span>{'카테고리'}</span>
-										<span className="font-semibold text-black">
-											{exercise.name}
-										</span>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											className="w-[2.8rem] h-[2.8rem] text-[#9F9F9F]"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke="currentColor"
-											onClick={
-												!readyDelete
-													? () => {
-															sessionExerciseInputVar({
-																...sessionExerciseInput,
-																exerciseName: exercise.name,
-																sessionExerciseId: exercise.id
-															})
-															modalVar(true)
-													  }
-													: undefined
-											}>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M12 4v16m8-8H4"
-											/>
-										</svg>
-									</div>
-									{exercise.sessionExerciseVolumes.map((volume: any, index: any) => {
-										return (
-											<div key={index} className="text-black text-[1.6rem] grid grid-cols-3 justify-items-center items-center w-full py-[0.8rem] px-[0.8rem] border-b last:border-b-0">
-												<span>{volume.weight}kg</span>
-												<span>{volume.reps}회</span>
-												<span>{volume.sets}세트</span>
+												}}>
+												<span>{'카테고리'}</span>
+												<span className="font-semibold text-black">
+													{exercise.name}
+												</span>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													className="w-[2.8rem] h-[2.8rem] text-[#9F9F9F]"
+													fill="none"
+													viewBox="0 0 24 24"
+													stroke="currentColor"
+													onClick={
+														!readyDelete
+															? () => {
+																	sessionExerciseInputVar({
+																		...sessionExerciseInput,
+																		exerciseName: exercise.name,
+																		sessionExerciseId: exercise.id
+																	})
+																	modalVar(true)
+															  }
+															: undefined
+													}>
+													<path
+														strokeLinecap="round"
+														strokeLinejoin="round"
+														strokeWidth={2}
+														d="M12 4v16m8-8H4"
+													/>
+												</svg>
 											</div>
-										)
-									})}
-								</div>
-							</React.Fragment>
-						)
-					})}
+											{exercise &&
+												exercise.sessionExerciseVolumes &&
+												exercise.sessionExerciseVolumes.map(
+													(volume: any, index: any) => {
+														return (
+															<div
+																key={index}
+																className="text-black text-[1.6rem] grid grid-cols-3 justify-items-center items-center w-full py-[0.8rem] px-[0.8rem] border-b last:border-b-0">
+																<span>{volume.weight}kg</span>
+																<span>{volume.reps}회</span>
+																<span>{volume.sets}세트</span>
+															</div>
+														)
+													}
+												)}
+										</div>
+									</React.Fragment>
+								)
+							}
+						})}
 					<div className="flex justify-center mt-[2.4rem]">
-						<Link href={`${router.asPath}/select-exercise`}
-							passHref
-						>
+						<Link href={`${router.asPath}/select-exercise`} passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								className="w-[3.2rem] h-[3.2rem] text-black self-center cursor-pointer "
@@ -311,7 +321,7 @@ const Detail: NextPage = () => {
 					autoFocus
 					autoSave="true"
 					placeholder="수업 피드백을 입력해주세요."
-					defaultValue={data.session.feedback}
+					defaultValue={data && (data.session.feedback as string)}
 					onBlur={e => {
 						// 피드백 작성 API
 						// e.target.value
@@ -330,7 +340,7 @@ const Detail: NextPage = () => {
 					}}
 				/>
 			</Layout>
-			
+
 			{modal ? (
 				<div className="fixed bottom-0 w-full font-IBM">
 					<div

@@ -1,13 +1,12 @@
+import { useQuery, useReactiveVar } from '@apollo/client'
+import Chart from 'chart.js/auto'
 import { NextPage } from 'next'
 import Link from 'next/link'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Layout from '../../../../components/Layout'
-import Chart from 'chart.js/auto'
-import { useReactiveVar, useQuery } from '@apollo/client'
+import Loading from '../../../../components/Loading'
 import { UserDocument } from '../../../../graphql/graphql'
 import { managedUserInfoVar } from '../../../../graphql/vars'
-import Loading from '../../../../components/Loading'
-import { useRouter } from 'next/dist/client/router'
 
 const Inbody: NextPage = () => {
 	const managedUserInfo = useReactiveVar(managedUserInfoVar)

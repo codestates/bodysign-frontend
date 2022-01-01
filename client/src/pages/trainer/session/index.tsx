@@ -1,17 +1,18 @@
+import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import Layout from '../../../components/Layout'
-import { modalVar, userDataVar } from '../../../graphql/vars'
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
+import Loading from '../../../components/Loading'
 import BottomBar from '../../../components/organisms/BottomBar'
 import {
 	TrainerDocument,
-	UpdateSessionDocument,
-	RemoveSessionDocument
-} from '../../../graphql/graphql'
-import Loading from '../../../components/Loading'
-import Image from 'next/image'
+	useRemoveSessionMutation,
+	useTrainerQuery,
+	useUpdateSessionMutation
+} from '../../../generated/graphql'
+import { modalVar, userDataVar } from '../../../graphql/vars'
 
 interface MemberSession {
 	id: number
@@ -27,43 +28,46 @@ const Session: NextPage = () => {
 	const [sessionId, setSessionId] = useState<number>()
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
-	const { loading, data } = useQuery(TrainerDocument, {
-		variables: { id: userData?.id }
+	const { loading, data } = useTrainerQuery({
+		variables: { id: userData?.id as number }
 	})
-	const [updateSession] = useMutation(UpdateSessionDocument)
-	const [removeSession] = useMutation(RemoveSessionDocument)
+	const [updateSession] = useUpdateSessionMutation()
+	const [removeSession] = useRemoveSessionMutation()
+
 	const sessionObject: Record<string, MemberSession[]> = {}
 	const completedSessionObject: Record<string, MemberSession[]> = {}
-	if (!loading && data) {
+	if (!loading && data && data.trainer.sessions) {
 		let $Data = [...data.trainer.sessions]
 		$Data
 			.sort((a, b) => {
-				const aDate = new Date(a.date).getTime()
-				const bDate = new Date(b.date).getTime()
+				const aDate = new Date(a!.date).getTime()
+				const bDate = new Date(b!.date).getTime()
 				return aDate > bDate ? -1 : 1
 			})
 			.forEach(session => {
-				const date = session.date.split('T')[0]
-				if (session.completedSession) {
-					if (completedSessionObject[date] === undefined) {
-						completedSessionObject[date] = []
+				if (session) {
+					const date = session.date.split('T')[0]
+					if (session.completedSession) {
+						if (completedSessionObject[date] === undefined) {
+							completedSessionObject[date] = []
+						}
+						completedSessionObject[date].push({
+							id: session.id as number,
+							date: session.date,
+							userName: session.user.userName,
+							gender: session.user.gender
+						})
+					} else {
+						if (sessionObject[date] === undefined) {
+							sessionObject[date] = []
+						}
+						sessionObject[date].push({
+							id: session.id as number,
+							date: session.date,
+							userName: session.user.userName,
+							gender: session.user.gender
+						})
 					}
-					completedSessionObject[date].push({
-						id: session.id,
-						date: session.date,
-						userName: session.user.userName,
-						gender: session.user.gender
-					})
-				} else {
-					if (sessionObject[date] === undefined) {
-						sessionObject[date] = []
-					}
-					sessionObject[date].push({
-						id: session.id,
-						date: session.date,
-						userName: session.user.userName,
-						gender: session.user.gender
-					})
 				}
 			})
 	}
@@ -292,7 +296,7 @@ const Session: NextPage = () => {
 										await updateSession({
 											variables: {
 												updateSessionInput: {
-													id: sessionId,
+													id: sessionId as number,
 													completedSession: true
 												}
 											},

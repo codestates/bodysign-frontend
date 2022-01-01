@@ -1,0 +1,9 @@
+mutation CreateUserCategory(
+	$createUserCategoryInput: CreateUserCategoryInput!
+) {
+	createUserCategory(createUserCategoryInput: $createUserCategoryInput) {
+		id
+		status
+		trainerId
+	}
+}

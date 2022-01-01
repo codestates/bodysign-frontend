@@ -1,0 +1,9 @@
+mutation UpdateSession($updateSessionInput: UpdateSessionInput!) {
+	updateSession(updateSessionInput: $updateSessionInput) {
+		id
+		userId
+		date
+		trainerId
+		feedback
+	}
+}

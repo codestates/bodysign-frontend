@@ -1,0 +1,11 @@
+mutation FindOneUserByPhoneNumber($phoneNumber: String!) {
+	findOneUserByPhoneNumber(phoneNumber: $phoneNumber) {
+		id
+		email
+		userName
+		birthDate
+		phoneNumber
+		gender
+		graduate
+	}
+}

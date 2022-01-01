@@ -1,0 +1,11 @@
+mutation CreateExerciseCategory(
+	$createExerciseCategoryInput: CreateExerciseCategoryInput!
+) {
+	createExerciseCategory(
+		createExerciseCategoryInput: $createExerciseCategoryInput
+	) {
+		id
+		name
+		trainerId
+	}
+}

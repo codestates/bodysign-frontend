@@ -1,0 +1,13 @@
+mutation CreateSocialTrainer(
+	$createSocialTrainerInput: CreateSocialTrainerInput!
+) {
+	createSocialTrainer(
+		createSocialTrainerInput: $createSocialTrainerInput
+	) {
+		id
+		email
+		userName
+		birthDate
+		gender
+	}
+}

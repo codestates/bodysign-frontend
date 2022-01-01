@@ -1,4 +1,8 @@
-const CheckIcon = () => {
+interface DCheckIconProps {
+	handleDelete: () => void
+}
+
+const CheckIcon = ({ handleDelete }: DCheckIconProps) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -6,29 +10,7 @@ const CheckIcon = () => {
 			fill="none"
 			viewBox="0 0 24 24"
 			stroke="currentColor"
-			onClick={async () => {
-				// 운동 삭제 step 2
-				const deleteItemId = Array.from(deleteLists)[0]
-				if (deleteItemId) {
-					try {
-						await removeExercise({
-							variables: {
-								id: deleteItemId
-							},
-							refetchQueries: [
-								{
-									query: TrainerDocument,
-									variables: { id: userData?.id }
-								}
-							]
-						})
-						deleteLists.clear()
-					} catch (error) {
-						console.log(error)
-					}
-				}
-				setReadyDelete(false)
-			}}>
+			onClick={() => handleDelete()}>
 			<path
 				strokeLinecap="round"
 				strokeLinejoin="round"
