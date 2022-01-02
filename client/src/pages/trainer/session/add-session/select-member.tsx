@@ -23,35 +23,6 @@ const SelectMember: NextPage = () => {
 		variables: { id: userData?.id as number }
 	})
 
-	const selectMemberObject: Record<string, MemberSession[]> = {}
-	if (!loading && data && data.trainer.users) {
-		const userCategories = data.trainer.userCategories
-		if (userCategories) {
-			for (let i = 0; i < userCategories.length; i++) {
-				const userCategoryName = userCategories[i]?.name as string
-				if (selectMemberObject[userCategoryName] === undefined) {
-					selectMemberObject[userCategoryName] = []
-				}
-			}
-
-			data.trainer.users.forEach((user: any) => {
-				const userCategoryName = userCategories[user.userCategoryId - 1]
-					?.name as string
-				const userSessionHistory = user.sessionHistories[0]
-				// 식별이 필요하다. 진행중, 완료, 취소 등
-
-				selectMemberObject[userCategoryName].push({
-					id: user.id,
-					email: user.email,
-					userName: user.userName,
-					gender: user.gender,
-					usedCount: userSessionHistory.usedCount,
-					totalCount: userSessionHistory.totalCount
-				})
-			})
-		}
-	}
-
 	if (loading) return <Loading />
 	return (
 		<>
@@ -107,68 +78,76 @@ const SelectMember: NextPage = () => {
 					</span>
 				</div> */}
 
-				{Object.entries(selectMemberObject).map((entry, idx) => {
-					return (
-						<React.Fragment key={idx}>
-							<div className="mt-[2.4rem]">
-								<div className="text-[1.8rem] font-semibold">
-									{entry[0]}
-								</div>
-								{entry[1].map((member, idx2) => {
-									return (
-										<React.Fragment key={idx2}>
-											<div
-												className={`
-											${managedUserInfoVar().userId === member.id ? 'bg-[#FDAD00]' : 'bg-black'}
-											h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white hover:ring-2`}
-												data-id={member.id}
-												onClick={e => {
-													if (
-														e !== null &&
-														e.target instanceof HTMLElement
-													) {
-														const userId = e.target.dataset.id as string
-														console.log(userId)
+				{data &&
+					data.trainer.userCategories &&
+					data.trainer.userCategories.map((userCategory, idx) => {
+						return (
+							<React.Fragment key={idx}>
+								<div className="mt-[2.4rem]">
+									<div className="text-[1.8rem] font-semibold">
+										{userCategory?.name}
+									</div>
+									{userCategory?.users &&
+										userCategory.users.map(member => {
+											if (member) {
+												return (
+													<React.Fragment key={member.id}>
+														<div
+															className={`
+													${managedUserInfoVar().userId === member.id ? 'bg-[#FDAD00]' : 'bg-black'}
+													h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white hover:ring-2`}
+															data-id={member.id}
+															onClick={e => {
+																if (
+																	e !== null &&
+																	e.target instanceof HTMLElement
+																) {
+																	const userId = e.target.dataset
+																		.id as string
+																	console.log(userId)
 
-														managedUserInfoVar({
-															userId: +userId,
-															email: member.email,
-															userName: member.userName,
-															gender: member.gender
-														})
-													}
-												}}>
-												<div className="flex">
-													{member.gender === 'male' ? (
-														<Image
-															src="/man.png"
-															width="36"
-															height="30"
-															alt="image"
-														/>
-													) : (
-														<Image
-															src="/woman.png"
-															width="36"
-															height="30"
-															alt="image"
-														/>
-													)}
-													<div className="self-center ml-[1.2rem] cursor-pointer ">
-														{member.userName} 회원
-													</div>
-												</div>
-												<div>
-													{`${member.usedCount} / ${member.totalCount}`}
-												</div>
-											</div>
-										</React.Fragment>
-									)
-								})}
-							</div>
-						</React.Fragment>
-					)
-				})}
+																	managedUserInfoVar({
+																		userId: +userId,
+																		email: member.email,
+																		userName: member.userName,
+																		gender: member.gender
+																	})
+																}
+															}}>
+															<div className="flex">
+																{member.gender === 'male' ? (
+																	<Image
+																		src="/man.png"
+																		width="36"
+																		height="30"
+																		alt="image"
+																	/>
+																) : (
+																	<Image
+																		src="/woman.png"
+																		width="36"
+																		height="30"
+																		alt="image"
+																	/>
+																)}
+																<div className="self-center ml-[1.2rem] cursor-pointer ">
+																	{member.userName} 회원
+																</div>
+															</div>
+															<div>
+																{member.sessionHistories.length
+																	? `${member.sessionHistories[0].usedCount} / ${member.sessionHistories[0].totalCount}`
+																	: null}
+															</div>
+														</div>
+													</React.Fragment>
+												)
+											}
+										})}
+								</div>
+							</React.Fragment>
+						)
+					})}
 			</Layout>
 		</>
 	)
