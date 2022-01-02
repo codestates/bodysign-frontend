@@ -1,17 +1,21 @@
-interface AddCategoryIconProps {
+interface AddItemIconProps {
+	dataCheckModal: string
 	handleModal: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
-const AddCategoryIcon = ({ handleModal }: AddCategoryIconProps) => {
+const AddItemIcon = ({
+	dataCheckModal,
+	handleModal
+}: AddItemIconProps) => {
 	return (
 		<div
-			data-check-modal="addcategory"
+			data-check-modal={dataCheckModal}
 			onClick={e => {
 				handleModal(e)
 			}}>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
-				className="cursor-pointer w-[2.8rem] h-[2.8rem] pointer-events-none"
+				className="w-[2.8rem] h-[2.8rem] text-[#9F9F9F] pointer-events-none"
 				fill="none"
 				viewBox="0 0 24 24"
 				stroke="currentColor">
@@ -19,11 +23,11 @@ const AddCategoryIcon = ({ handleModal }: AddCategoryIconProps) => {
 					strokeLinecap="round"
 					strokeLinejoin="round"
 					strokeWidth={2}
-					d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+					d="M12 4v16m8-8H4"
 				/>
 			</svg>
 		</div>
 	)
 }
 
-export default AddCategoryIcon
+export default AddItemIcon

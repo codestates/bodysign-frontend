@@ -1048,7 +1048,7 @@ export type TrainerQueryVariables = Exact<{
 }>;
 
 
-export type TrainerQuery = { __typename?: 'Query', trainer: { __typename?: 'Trainer', id: number, email: string, userName: string, birthDate?: any | null | undefined, phoneNumber?: string | null | undefined, gender: string, users?: Array<{ __typename?: 'User', id: number, email: string, userName: string, birthDate: any, phoneNumber: string, gender: string, graduate: boolean, userCategoryId?: number | null | undefined, sessionHistories: Array<{ __typename?: 'SessionHistory', id?: number | null | undefined, date: any, costPerSession: number, totalCount: number, usedCount: number, commission: number, userId: number, user: { __typename?: 'User', userName: string } }> } | null | undefined> | null | undefined, sessions?: Array<{ __typename?: 'Session', id?: number | null | undefined, userId: number, trainerId: number, feedback?: string | null | undefined, sentFeedback: boolean, completedSession: boolean, date: any, user: { __typename?: 'User', id: number, userName: string, gender: string }, sessionExercises?: Array<{ __typename?: 'SessionExercise', name: string, sessionExerciseVolumes?: Array<{ __typename?: 'SessionExerciseVolume', id: number, reps: number, sets: number, weight: number, seq: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined } | null | undefined> | null | undefined, exerciseCategories?: Array<{ __typename?: 'ExerciseCategory', id?: number | null | undefined, name: string, trainerId: number, exercises?: Array<{ __typename?: 'Exercise', id?: number | null | undefined, name: string, exerciseCategoryId: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined, userCategories?: Array<{ __typename?: 'UserCategory', id?: number | null | undefined, name: string, trainerId: number, users?: Array<{ __typename?: 'User', id: number, email: string, userName: string, gender: string, graduate: boolean } | null | undefined> | null | undefined } | null | undefined> | null | undefined } };
+export type TrainerQuery = { __typename?: 'Query', trainer: { __typename?: 'Trainer', id: number, email: string, userName: string, birthDate?: any | null | undefined, phoneNumber?: string | null | undefined, gender: string, users?: Array<{ __typename?: 'User', id: number, email: string, userName: string, birthDate: any, phoneNumber: string, gender: string, graduate: boolean, userCategoryId?: number | null | undefined, sessionHistories: Array<{ __typename?: 'SessionHistory', id?: number | null | undefined, date: any, costPerSession: number, totalCount: number, usedCount: number, commission: number, userId: number, user: { __typename?: 'User', userName: string } }> } | null | undefined> | null | undefined, sessions?: Array<{ __typename?: 'Session', id?: number | null | undefined, userId: number, trainerId: number, feedback?: string | null | undefined, sentFeedback: boolean, completedSession: boolean, date: any, user: { __typename?: 'User', id: number, userName: string, gender: string }, sessionExercises?: Array<{ __typename?: 'SessionExercise', name: string, sessionExerciseVolumes?: Array<{ __typename?: 'SessionExerciseVolume', id: number, reps: number, sets: number, weight: number, seq: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined } | null | undefined> | null | undefined, exerciseCategories?: Array<{ __typename?: 'ExerciseCategory', id?: number | null | undefined, name: string, trainerId: number, exercises?: Array<{ __typename?: 'Exercise', id?: number | null | undefined, name: string, exerciseCategoryId: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined, userCategories?: Array<{ __typename?: 'UserCategory', id?: number | null | undefined, name: string, trainerId: number, users?: Array<{ __typename?: 'User', id: number, email: string, userName: string, gender: string, graduate: boolean, sessionHistories: Array<{ __typename?: 'SessionHistory', id?: number | null | undefined, date: any, costPerSession: number, totalCount: number, usedCount: number, commission: number }> } | null | undefined> | null | undefined } | null | undefined> | null | undefined } };
 
 export type UserCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2127,6 +2127,14 @@ export const TrainerDocument = gql`
         userName
         gender
         graduate
+        sessionHistories {
+          id
+          date
+          costPerSession
+          totalCount
+          usedCount
+          commission
+        }
       }
     }
   }
