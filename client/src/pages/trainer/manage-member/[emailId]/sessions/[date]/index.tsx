@@ -74,6 +74,8 @@ const Detail: NextPage = () => {
 		}
 	}
 
+	console.log(data)
+
 	if (loading) return <Loading />
 	return (
 		<>

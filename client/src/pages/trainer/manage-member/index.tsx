@@ -7,11 +7,11 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { io } from 'socket.io-client'
 import Avatar from '../../../components/atoms/Avatar'
 import AddCategoryIcon from '../../../components/atoms/icons/AddCategoryIcon'
-import AddMemberIcon from '../../../components/atoms/icons/AddMemberIcon'
 import CheckIcon from '../../../components/atoms/icons/CheckIcon'
 import DeleteIcon from '../../../components/atoms/icons/DeleteIcon'
 import Layout from '../../../components/Layout'
 import Loading from '../../../components/Loading'
+import AddItem from '../../../components/molecules/Entities/AddItem'
 import ColMemberGroup from '../../../components/molecules/Entities/ColMemberGroup'
 import RowMemberItem from '../../../components/molecules/Entities/RowMemberItem'
 import ChatLink from '../../../components/molecules/Link/ChatLink'
@@ -116,61 +116,6 @@ const ManageMember: NextPage = () => {
 		}
 	}
 
-	const manageMemberObject: Record<string, Member[]> = {}
-	const graduateManageMemberObject: Record<string, Member[]> = {}
-	if (!loading && data) {
-		const userCategories = data.trainer.userCategories
-		if (userCategories) {
-			for (let i = 0; i < userCategories.length; i++) {
-				const userCategoryName = userCategories[i]?.name as string
-				if (graduateManageMemberObject[userCategoryName] === undefined) {
-					graduateManageMemberObject[userCategoryName] = []
-				}
-				if (manageMemberObject[userCategoryName] === undefined) {
-					manageMemberObject[userCategoryName] = []
-				}
-			}
-		}
-
-		if (userCategories && data.trainer.users) {
-			data.trainer.users.forEach((user: any) => {
-				let sumUsedCount = 0
-				let sumTotalCount = 0
-				for (let i = 0; i < user.sessionHistories.length; i++) {
-					sumUsedCount = sumUsedCount + user.sessionHistories[i].usedCount
-					sumTotalCount =
-						sumTotalCount + user.sessionHistories[i].totalCount
-				}
-
-				const userCategoryName = userCategories[user.userCategoryId - 1]
-					?.name as string
-				// userCategories의 갯수는 각 트레이너마다 0번부터 시작인데,
-				// user.userCategoryId 값은 전체(모든 트레이너) 유저 카테고리의 row id값이라서 일치하지 않는다.
-				// console.log(userCategories, user.userCategoryId)
-
-				if (user.graduate) {
-					graduateManageMemberObject[userCategoryName].push({
-						id: user.id,
-						email: user.email,
-						userName: user.userName,
-
-						gender: user.gender,
-						count: `${sumUsedCount} / ${sumTotalCount}`
-					})
-				} else {
-					manageMemberObject[userCategoryName].push({
-						id: user.id,
-						email: user.email,
-						userName: user.userName,
-
-						gender: user.gender,
-						count: `${sumUsedCount} / ${sumTotalCount}`
-					})
-				}
-			})
-		}
-	}
-
 	const socket = io(process.env.NEXT_PUBLIC_API_DOMAIN_SOCKET as string)
 	useEffect(() => {
 		socket.emit('joinLounge', 21)
@@ -184,8 +129,10 @@ const ManageMember: NextPage = () => {
 		setCategory(category)
 	}
 
-	const handleModal = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-		if (e !== null && e.target instanceof SVGElement) {
+	const handleModal = (
+		e: React.MouseEvent<HTMLDivElement, MouseEvent>
+	) => {
+		if (e !== null && e.target instanceof HTMLDivElement) {
 			setCheckModal(e.target.dataset.checkModal as string)
 			modalVar(true)
 		}
@@ -223,7 +170,7 @@ const ManageMember: NextPage = () => {
 
 	const handleManagedMember = (
 		member: {
-			id: string
+			id: number
 			email: string
 			userName: string
 			gender: string
@@ -269,7 +216,7 @@ const ManageMember: NextPage = () => {
 				<Header category={category} handleSetCategory={handleCategory}>
 					{!readyDelete ? (
 						<>
-							<AddMemberIcon handleModal={handleModal} />
+							{/* <AddMemberIcon handleModal={handleModal} /> */}
 							<AddCategoryIcon handleModal={handleModal} />
 							<DeleteIcon handleReadyDelete={handleReadyDelete} />
 						</>
@@ -278,53 +225,86 @@ const ManageMember: NextPage = () => {
 					)}
 				</Header>
 
-				{Object.entries(
-					category === '관리중'
-						? manageMemberObject
-						: graduateManageMemberObject
-				).map((entry, idx) => {
-					return (
-						<Entities idx={idx} userCategory={entry[0]}>
-							{entry[1].map(member => {
-								return (
-									<>
-										<RowMemberItem memberId={member.id}>
-											<div className="flex">
-												<Avatar gender={member.gender} />
-												<ColMemberGroup>
-													<div
-														className="text-left cursor-pointer"
-														data-id={member.id}
-														onClick={e => handleManagedMember(member, e)}>
-														{member.userName} 회원
-													</div>
-													<div className="text-[1.4rem] text-left text-[#9F9F9F]">
-														{member.count}회
-													</div>
-												</ColMemberGroup>
-											</div>
-											{!readyDelete ? (
-												<ChatLink />
-											) : deleteLists.has(+member.id) ? (
-												<svg
-													className="text-green-600"
-													viewBox="0 0 15 15"
-													fill="none"
-													xmlns="http://www.w3.org/2000/svg"
-													width="20"
-													height="20">
-													<path
-														d="M4 7.5L7 10l4-5m-3.5 9.5a7 7 0 110-14 7 7 0 010 14z"
-														stroke="currentColor"></path>
-												</svg>
-											) : null}
-										</RowMemberItem>
-									</>
-								)
-							})}
-						</Entities>
-					)
-				})}
+				{data &&
+					data.trainer.userCategories &&
+					data.trainer.userCategories.map((userCategory, idx) => {
+						return (
+							<Entities
+								key={userCategory?.id as number}
+								userCategory={userCategory?.name as string}>
+								{userCategory?.users &&
+									userCategory.users
+										.filter(member => {
+											if (category === '관리중' && !member?.graduate) {
+												return member
+											} else if (category === '졸업' && member?.graduate) {
+												return member
+											}
+										})
+										.map(member => {
+											if (member) {
+												let sumUsedCount = 0
+												let sumTotalCount = 0
+												for (
+													let i = 0;
+													i < member.sessionHistories.length;
+													i++
+												) {
+													sumUsedCount =
+														sumUsedCount +
+														member.sessionHistories[i].usedCount
+													sumTotalCount =
+														sumTotalCount +
+														member.sessionHistories[i].totalCount
+												}
+
+												return (
+													<>
+														<RowMemberItem memberId={member.id}>
+															<div className="flex">
+																<Avatar gender={member.gender} />
+																<ColMemberGroup>
+																	<div
+																		className="text-left cursor-pointer"
+																		data-id={member.id}
+																		onClick={e =>
+																			handleManagedMember(member, e)
+																		}>
+																		{member.userName} 회원
+																	</div>
+																	<div className="text-[1.4rem] text-right text-[#9F9F9F]">
+																		{`${sumUsedCount} / ${sumTotalCount}`}
+																		회
+																	</div>
+																</ColMemberGroup>
+															</div>
+															{!readyDelete ? (
+																<ChatLink />
+															) : deleteLists.has(+member.id) ? (
+																<svg
+																	className="text-green-600"
+																	viewBox="0 0 15 15"
+																	fill="none"
+																	xmlns="http://www.w3.org/2000/svg"
+																	width="20"
+																	height="20">
+																	<path
+																		d="M4 7.5L7 10l4-5m-3.5 9.5a7 7 0 110-14 7 7 0 010 14z"
+																		stroke="currentColor"></path>
+																</svg>
+															) : null}
+														</RowMemberItem>
+													</>
+												)
+											}
+										})}
+								<AddItem
+									dataCheckModal="addmember"
+									handleModal={handleModal}
+								/>
+							</Entities>
+						)
+					})}
 			</Layout>
 			<BottomBar variant="Trainer" />
 

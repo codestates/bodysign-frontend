@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface RowMemberItemProps {
-	memberId: string
+	memberId: number
 	children: React.ReactNode
 }
 

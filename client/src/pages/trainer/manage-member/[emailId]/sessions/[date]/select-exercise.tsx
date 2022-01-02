@@ -6,7 +6,6 @@ import React, { useRef } from 'react'
 import Layout from '../../../../../../components/Layout'
 import Loading from '../../../../../../components/Loading'
 import {
-	Exercise,
 	useCreateSessionExerciseMutation,
 	useTrainerQuery
 } from '../../../../../../generated/graphql'
@@ -26,23 +25,6 @@ const Exercise: NextPage = () => {
 		variables: { id: userData?.id as number }
 	})
 	const [createSessionExercise] = useCreateSessionExerciseMutation()
-
-	const selectExerciseObject: Record<string, any> = {}
-	if (!loading && data) {
-		const exerciseCategories = data.trainer.exerciseCategories
-		if (exerciseCategories) {
-			for (let i = 0; i < exerciseCategories.length; i++) {
-				const exerciseCategoryName = exerciseCategories[i]?.name as string
-				if (selectExerciseObject[exerciseCategoryName] === undefined) {
-					selectExerciseObject[exerciseCategoryName] = []
-				}
-				const exercise = exerciseCategories[i]?.exercises
-				if (exercise) {
-					selectExerciseObject[exerciseCategoryName] = [...exercise!]
-				}
-			}
-		}
-	}
 
 	if (loading) return <Loading />
 	return (
@@ -128,47 +110,52 @@ const Exercise: NextPage = () => {
 					)}
 				</div> */}
 
-				{Object.entries(selectExerciseObject).map((category, idx) => {
-					return (
-						<React.Fragment key={idx}>
-							<div className="mt-[2.4rem]">
-								<div
-									className="text-[1.8rem] font-semibold"
-									ref={span => {
-										refs.current[idx] = span
-									}}>
-									{category[0]}
+				{data &&
+					data.trainer.exerciseCategories &&
+					data.trainer.exerciseCategories.map((exerciseCategory, idx) => {
+						return (
+							<React.Fragment key={idx}>
+								<div className="mt-[2.4rem]">
+									<div
+										className="text-[1.8rem] font-semibold"
+										ref={span => {
+											refs.current[idx] = span
+										}}>
+										{exerciseCategory?.name}
+									</div>
+									{exerciseCategory?.exercises &&
+										exerciseCategory.exercises.map(exercise => {
+											if (exercise) {
+												return (
+													<React.Fragment key={exercise.id}>
+														<div
+															className={`h-[7rem] flex justify-center items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md hover:ring-4 hover:ring-[#FDAD00] cursor-pointer ${
+																exercise.name ===
+																sessionExerciseInput.exerciseName
+																	? 'bg-[#FDAD00]'
+																	: ''
+															}`}
+															onClick={e => {
+																if (
+																	e !== null &&
+																	e.target instanceof HTMLElement
+																) {
+																	sessionExerciseInputVar({
+																		...sessionExerciseInput,
+																		exerciseName: exercise.name
+																	})
+																}
+															}}>
+															<div>{exercise.name}</div>
+														</div>
+													</React.Fragment>
+												)
+											}
+										})}
 								</div>
-								{category[1].map((exercise: Exercise) => {
-									return (
-										<React.Fragment key={exercise.id}>
-											<div
-												className={`h-[7rem] flex justify-center items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md hover:ring-4 hover:ring-[#FDAD00] cursor-pointer ${
-													exercise.name ===
-													sessionExerciseInput.exerciseName
-														? 'bg-[#FDAD00]'
-														: ''
-												}`}
-												onClick={e => {
-													if (
-														e !== null &&
-														e.target instanceof HTMLElement
-													) {
-														sessionExerciseInputVar({
-															...sessionExerciseInput,
-															exerciseName: exercise.name
-														})
-													}
-												}}>
-												<div>{exercise.name}</div>
-											</div>
-										</React.Fragment>
-									)
-								})}
-							</div>
-						</React.Fragment>
-					)
-				})}
+							</React.Fragment>
+						)
+					})}
 			</Layout>
 		</>
 	)

@@ -2,11 +2,12 @@ import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import AddCategoryIcon from '../../../components/atoms/icons/AddCategoryIcon'
 import Layout from '../../../components/Layout'
 import Loading from '../../../components/Loading'
+import AddItem from '../../../components/molecules/Entities/AddItem'
 import BottomBar from '../../../components/organisms/BottomBar'
 import {
-	Exercise as ExerciseType,
 	TrainerDocument,
 	useCreateExerciseCategoryMutation,
 	useCreateExerciseMutation,
@@ -14,12 +15,6 @@ import {
 	useTrainerQuery
 } from '../../../generated/graphql'
 import { modalVar, userDataVar } from '../../../graphql/vars'
-
-// interface Exercise {
-// 	id: number
-// 	name: string
-// 	isChecked: boolean
-// }
 
 interface FormInput {
 	exerciseName: string
@@ -87,20 +82,12 @@ const Exercise: NextPage = () => {
 		}
 	}
 
-	const exerciseObject: Record<string, any> = {}
-	if (!loading && data) {
-		const exerciseCategories = data.trainer.exerciseCategories
-		if (exerciseCategories) {
-			for (let i = 0; i < exerciseCategories.length; i++) {
-				const exerciseCategoryName = exerciseCategories[i]?.name as string
-				if (exerciseObject[exerciseCategoryName] === undefined) {
-					exerciseObject[exerciseCategoryName] = []
-				}
-				const exercise = exerciseCategories[i]?.exercises
-				if (exercise) {
-					exerciseObject[exerciseCategoryName] = [...exercise!]
-				}
-			}
+	const handleModal = (
+		e: React.MouseEvent<HTMLDivElement, MouseEvent>
+	) => {
+		if (e !== null && e.target instanceof HTMLDivElement) {
+			setCheckModal(e.target.dataset.checkModal as string)
+			modalVar(true)
 		}
 	}
 
@@ -115,30 +102,7 @@ const Exercise: NextPage = () => {
 					<span className="flex">
 						{!readyDelete ? (
 							<>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="cursor-pointer w-[2.8rem] h-[2.8rem]"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									data-check-modal="addcategory"
-									onClick={e => {
-										if (e !== null && e.target instanceof SVGElement) {
-											{
-												setCheckModal(
-													e.target.dataset.checkModal as string
-												)
-											}
-										}
-										modalVar(true)
-									}}>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-									/>
-								</svg>
+								<AddCategoryIcon handleModal={handleModal} />
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									className="ml-[0.8rem] cursor-pointer w-[2.8rem] h-[2.8rem]"
@@ -195,93 +159,82 @@ const Exercise: NextPage = () => {
 					</span>
 				</div>
 
-				{Object.entries(exerciseObject).map((category, idx) => {
-					const deleteItemId = Array.from(deleteLists)[0]
-					return (
-						<React.Fragment key={idx}>
-							<div className="mt-[2.4rem]">
-								<div className="font-semibold text-[1.8rem]">
-									{category[0]}
-								</div>
-								{category[1].map((exercise: ExerciseType) => {
-									return (
-										<React.Fragment key={exercise.id}>
-											<div
-												className={`flex justify-center h-[7rem] mt-[0.8rem] border text-[1.8rem] text-center rounded-full shadow-md bg-white ${
-													!readyDelete ? '' : 'cursor-pointer'
-												} ${exercise.id === deleteItemId ? 'ring-2' : ''}
-													`}
-												data-id={exercise.id}
-												onClick={
-													!readyDelete
-														? undefined
-														: e => {
-																if (
-																	e !== null &&
-																	e.target instanceof HTMLElement
-																) {
-																	// 운동 삭제 step 1
-																	if (e.target.dataset.id) {
-																		const id = +e.target.dataset.id
-																		// 하나만 가능한 조건
-																		if (deleteLists.size > 0) {
-																			setDeleteLists(prev => new Set())
-																		}
-																		if (deleteLists.has(id)) {
-																			setDeleteLists(
-																				prev =>
-																					new Set(
-																						[...prev].filter(
-																							el => el !== id
+				{data &&
+					data.trainer.exerciseCategories &&
+					data.trainer.exerciseCategories.map((exerciseCategory, idx) => {
+						const deleteItemId = Array.from(deleteLists)[0]
+						return (
+							<React.Fragment key={idx}>
+								<div className="mt-[2.4rem]">
+									<div className="font-semibold text-[1.8rem]">
+										{exerciseCategory?.name}
+									</div>
+									{exerciseCategory?.exercises &&
+										exerciseCategory.exercises.map(exercise => {
+											if (exercise) {
+												return (
+													<React.Fragment key={exercise.id}>
+														<div
+															className={`flex justify-center h-[7rem] mt-[0.8rem] border text-[1.8rem] text-center rounded-full shadow-md bg-white ${
+																!readyDelete ? '' : 'cursor-pointer'
+															} ${
+																exercise.id === deleteItemId
+																	? 'ring-2'
+																	: ''
+															}
+														`}
+															data-id={exercise.id}
+															onClick={
+																!readyDelete
+																	? undefined
+																	: e => {
+																			if (
+																				e !== null &&
+																				e.target instanceof HTMLElement
+																			) {
+																				// 운동 삭제 step 1
+																				if (e.target.dataset.id) {
+																					const id = +e.target.dataset.id
+																					// 하나만 가능한 조건
+																					if (deleteLists.size > 0) {
+																						setDeleteLists(
+																							prev => new Set()
 																						)
-																					)
-																			)
-																		} else {
-																			setDeleteLists(
-																				prev => new Set(prev.add(id))
-																			)
-																		}
-																	}
-																}
-														  }
-												}>
-												<span className="self-center">
-													{exercise.name}
-												</span>
-											</div>
-										</React.Fragment>
-									)
-								})}
-								<div className="flex justify-center py-[2rem] text-[1.8rem] mt-[0.8rem] bg-white rounded-full shadow-md border">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										className="w-[2.8rem] h-[2.8rem] text-[#9F9F9F]"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
-										data-check-modal="addexercise"
-										onClick={e => {
-											if (e !== null && e.target instanceof SVGElement) {
-												{
-													setCheckModal(
-														e.target.dataset.checkModal as string
-													)
-												}
+																					}
+																					if (deleteLists.has(id)) {
+																						setDeleteLists(
+																							prev =>
+																								new Set(
+																									[...prev].filter(
+																										el => el !== id
+																									)
+																								)
+																						)
+																					} else {
+																						setDeleteLists(
+																							prev => new Set(prev.add(id))
+																						)
+																					}
+																				}
+																			}
+																	  }
+															}>
+															<span className="self-center">
+																{exercise.name}
+															</span>
+														</div>
+													</React.Fragment>
+												)
 											}
-											modalVar(true)
-										}}>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M12 4v16m8-8H4"
-										/>
-									</svg>
+										})}
+									<AddItem
+										dataCheckModal="addexercise"
+										handleModal={handleModal}
+									/>
 								</div>
-							</div>
-						</React.Fragment>
-					)
-				})}
+							</React.Fragment>
+						)
+					})}
 			</Layout>
 			<BottomBar variant="Trainer" />
 

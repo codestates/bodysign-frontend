@@ -72,6 +72,14 @@ query Trainer($id: Int!) {
 				userName
 				gender
 				graduate
+				sessionHistories {
+					id
+					date
+					costPerSession
+					totalCount
+					usedCount
+					commission
+				}
 			}
 		}
 	}
