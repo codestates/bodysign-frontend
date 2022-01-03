@@ -5,7 +5,6 @@ import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import Layout from '../../../components/Layout'
 import Loading from '../../../components/Loading'
 import { useTrainerQuery } from '../../../generated/graphql'
 import { modalVar, userDataVar } from '../../../graphql/vars'
@@ -147,67 +146,65 @@ const Sales: NextPage = () => {
 	if (loading) return <Loading />
 	return (
 		<>
-			<Layout>
-				<div className="flex items-center justify-between">
-					<span className="flex text-[3.2rem]">
-						<Link href="/trainer/menu" passHref>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M10 19l-7-7m0 0l7-7m-7 7h18"
-								/>
-							</svg>
-						</Link>
-						<div className="ml-[0.8rem] font-bold">매출 조회</div>
-					</span>
-				</div>
-
-				<div className="mt-[2.4rem]">
-					<canvas ref={canvasRef} height="400"></canvas>
-				</div>
-
-				<div className="mt-[2.4rem] text-[1.8rem]">
-					<form className="flex flex-col" onSubmit={e => handleSubmit(e)}>
-						<div className="flex items-center justify-around">
-							<DatePicker
-								className="w-[12rem] p-[0.8rem] border text-center mr-[0.8rem] rounded-2xl"
-								selected={startDate}
-								onChange={date => setStartDate(date as Date)}
-								selectsStart
-								startDate={startDate}
-								endDate={endDate}
+			<div className="flex items-center justify-between">
+				<span className="flex text-[3.2rem]">
+					<Link href="/trainer/menu" passHref>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M10 19l-7-7m0 0l7-7m-7 7h18"
 							/>
-							~
-							<DatePicker
-								className="w-[12rem] p-[0.8rem] border text-center ml-[0.8rem] rounded-2xl"
-								selected={endDate}
-								onChange={date => setEndDate(date as Date)}
-								selectsEnd
-								startDate={startDate}
-								endDate={endDate}
-								minDate={startDate}
-							/>
-							<button
-								className="p-[0.8rem] bg-[#FDAD00] border rounded-2xl"
-								type="submit">
-								조회
-							</button>
+						</svg>
+					</Link>
+					<div className="ml-[0.8rem] font-bold">매출 조회</div>
+				</span>
+			</div>
+
+			<div className="mt-[2.4rem]">
+				<canvas ref={canvasRef} height="400"></canvas>
+			</div>
+
+			<div className="mt-[2.4rem] text-[1.8rem]">
+				<form className="flex flex-col" onSubmit={e => handleSubmit(e)}>
+					<div className="flex items-center justify-around">
+						<DatePicker
+							className="w-[12rem] p-[0.8rem] border text-center mr-[0.8rem] rounded-2xl"
+							selected={startDate}
+							onChange={date => setStartDate(date as Date)}
+							selectsStart
+							startDate={startDate}
+							endDate={endDate}
+						/>
+						~
+						<DatePicker
+							className="w-[12rem] p-[0.8rem] border text-center ml-[0.8rem] rounded-2xl"
+							selected={endDate}
+							onChange={date => setEndDate(date as Date)}
+							selectsEnd
+							startDate={startDate}
+							endDate={endDate}
+							minDate={startDate}
+						/>
+						<button
+							className="p-[0.8rem] bg-[#FDAD00] border rounded-2xl"
+							type="submit">
+							조회
+						</button>
+					</div>
+					{rangeFilterResult === 0 ? null : (
+						<div className="self-end text-[2rem] mt-[1.2rem] text-[#9F9F9F]">
+							총액: {rangeFilterResult}원
 						</div>
-						{rangeFilterResult === 0 ? null : (
-							<div className="self-end text-[2rem] mt-[1.2rem] text-[#9F9F9F]">
-								총액: {rangeFilterResult}원
-							</div>
-						)}
-					</form>
-				</div>
-			</Layout>
+					)}
+				</form>
+			</div>
 
 			<div className="flex flex-col mt-[2.4rem] text-[1.4rem] font-thin font-IBM">
 				<div className="border-b border-gray-200">
@@ -279,25 +276,25 @@ const Sales: NextPage = () => {
 			</div>
 
 			{modal ? (
-				<div className="font-IBM fixed max-w-[450px] w-full bottom-0">
+				<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
 					<div
 						className="fixed inset-0 z-[-1] bg-black opacity-20"
 						onClick={() => modalVar(false)}></div>
-					<div className="bg-white flex z-[50] h-full flex-col py-10">
-						<div className="p-3 text-center text-[20px] font-bold">
+					<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[1.6rem]">
+						<div className="text-[3.2rem] font-bold">
 							{date.split('.')[1].replace(/^0/, '')}월 매출
 						</div>
-						<div className="mt-4 border-b border-gray-200">
+						<div className="mt-[2.4rem] border-b border-gray-200">
 							<table className="min-w-full divide-y divide-gray-200">
 								<thead className="bg-gray-50">
 									<tr>
-										<th className="p-3 text-xs text-left text-gray-500">
+										<th className="p-[1.2rem] text-xs text-left text-gray-500">
 											날짜
 										</th>
-										<th className="p-3 text-xs text-left text-gray-500">
+										<th className="p-[1.2rem] text-xs text-left text-gray-500">
 											회원명
 										</th>
-										<th className="p-3 text-xs text-left text-gray-500">
+										<th className="p-[1.2rem] text-xs text-left text-gray-500">
 											총액
 										</th>
 									</tr>
@@ -314,13 +311,15 @@ const Sales: NextPage = () => {
 											return (
 												<React.Fragment key={sessionHistory.id}>
 													<tr>
-														<td className="p-3 text-[12px] text-gray-500">
-															{sessionHistory.date.split('T')[0]}
+														<td className="p-[1.2rem] text-[12px] text-gray-500">
+															{sessionHistory.date
+																.split('T')[0]
+																.replace(/\-/g, '.')}
 														</td>
-														<td className="p-3 text-[12px] text-gray-500">
+														<td className="p-[1.2rem] text-[12px] text-gray-500">
 															{sessionHistory.user.userName}
 														</td>
-														<td className="p-3 text-[12px] text-gray-500">
+														<td className="p-[1.2rem] text-[12px] text-gray-500">
 															{sessionHistory.costPerSession *
 																sessionHistory.totalCount}
 															원
@@ -333,9 +332,9 @@ const Sales: NextPage = () => {
 							</table>
 						</div>
 
-						<div className="max-w-[450px] self-end mt-4 mr-4">
+						<div className="flex justify-between mt-[2.4rem]">
 							<button
-								className="px-4 py-3 bg-yellow-100 border"
+								className="w-full p-[1.2rem] bg-[#FED06E] border shadow-md rounded-3xl"
 								onClick={() => modalVar(false)}>
 								확인
 							</button>

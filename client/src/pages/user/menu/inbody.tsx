@@ -4,7 +4,6 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useEffect, useRef } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import Layout from '../../../components/Layout'
 import Loading from '../../../components/Loading'
 import { useCreateInbodyMutation } from '../../../generated/graphql'
 import { UserDocument } from '../../../graphql/graphql'
@@ -107,32 +106,30 @@ const Inbody: NextPage = () => {
 	if (loading) return <Loading />
 	return (
 		<>
-			<Layout>
-				<div className="flex items-center justify-between">
-					<span className="flex text-[3.2rem] items-center">
-						<Link href="/user/menu" passHref>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M10 19l-7-7m0 0l7-7m-7 7h18"
-								/>
-							</svg>
-						</Link>
-						<div className="ml-[0.8rem] font-bold">인바디</div>
-					</span>
-				</div>
+			<div className="flex items-center justify-between">
+				<span className="flex text-[3.2rem] items-center">
+					<Link href="/user/menu" passHref>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M10 19l-7-7m0 0l7-7m-7 7h18"
+							/>
+						</svg>
+					</Link>
+					<div className="ml-[0.8rem] font-bold">인바디</div>
+				</span>
+			</div>
 
-				<div className="mt-[2.4rem]">
-					<canvas ref={canvasRef} height="400"></canvas>
-				</div>
-			</Layout>
+			<div className="mt-[2.4rem]">
+				<canvas ref={canvasRef} height="400"></canvas>
+			</div>
 
 			<div className="flex flex-col mt-[2.4rem] text-[1.4rem] font-thin font-IBM">
 				<div className="border-b border-gray-200">
@@ -194,12 +191,12 @@ const Inbody: NextPage = () => {
 			</div>
 
 			{modal ? (
-				<div className="fixed bottom-0 w-full font-IBM">
+				<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
 					<div
 						className="fixed inset-0 z-[-1] bg-black opacity-20"
 						onClick={() => modalVar(false)}></div>
 					<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[2rem]">
-						<div className="text-[3.2rem] text-bold">인바디 등록</div>
+						<div className="text-[3.2rem] font-bold">인바디 등록</div>
 						<form
 							className="flex flex-col mt-[2.4rem]"
 							onSubmit={handleSubmit(onSubmit)}>

@@ -2,9 +2,7 @@ import { useQuery, useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import React from 'react'
-import Layout from '../../../components/Layout'
 import Loading from '../../../components/Loading'
-import BottomBar from '../../../components/organisms/BottomBar'
 import { UserDocument } from '../../../graphql/graphql'
 import {
 	sessionExerciseInputVar,
@@ -61,66 +59,63 @@ const Session: NextPage = () => {
 	if (loading) return <Loading />
 	return (
 		<>
-			<Layout>
-				<div className="flex items-center justify-between">
-					<span className="flex text-[3.2rem]">
-						<div className="font-bold">수업기록</div>
-					</span>
-				</div>
+			<div className="flex items-center justify-between">
+				<span className="flex text-[3.2rem]">
+					<div className="font-bold">수업기록</div>
+				</span>
+			</div>
 
-				{Object.entries(sessionObject).map((entry, idx) => {
-					const date = entry[0].split('-')
-					return (
-						<React.Fragment key={idx}>
-							<div className="mt-[2.4rem]">
-								<div className="text-[1.8rem] font-semibold">
-									{`${date[0]}.${date[1]}`}
-								</div>
-								{entry[1].map(session => {
-									const date = new Date(session.date)
-									let hours = date.getHours() + ''
-									if (hours.length === 1) {
-										hours = 0 + hours
-									}
-									let minutes = date.getMinutes() + ''
-									if (minutes.length === 1) {
-										minutes = 0 + minutes
-									}
-									return (
-										<React.Fragment key={session.id}>
-											<div
-												className={`h-[7rem] flex justify-around items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white	`}
-												onClick={e => {
-													if (
-														e !== null &&
-														e.target instanceof HTMLElement
-													) {
-														sessionExerciseInputVar({
-															...sessionExerciseInput,
-															sessionId: session.id
-														})
-														router.push(
-															`/user/session/${session.date.split('T')[0]}`
-														)
-													}
-												}}>
-												<span>
-													{session.date.split('T')[0].replace(/\-/g, '.')}{' '}
-													({week[new Date(session.date).getDay()]})
-												</span>
-												<span>{`${hours}:${
-													minutes === '0' ? '00' : minutes
-												}`}</span>
-											</div>
-										</React.Fragment>
-									)
-								})}
+			{Object.entries(sessionObject).map((entry, idx) => {
+				const date = entry[0].split('-')
+				return (
+					<React.Fragment key={idx}>
+						<div className="mt-[2.4rem]">
+							<div className="text-[1.8rem] font-semibold">
+								{`${date[0]}.${date[1]}`}
 							</div>
-						</React.Fragment>
-					)
-				})}
-			</Layout>
-			<BottomBar variant="Member" />
+							{entry[1].map(session => {
+								const date = new Date(session.date)
+								let hours = date.getHours() + ''
+								if (hours.length === 1) {
+									hours = 0 + hours
+								}
+								let minutes = date.getMinutes() + ''
+								if (minutes.length === 1) {
+									minutes = 0 + minutes
+								}
+								return (
+									<React.Fragment key={session.id}>
+										<div
+											className={`h-[7rem] flex justify-around items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white	`}
+											onClick={e => {
+												if (
+													e !== null &&
+													e.target instanceof HTMLElement
+												) {
+													sessionExerciseInputVar({
+														...sessionExerciseInput,
+														sessionId: session.id
+													})
+													router.push(
+														`/user/session/${session.date.split('T')[0]}`
+													)
+												}
+											}}>
+											<span>
+												{session.date.split('T')[0].replace(/\-/g, '.')} (
+												{week[new Date(session.date).getDay()]})
+											</span>
+											<span>{`${hours}:${
+												minutes === '0' ? '00' : minutes
+											}`}</span>
+										</div>
+									</React.Fragment>
+								)
+							})}
+						</div>
+					</React.Fragment>
+				)
+			})}
 		</>
 	)
 }

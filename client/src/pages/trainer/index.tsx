@@ -4,9 +4,7 @@ import type { NextPage } from 'next'
 import Image from 'next/image'
 import React, { useCallback, useEffect, useState } from 'react'
 import logo from '../../../public/logo.svg'
-import Layout from '../../components/Layout'
 import Loading from '../../components/Loading'
-import BottomBar from '../../components/organisms/BottomBar'
 import { useTrainerQuery } from '../../generated/graphql'
 import { accessTokenVar, userDataVar } from '../../graphql/vars'
 // TODO: CSS 애니메이션 꾸미기
@@ -96,64 +94,61 @@ const Main: NextPage = () => {
 	if (loading) return <Loading />
 	return (
 		<>
-			<Layout>
-				<div className="flex w-full text-[3.2rem] font-IBM">
-					<Image src={logo} width="50" height="50" alt="logo" />
-					<span className="ml-[0.8rem] text-[#FDAD00] font-bold">
-						Bodysign
-					</span>
+			<div className="flex w-full text-[3.2rem] font-IBM">
+				<Image src={logo} width="50" height="50" alt="logo" />
+				<span className="ml-[0.8rem] text-[#FDAD00] font-bold">
+					Bodysign
+				</span>
+			</div>
+			<div className="flex flex-col font-IBM">
+				<div className="font-extrabold text-[2.4rem] mt-[4rem]">
+					{/* 체중, 골격근량, 체지방 보여주기 */}
+					{/* 이 때 CSS 애니메이션 추가가 필요 */}
+					{`안녕하세요. 김창동 선생님!`}
+					<br />
+					<br />
+					{`이번 달 정산 금액은`}
+					<br />
+					{`2,000,000원 입니다.`}
 				</div>
-				<div className="flex flex-col font-IBM">
-					<div className="font-extrabold text-[2.4rem] mt-[4rem]">
-						{/* 체중, 골격근량, 체지방 보여주기 */}
-						{/* 이 때 CSS 애니메이션 추가가 필요 */}
-						{`안녕하세요. 김창동 선생님!`}
-						<br />
-						<br />
-						{`이번 달 정산 금액은`}
-						<br />
-						{`2,000,000원 입니다.`}
+				<div className="bottom-2 mt-[300px] mb-2 width-full">
+					<div className="font-bold text-[20px] mb-3">
+						오늘 예정된 수업
 					</div>
-					<div className="bottom-2 mt-[300px] mb-2 width-full">
-						<div className="font-bold text-[20px] mb-3">
-							오늘 예정된 수업
+					<div className="text-[22px] font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
+						<div className="inline-block p-1 mx-3 font-bold">
+							{'권오연 회원님'}
 						</div>
-						<div className="text-[22px] font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
-							<div className="inline-block p-1 mx-3 font-bold">
-								{'권오연 회원님'}
-							</div>
-							<div className="inline-block float-right p-1 mx-3 font-bold">
-								{classData.time}
-							</div>
+						<div className="inline-block float-right p-1 mx-3 font-bold">
+							{classData.time}
 						</div>
-						<div className="text-[22px] font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
-							<div className="inline-block p-1 mx-3 font-bold">
-								{'장수민 회원님'}
-							</div>
-							<div className="inline-block float-right p-1 mx-3 font-bold">
-								{'17:00'}
-							</div>
+					</div>
+					<div className="text-[22px] font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
+						<div className="inline-block p-1 mx-3 font-bold">
+							{'장수민 회원님'}
 						</div>
-						<div className="text-[22px] font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
-							<div className="inline-block p-1 mx-3 font-bold">
-								{'최원준 회원님'}
-							</div>
-							<div className="inline-block float-right p-1 mx-3 font-bold">
-								{'19:00'}
-							</div>
+						<div className="inline-block float-right p-1 mx-3 font-bold">
+							{'17:00'}
 						</div>
-						<div className="text-[22px] font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
-							<div className="inline-block p-1 mx-3 font-bold">
-								{'황현수 회원님'}
-							</div>
-							<div className="inline-block float-right p-1 mx-3 font-bold">
-								{'21:00'}
-							</div>
+					</div>
+					<div className="text-[22px] font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
+						<div className="inline-block p-1 mx-3 font-bold">
+							{'최원준 회원님'}
+						</div>
+						<div className="inline-block float-right p-1 mx-3 font-bold">
+							{'19:00'}
+						</div>
+					</div>
+					<div className="text-[22px] font-medium border border-gray-300 bg-gray-50 rounded-3xl p-2 items-center m-1 width-full">
+						<div className="inline-block p-1 mx-3 font-bold">
+							{'황현수 회원님'}
+						</div>
+						<div className="inline-block float-right p-1 mx-3 font-bold">
+							{'21:00'}
 						</div>
 					</div>
 				</div>
-			</Layout>
-			<BottomBar variant="Trainer" />
+			</div>
 		</>
 	)
 }

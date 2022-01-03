@@ -1,18 +1,16 @@
+import { useMutation, useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
-import React, { useState } from 'react'
-import Layout from '../components/Layout'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import 'react-datepicker/dist/react-datepicker.css'
-import { gql, useMutation, useReactiveVar } from '@apollo/client'
-import { loginTypeVar, modalVar } from '../graphql/vars'
 import { useRouter } from 'next/dist/client/router'
+import React, { useState } from 'react'
+import 'react-datepicker/dist/react-datepicker.css'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import {
 	CreateSocialTrainer,
 	CreateSocialUser,
 	CreateTrainerDocument,
 	CreateUserDocument
 } from '../graphql/graphql'
-import { Cookies } from "react-cookie"
+import { loginTypeVar, modalVar } from '../graphql/vars'
 
 interface FormInput {
 	email: string | undefined | string[]
@@ -28,7 +26,6 @@ const labelProperties =
 	'after:absolute after:border after:h-[4.8rem] after:bg-[#FDAD00] after:p-[1.2rem] after:w-full after:-top-0 after:z-[-1] after:transition-[left] after:duration-500 after:rounded-[2rem] peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
 
 const Signup: NextPage<FormInput> = () => {
-
 	const router = useRouter()
 	const queryLoginType = router.query.logintype
 	const googleEmail = router.query.email
@@ -134,24 +131,23 @@ const Signup: NextPage<FormInput> = () => {
 
 	return (
 		<>
-			<Layout>
-				<div>
-					<div className="text-[3.2rem] text-left font-bold">회원가입</div>
-					<form
-						className="mt-[2.4rem] text-[1.8rem]"
-						onSubmit={handleSubmit(onSubmit)}>
-						{queryLoginType === 'google' ? (
-							<div>
-								<label>이메일</label>
-								<input
-									className="w-full p-[1.2rem] mt-[0.4rem] text-gray-400 border outline-none h-[4.8rem] rounded-[2rem]"
-									type="text"
-									value={googleEmail}
-									readOnly
-								/>
-							</div>
-						) : (
-							<>
+			<div>
+				<div className="text-[3.2rem] text-left font-bold">회원가입</div>
+				<form
+					className="mt-[2.4rem] text-[1.8rem]"
+					onSubmit={handleSubmit(onSubmit)}>
+					{queryLoginType === 'google' ? (
+						<div>
+							<label>이메일</label>
+							<input
+								className="w-full p-[1.2rem] mt-[0.4rem] text-gray-400 border outline-none h-[4.8rem] rounded-[2rem]"
+								type="text"
+								value={googleEmail}
+								readOnly
+							/>
+						</div>
+					) : (
+						<>
 							<div>
 								<label>이메일</label>
 								<input
@@ -205,206 +201,205 @@ const Signup: NextPage<FormInput> = () => {
 									</div>
 								)}
 							</div>
-							</>
-						)}
-						<div className="mt-[1.6rem]">
-							<label>이름</label>
+						</>
+					)}
+					<div className="mt-[1.6rem]">
+						<label>이름</label>
+						<input
+							className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
+							type="text"
+							{...register('userName', {
+								required: true
+							})}
+						/>
+					</div>
+
+					<div className="mt-[1.6rem]">
+						<span>
 							<input
-								className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
-								type="text"
-								{...register('userName', {
+								className="hidden peer"
+								type="radio"
+								id="male"
+								value="male"
+								defaultChecked
+								{...register('gender', {
 									required: true
 								})}
 							/>
-						</div>
-
-						<div className="mt-[1.6rem]">
-							<span>
-								<input
-									className="hidden peer"
-									type="radio"
-									id="male"
-									value="male"
-									defaultChecked
-									{...register('gender', {
-										required: true
-									})}
-								/>
-								<label
-									className={`${labelProperties} h-[4.8rem] rounded-l-[2rem] w-1/2 text-center p-[1.2rem] inline-block relative border border-r-0 cursor-pointer after:left-full after:border-r-0`}
-									htmlFor="male">
-									남성
-								</label>
-							</span>
-							<span>
-								<input
-									className="hidden peer"
-									type="radio"
-									id="female"
-									value="female"
-									{...register('gender', {
-										required: true
-									})}
-								/>
-								<label
-									className={`${labelProperties} h-[4.8rem] rounded-r-[2rem] w-1/2 text-center p-[1.2rem] inline-block relative border border-l-0 cursor-pointer after:-left-full after:border-l-0`}
-									htmlFor="female">
-									여성
-								</label>
-							</span>
-						</div>
-
-						<div className="mt-[1.6rem]">
-							<span>
-								<input
-									className="hidden peer"
-									type="radio"
-									id="trainer"
-									value="trainer"
-									defaultChecked
-									{...register('loginType', {
-										required: true
-									})}
-									onClick={() => setAreYouTrainer(true)}
-								/>
-								<label
-									className={`${labelProperties} h-[4.8rem] rounded-l-[2rem] w-1/2 text-center p-[1.2rem] inline-block relative border border-r-0 cursor-pointer after:left-full`}
-									htmlFor="trainer">
-									트레이너
-								</label>
-							</span>
-							<span>
-								<input
-									className="hidden peer"
-									type="radio"
-									id="user"
-									value="user"
-									{...register('loginType', {
-										required: true
-									})}
-									onClick={() => setAreYouTrainer(false)}
-								/>
-								<label
-									className={`${labelProperties} h-[4.8rem] rounded-r-[2rem] w-1/2 text-center p-[1.2rem] inline-block relative border border-l-0 cursor-pointer after:-left-full`}
-									htmlFor="user">
-									회원
-								</label>
-							</span>
-						</div>
-
-						{areYouTrainer ? (
-							<div className="flex flex-col mt-[1.6rem]">
-								<div className="grid grid-cols-3 gap-[1.2rem]">
-									{interestedTypes.map(type => {
-										return (
-											<React.Fragment key={type.id}>
-												<span
-													className={`py-[0.8rem] px-[2rem] border rounded-[2rem] text-[1.6rem] text-center ${
-														interestedTypes[type.id].status
-															? 'bg-[#FDAD00]'
-															: ''
-													}`}
-													data-id={type.id}
-													onClick={e => {
-														if (
-															e !== null &&
-															e.target instanceof HTMLElement
-														) {
-															const idx = Number(e.target.dataset.id)
-															if (interestedTypes[idx].status) {
-																setInterestedTypes(
-																	interestedTypes.map(type => {
-																		if (type.id === idx) {
-																			type.status = false
-																		}
-																		return type
-																	})
-																)
-															} else {
-																setInterestedTypes(
-																	interestedTypes.map(type => {
-																		if (type.id === idx) {
-																			type.status = true
-																		}
-																		return type
-																	})
-																)
-															}
-														}
-													}}>
-													{type.name}
-												</span>
-											</React.Fragment>
-										)
-									})}
-								</div>
-							</div>
-						) : (
-							<>
-								<div className="mt-[1.6rem]">
-									<label>생년월일</label>
-									<input
-										className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
-										type="date"
-										{...register('birthDate', {
-											required: true
-										})}
-									/>
-								</div>
-
-								<div className="mt-[1.6rem]">
-									<label>휴대폰 번호</label>
-									<input
-										className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
-										type="text"
-										{...register('phoneNumber', {
-											required: true,
-											pattern: /^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/
-										})}
-									/>
-									{errors.phoneNumber && (
-										<div className="text-[16px] text-red-500 mt-[0.4rem] text-center">
-											붙임표(-)는 제외하고 입력해주세요.
-										</div>
-									)}
-								</div>
-							</>
-						)}
-
-						<div className="flex items-center mt-[1.6rem]">
+							<label
+								className={`${labelProperties} h-[4.8rem] rounded-l-[2rem] w-1/2 text-center p-[1.2rem] inline-block relative border border-r-0 cursor-pointer after:left-full after:border-r-0`}
+								htmlFor="male">
+								남성
+							</label>
+						</span>
+						<span>
 							<input
-								className="mr-[0.4rem]"
-								type="checkbox"
-								onChange={e => {
-									setCheckedPersonalInfo(e.target.checked)
-								}}
+								className="hidden peer"
+								type="radio"
+								id="female"
+								value="female"
+								{...register('gender', {
+									required: true
+								})}
 							/>
-							<p
-								className="underline"
-								onClick={() => {
-									modalVar(true)
-								}}>
-								개인정보 수집 및 이용동의 (필수)
-							</p>
-						</div>
+							<label
+								className={`${labelProperties} h-[4.8rem] rounded-r-[2rem] w-1/2 text-center p-[1.2rem] inline-block relative border border-l-0 cursor-pointer after:-left-full after:border-l-0`}
+								htmlFor="female">
+								여성
+							</label>
+						</span>
+					</div>
 
+					<div className="mt-[1.6rem]">
+						<span>
+							<input
+								className="hidden peer"
+								type="radio"
+								id="trainer"
+								value="trainer"
+								defaultChecked
+								{...register('loginType', {
+									required: true
+								})}
+								onClick={() => setAreYouTrainer(true)}
+							/>
+							<label
+								className={`${labelProperties} h-[4.8rem] rounded-l-[2rem] w-1/2 text-center p-[1.2rem] inline-block relative border border-r-0 cursor-pointer after:left-full`}
+								htmlFor="trainer">
+								트레이너
+							</label>
+						</span>
+						<span>
+							<input
+								className="hidden peer"
+								type="radio"
+								id="user"
+								value="user"
+								{...register('loginType', {
+									required: true
+								})}
+								onClick={() => setAreYouTrainer(false)}
+							/>
+							<label
+								className={`${labelProperties} h-[4.8rem] rounded-r-[2rem] w-1/2 text-center p-[1.2rem] inline-block relative border border-l-0 cursor-pointer after:-left-full`}
+								htmlFor="user">
+								회원
+							</label>
+						</span>
+					</div>
+
+					{areYouTrainer ? (
+						<div className="flex flex-col mt-[1.6rem]">
+							<div className="grid grid-cols-3 gap-[1.2rem]">
+								{interestedTypes.map(type => {
+									return (
+										<React.Fragment key={type.id}>
+											<span
+												className={`py-[0.8rem] px-[2rem] border rounded-[2rem] text-[1.6rem] text-center ${
+													interestedTypes[type.id].status
+														? 'bg-[#FDAD00]'
+														: ''
+												}`}
+												data-id={type.id}
+												onClick={e => {
+													if (
+														e !== null &&
+														e.target instanceof HTMLElement
+													) {
+														const idx = Number(e.target.dataset.id)
+														if (interestedTypes[idx].status) {
+															setInterestedTypes(
+																interestedTypes.map(type => {
+																	if (type.id === idx) {
+																		type.status = false
+																	}
+																	return type
+																})
+															)
+														} else {
+															setInterestedTypes(
+																interestedTypes.map(type => {
+																	if (type.id === idx) {
+																		type.status = true
+																	}
+																	return type
+																})
+															)
+														}
+													}
+												}}>
+												{type.name}
+											</span>
+										</React.Fragment>
+									)
+								})}
+							</div>
+						</div>
+					) : (
+						<>
+							<div className="mt-[1.6rem]">
+								<label>생년월일</label>
+								<input
+									className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
+									type="date"
+									{...register('birthDate', {
+										required: true
+									})}
+								/>
+							</div>
+
+							<div className="mt-[1.6rem]">
+								<label>휴대폰 번호</label>
+								<input
+									className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
+									type="text"
+									{...register('phoneNumber', {
+										required: true,
+										pattern: /^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/
+									})}
+								/>
+								{errors.phoneNumber && (
+									<div className="text-[16px] text-red-500 mt-[0.4rem] text-center">
+										붙임표(-)는 제외하고 입력해주세요.
+									</div>
+								)}
+							</div>
+						</>
+					)}
+
+					<div className="flex items-center mt-[1.6rem]">
 						<input
-							className={`w-full h-[4.8rem] mt-[1.6rem] text-black bg-[#FDAD00] cursor-pointer disabled:opacity-50 rounded-[2rem]`}
-							value="회원가입"
-							type="submit"
-							disabled={checkedPersonalInfo ? false : true}
+							className="mr-[0.4rem]"
+							type="checkbox"
+							onChange={e => {
+								setCheckedPersonalInfo(e.target.checked)
+							}}
 						/>
-					</form>
-				</div>
-			</Layout>
+						<p
+							className="underline"
+							onClick={() => {
+								modalVar(true)
+							}}>
+							개인정보 수집 및 이용동의 (필수)
+						</p>
+					</div>
+
+					<input
+						className={`w-full h-[4.8rem] mt-[1.6rem] text-black bg-[#FDAD00] cursor-pointer disabled:opacity-50 rounded-[2rem]`}
+						value="회원가입"
+						type="submit"
+						disabled={checkedPersonalInfo ? false : true}
+					/>
+				</form>
+			</div>
 
 			{modal ? (
-				<div className="fixed bottom-0 h-full overflow-auto">
+				<div className="fixed bottom-[6.3rem] right-0 h-full overflow-auto">
 					<div
 						className="fixed inset-0 z-[-1] bg-black opacity-20 "
 						onClick={() => modalVar(false)}></div>
 					<div className="flex flex-col p-[2rem] z-[50] bg-white text-[1.4rem]">
-						<div className="text-left text-[2.4rem] text-bold">
+						<div className="text-left text-[2.4rem] font-bold">
 							Bodysign 개인정보처리방침
 						</div>
 

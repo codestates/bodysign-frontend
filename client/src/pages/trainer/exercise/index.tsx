@@ -3,10 +3,8 @@ import { NextPage } from 'next'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import AddCategoryIcon from '../../../components/atoms/icons/AddCategoryIcon'
-import Layout from '../../../components/Layout'
 import Loading from '../../../components/Loading'
 import AddItem from '../../../components/molecules/Entities/AddItem'
-import BottomBar from '../../../components/organisms/BottomBar'
 import {
 	TrainerDocument,
 	useCreateExerciseCategoryMutation,
@@ -94,160 +92,155 @@ const Exercise: NextPage = () => {
 	if (loading) return <Loading />
 	return (
 		<>
-			<Layout>
-				<div className="flex items-center justify-between">
-					<span className="flex text-[3.2rem] font-bold">
-						<div>운동</div>
-					</span>
-					<span className="flex">
-						{!readyDelete ? (
-							<>
-								<AddCategoryIcon handleModal={handleModal} />
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="ml-[0.8rem] cursor-pointer w-[2.8rem] h-[2.8rem]"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									onClick={() => setReadyDelete(true)}>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-									/>
-								</svg>
-							</>
-						) : (
+			<div className="flex items-center justify-between">
+				<span className="flex text-[3.2rem] font-bold">
+					<div>운동</div>
+				</span>
+				<span className="flex">
+					{!readyDelete ? (
+						<>
+							<AddCategoryIcon handleModal={handleModal} />
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="cursor-pointer w-[2.8rem] h-[2.8rem]"
+								className="ml-[0.8rem] cursor-pointer w-[2.8rem] h-[2.8rem]"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
-								onClick={async () => {
-									// 운동 삭제 step 2
-									const deleteItemId = Array.from(deleteLists)[0]
-									if (deleteItemId) {
-										try {
-											await removeExercise({
-												variables: {
-													id: deleteItemId
-												},
-												refetchQueries: [
-													{
-														query: TrainerDocument,
-														variables: { id: userData?.id }
-													}
-												]
-											})
-											deleteLists.clear()
-										} catch (error) {
-											console.log(error)
-										}
-									}
-									setReadyDelete(false)
-								}}>
+								onClick={() => setReadyDelete(true)}>
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
 									strokeWidth={2}
-									d="M5 13l4 4L19 7"
+									d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
 								/>
 							</svg>
-						)}
-					</span>
-				</div>
+						</>
+					) : (
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="cursor-pointer w-[2.8rem] h-[2.8rem]"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+							onClick={async () => {
+								// 운동 삭제 step 2
+								const deleteItemId = Array.from(deleteLists)[0]
+								if (deleteItemId) {
+									try {
+										await removeExercise({
+											variables: {
+												id: deleteItemId
+											},
+											refetchQueries: [
+												{
+													query: TrainerDocument,
+													variables: { id: userData?.id }
+												}
+											]
+										})
+										deleteLists.clear()
+									} catch (error) {
+										console.log(error)
+									}
+								}
+								setReadyDelete(false)
+							}}>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M5 13l4 4L19 7"
+							/>
+						</svg>
+					)}
+				</span>
+			</div>
 
-				{data &&
-					data.trainer.exerciseCategories &&
-					data.trainer.exerciseCategories.map((exerciseCategory, idx) => {
-						const deleteItemId = Array.from(deleteLists)[0]
-						return (
-							<React.Fragment key={idx}>
-								<div className="mt-[2.4rem]">
-									<div className="font-semibold text-[1.8rem]">
-										{exerciseCategory?.name}
-									</div>
-									{exerciseCategory?.exercises &&
-										exerciseCategory.exercises.map(exercise => {
-											if (exercise) {
-												return (
-													<React.Fragment key={exercise.id}>
-														<div
-															className={`${
-																!readyDelete ? '' : 'cursor-pointer'
-															} ${
-																exercise.id ===
-																deleteLists.keys().next().value
-																	? 'ring-2 ring-[#FED06E]'
-																	: ''
-															} flex justify-center h-[7rem] mt-[0.8rem] border text-[1.8rem] text-center rounded-full shadow-md bg-white hover:ring-2 hover:ring-[#FED06E]`}
-															data-id={exercise.id}
-															onClick={
-																!readyDelete
-																	? undefined
-																	: e => {
-																			if (
-																				e !== null &&
-																				e.target instanceof HTMLElement
-																			) {
-																				// 운동 삭제 step 1
-																				if (e.target.dataset.id) {
-																					const id = +e.target.dataset.id
-																					// 하나만 가능한 조건
-																					if (deleteLists.size > 0) {
-																						setDeleteLists(
-																							prev => new Set()
-																						)
-																					}
-																					if (deleteLists.has(id)) {
-																						setDeleteLists(
-																							prev =>
-																								new Set(
-																									[...prev].filter(
-																										el => el !== id
-																									)
+			{data &&
+				data.trainer.exerciseCategories &&
+				data.trainer.exerciseCategories.map((exerciseCategory, idx) => {
+					const deleteItemId = Array.from(deleteLists)[0]
+					return (
+						<React.Fragment key={idx}>
+							<div className="mt-[2.4rem]">
+								<div className="font-semibold text-[1.8rem]">
+									{exerciseCategory?.name}
+								</div>
+								{exerciseCategory?.exercises &&
+									exerciseCategory.exercises.map(exercise => {
+										if (exercise) {
+											return (
+												<React.Fragment key={exercise.id}>
+													<div
+														className={`${
+															!readyDelete ? '' : 'cursor-pointer'
+														} ${
+															exercise.id ===
+															deleteLists.keys().next().value
+																? 'ring-2 ring-[#FED06E]'
+																: ''
+														} flex justify-center h-[7rem] mt-[0.8rem] border text-[1.8rem] text-center rounded-full shadow-md bg-white hover:ring-2 hover:ring-[#FED06E]`}
+														data-id={exercise.id}
+														onClick={
+															!readyDelete
+																? undefined
+																: e => {
+																		if (
+																			e !== null &&
+																			e.target instanceof HTMLElement
+																		) {
+																			// 운동 삭제 step 1
+																			if (e.target.dataset.id) {
+																				const id = +e.target.dataset.id
+																				// 하나만 가능한 조건
+																				if (deleteLists.size > 0) {
+																					setDeleteLists(prev => new Set())
+																				}
+																				if (deleteLists.has(id)) {
+																					setDeleteLists(
+																						prev =>
+																							new Set(
+																								[...prev].filter(
+																									el => el !== id
 																								)
-																						)
-																					} else {
-																						setDeleteLists(
-																							prev => new Set(prev.add(id))
-																						)
-																					}
+																							)
+																					)
+																				} else {
+																					setDeleteLists(
+																						prev => new Set(prev.add(id))
+																					)
 																				}
 																			}
-																	  }
-															}>
-															<span className="self-center">
-																{exercise.name}
-															</span>
-														</div>
-													</React.Fragment>
-												)
-											}
-										})}
-									{!readyDelete ? (
-										<AddItem
-											dataCheckModal="addexercise"
-											handleModal={handleModal}
-										/>
-									) : null}
-								</div>
-							</React.Fragment>
-						)
-					})}
-			</Layout>
-			<BottomBar variant="Trainer" />
+																		}
+																  }
+														}>
+														<span className="self-center">
+															{exercise.name}
+														</span>
+													</div>
+												</React.Fragment>
+											)
+										}
+									})}
+								{!readyDelete ? (
+									<AddItem
+										dataCheckModal="addexercise"
+										handleModal={handleModal}
+									/>
+								) : null}
+							</div>
+						</React.Fragment>
+					)
+				})}
 
 			{modal ? (
 				checkModal === 'addexercise' ? (
-					<div className="fixed bottom-0 w-full font-IBM">
+					<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
 						<div
 							className="fixed inset-0 z-[-1] bg-black opacity-20"
 							onClick={() => modalVar(false)}></div>
 						<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[1.6rem]">
-							<div className="text-[3.2rem] text-bold">운동 추가</div>
+							<div className="text-[3.2rem] font-bold">운동 추가</div>
 							<form
 								className="flex flex-col mt-[2.4rem]"
 								onSubmit={handleSubmit(onSubmit)}>
@@ -298,12 +291,12 @@ const Exercise: NextPage = () => {
 						</div>
 					</div>
 				) : (
-					<div className="fixed bottom-0 w-full font-IBM">
+					<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
 						<div
 							className="fixed inset-0 z-[-1] bg-black opacity-20"
 							onClick={() => modalVar(false)}></div>
 						<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[1.6rem]">
-							<div className="text-[3.2rem] text-bold">카테고리 추가</div>
+							<div className="text-[3.2rem] font-bold">카테고리 추가</div>
 							<form
 								className="flex flex-col mt-[2.4rem]"
 								onSubmit={handleSubmit(onSubmit)}>

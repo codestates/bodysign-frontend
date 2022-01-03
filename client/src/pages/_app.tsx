@@ -9,6 +9,7 @@ import {
 import { Provider } from 'next-auth/client'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
+import Layout from '../components/Layout'
 import '../components/loading.css'
 import { accessTokenVar } from '../graphql/vars'
 import '../styles/globals.css'
@@ -61,7 +62,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 			</Head>
 			<ApolloProvider client={client}>
 				<Provider session={pageProps.session}>
-					<Component {...pageProps} />
+					<Layout>
+						<Component {...pageProps} />
+					</Layout>
 				</Provider>
 			</ApolloProvider>
 		</>
