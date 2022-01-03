@@ -191,9 +191,50 @@ const Session: NextPage = () => {
 									return (
 										<React.Fragment key={session.id}>
 											<div
-												className={`h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white ${
-													session.id === deleteItemId ? 'ring-2' : ''
-												}`}>
+												className={`${
+													session.id === deleteLists.keys().next().value
+														? 'ring-2 ring-[#FED06E]'
+														: ''
+												} h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white hover:ring-2 hover:ring-[#FED06E]`}
+												data-id={session.id}
+												onClick={
+													!readyDelete
+														? category === '일정'
+															? () => {
+																	setSessionId(session.id)
+																	modalVar(true)
+															  }
+															: undefined
+														: e => {
+																if (
+																	e !== null &&
+																	e.target instanceof HTMLElement
+																) {
+																	// 수업 삭제 step 1
+																	if (e.target.dataset.id) {
+																		const id = +e.target.dataset.id
+																		// 하나만 가능한 조건
+																		if (deleteLists.size > 0) {
+																			setDeleteLists(prev => new Set())
+																		}
+																		if (deleteLists.has(id)) {
+																			setDeleteLists(
+																				prev =>
+																					new Set(
+																						[...prev].filter(
+																							el => el !== id
+																						)
+																					)
+																			)
+																		} else {
+																			setDeleteLists(
+																				prev => new Set(prev.add(id))
+																			)
+																		}
+																	}
+																}
+														  }
+												}>
 												<div className="flex">
 													{session.gender === 'male' ? (
 														<Image
@@ -210,53 +251,7 @@ const Session: NextPage = () => {
 															alt="image"
 														/>
 													)}
-													<div
-														className={`self-center ml-[1.2rem] ${
-															!readyDelete
-																? category === '일정'
-																	? 'cursor-pointer'
-																	: ''
-																: 'cursor-pointer'
-														}`}
-														data-id={session.id}
-														onClick={
-															!readyDelete
-																? category === '일정'
-																	? () => {
-																			setSessionId(session.id)
-																			modalVar(true)
-																	  }
-																	: undefined
-																: e => {
-																		if (
-																			e !== null &&
-																			e.target instanceof HTMLElement
-																		) {
-																			// 수업 삭제 step 1
-																			if (e.target.dataset.id) {
-																				const id = +e.target.dataset.id
-																				// 하나만 가능한 조건
-																				if (deleteLists.size > 0) {
-																					setDeleteLists(prev => new Set())
-																				}
-																				if (deleteLists.has(id)) {
-																					setDeleteLists(
-																						prev =>
-																							new Set(
-																								[...prev].filter(
-																									el => el !== id
-																								)
-																							)
-																					)
-																				} else {
-																					setDeleteLists(
-																						prev => new Set(prev.add(id))
-																					)
-																				}
-																			}
-																		}
-																  }
-														}>
+													<div className="self-center ml-[1.2rem]">
 														{session.userName} 회원
 													</div>
 												</div>
