@@ -1,11 +1,11 @@
+import { useReactiveVar } from '@apollo/client'
+import axios from 'axios'
 import { NextPage } from 'next'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import React, { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 import Layout from '../../../../components/Layout'
-import axios from 'axios'
-import { useReactiveVar } from '@apollo/client'
 import { chatTargetUserIdVar, userDataVar } from '../../../../graphql/vars'
 
 enum SenderReceiver {
@@ -36,8 +36,6 @@ const Chat: NextPage = () => {
 		url: '',
 		readyUpload: false
 	})
-
-	console.log(`${chatTargetUserId}|${userData?.id}`, 111)
 
 	const socket = io(process.env.NEXT_PUBLIC_API_DOMAIN_SOCKET as string)
 	useEffect(() => {
@@ -138,20 +136,19 @@ const Chat: NextPage = () => {
 		<>
 			<Layout>
 				<div className="flex items-center justify-between">
-					<span className="flex text-[25px]">
-						<Link href="/trainer/manage-member/" passHref>
+					<span className="flex text-[3.2rem] items-center">
+						<Link href="/trainer/manage-member" passHref>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="self-center w-6 h-6 cursor-pointer"
+								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
 								onClick={() => {
 									socket.emit(
 										'leaveRoom',
-										`${chatTargetUserId}|${userData?.id}`
+										`${userData?.id}|${userData?.trainerId}`
 									)
-									chatTargetUserIdVar(null)
 								}}>
 								<path
 									strokeLinecap="round"
@@ -161,14 +158,13 @@ const Chat: NextPage = () => {
 								/>
 							</svg>
 						</Link>
-						<div className="font-bold">
-							장수민 트레이너님
-							{/* {userData.user.userName} 트레이너님 */}
+						<div className="ml-[0.8rem] font-bold">
+							{userData?.userName} 회원
 						</div>
 					</span>
 					<span className="flex">
 						<svg
-							className="mr-3"
+							className="w-[2.8rem] h-[2.8rem] cursor-pointer"
 							viewBox="0 0 15 15"
 							fill="none"
 							xmlns="http://www.w3.org/2000/svg"
@@ -189,7 +185,7 @@ const Chat: NextPage = () => {
 					</div> */}
 
 				<div className="flex flex-col mt-4 border">
-					<div className="p-3 flex flex-col overflow-y-scroll no-scrollbar h-[calc(100vh-37px-16px-68px)]">
+					<div className="p-[1.2rem] flex flex-col overflow-y-scroll no-scrollbar h-[calc(100vh-37px-16px-68px)]">
 						{chats.map((chat, idx) => {
 							const url = chat.imgs[0]?.url
 							return chat.imgs.length ? (
@@ -213,9 +209,9 @@ const Chat: NextPage = () => {
 								<div
 									className={`${
 										chat.sender === SenderReceiver.User
-											? 'self-start bg-blue-100'
-											: 'self-end bg-blue-500 text-white'
-									} p-3 mb-[6px] rounded-lg font-IBM text-[2.2vh]`}
+											? 'self-start bg-[#FED06E]'
+											: 'self-end bg-white text-black border'
+									} p-[1.2rem] mb-[0.6rem] rounded-lg font-IBM text-[1.6rem]`}
 									key={idx}>
 									{chat.text}
 								</div>
@@ -223,8 +219,8 @@ const Chat: NextPage = () => {
 						})}
 					</div>
 					<div className="flex flex-col">
-						<div className="flex p-3">
-							<label className="mt-[5px] mr-2" htmlFor="upload">
+						<div className="flex p-[1.2rem]">
+							<label className="mt-[0.5rem] mr-[0.8rem]" htmlFor="upload">
 								<svg
 									viewBox="0 0 15 15"
 									fill="none"
@@ -248,17 +244,20 @@ const Chat: NextPage = () => {
 								}}
 							/>
 							<textarea
-								className="py-2 px-3 w-full h-[4.5vh] text-[2.2vh] resize-none bg-gray-50 focus:h-[10.5vh] overflow-hidden mr-2"
+								className="py-[0.8rem] px-[1.2rem] w-full h-[3.5rem] text-[1.6rem] resize-none bg-gray-50 focus:h-[6.3rem] overflow-auto mr-[0.8rem]"
 								autoFocus={true}
 								disabled={img.readyUpload ? true : false}
 								defaultValue=""
 								onBlur={e => {
 									setMessage(e.target.value)
 								}}
+								onFocus={e => {
+									e.target.scrollTop = e.target.scrollHeight
+								}}
 							/>
-							<button className="h-9" type="submit">
+							<button className="h-[3.6rem]" type="submit">
 								<svg
-									className="text-yellow-500"
+									className="text-[#FED06E]"
 									viewBox="0 0 15 15"
 									fill="none"
 									xmlns="http://www.w3.org/2000/svg"

@@ -1,19 +1,17 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
-import Head from 'next/head'
-import { Provider } from 'next-auth/client'
 import {
 	ApolloClient,
-	InMemoryCache,
-	ApolloProvider,
-	HttpLink,
 	ApolloLink,
+	ApolloProvider,
 	concat,
-	useReactiveVar
+	HttpLink,
+	InMemoryCache
 } from '@apollo/client'
+import { Provider } from 'next-auth/client'
+import type { AppProps } from 'next/app'
+import Head from 'next/head'
 import '../components/loading.css'
-import { chatTargetUserIdVar } from '../graphql/vars'
 import { accessTokenVar } from '../graphql/vars'
+import '../styles/globals.css'
 
 const httpLink = new HttpLink({
 	uri: process.env.NEXT_PUBLIC_API_DOMAIN_GRAPHQL,
@@ -68,17 +66,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 			</ApolloProvider>
 		</>
 	)
-}
-
-// This also gets called at build time
-export async function getStaticProps() {
-	// params contains the post `id`.
-	// If the route is like /posts/1, then params.id is 1
-	// const res = await fetch(`https://.../posts/${params.id}`)
-	// const post = await res.json()
-
-	// Pass post data to the page via props
-	return { props: {} }
 }
 
 export default MyApp

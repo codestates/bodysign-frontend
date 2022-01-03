@@ -19,15 +19,7 @@ const Sessions: NextPage = () => {
 		variables: { id: managedUserInfo.userId }
 	})
 
-	const week = [
-		'일요일',
-		'월요일',
-		'화요일',
-		'수요일',
-		'목요일',
-		'금요일',
-		'토요일'
-	]
+	const week = ['일', '월', '화', '수', '목', '금', '토']
 
 	if (loading) return <Loading />
 	return (
@@ -96,7 +88,16 @@ const Sessions: NextPage = () => {
 
 				<div className="flex flex-col mt-[2.4rem]">
 					{data.user.sessions.map((session: any) => {
-						const date = session.date.split('T')[0]
+						const date = new Date(session.date)
+						let hours = date.getHours() + ''
+						if (hours.length === 1) {
+							hours = 0 + hours
+						}
+						let minutes = date.getMinutes() + ''
+						if (minutes.length === 1) {
+							minutes = 0 + minutes
+						}
+
 						return (
 							<React.Fragment key={session.id}>
 								<div
@@ -110,18 +111,17 @@ const Sessions: NextPage = () => {
 											router.push(
 												`/trainer/manage-member/${
 													data.user.email.split('@')[0]
-												}/sessions/${date}`
+												}/sessions/${session.date.split('T')[0]}`
 											)
 										}
 									}}>
-									<span>{date}</span>
-									<span>{week[new Date(session.date).getDay()]}</span>
-									<span>{session.time}</span>
-									{session.sentFeedback ? (
-										<span className="w-[1.2rem] h-[1.2rem] bg-green-300 rounded-full"></span>
-									) : (
-										<span className="w-[1.2rem] h-[1.2rem] bg-gray-300 rounded-full"></span>
-									)}
+									<span>
+										{session.date.split('T')[0].replace(/\-/g, '.')} (
+										{week[new Date(session.date).getDay()]})
+									</span>
+									<span>{`${hours}:${
+										minutes === '0' ? '00' : minutes
+									}`}</span>
 								</div>
 							</React.Fragment>
 						)

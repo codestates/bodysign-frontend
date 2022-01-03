@@ -1,17 +1,17 @@
+import { useQuery, useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
-import { modalVar, userDataVar } from '../../../graphql/vars'
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client'
-import {
-	RemoveUserDocument,
-	UpdatePasswordUserDocument,
-	UpdateUserDocument,
-	UserDocument
-} from '../../../graphql/graphql'
 import Loading from '../../../components/Loading'
+import {
+	useRemoveUserMutation,
+	useUpdatePasswordUserMutation,
+	useUpdateUserMutation
+} from '../../../generated/graphql'
+import { UserDocument } from '../../../graphql/graphql'
+import { modalVar, userDataVar } from '../../../graphql/vars'
 
 interface FormInput {
 	prevPassword: string
@@ -30,9 +30,9 @@ const UserInfo: NextPage = () => {
 	const { loading, data } = useQuery(UserDocument, {
 		variables: { id: userData?.id }
 	})
-	const [updateUser] = useMutation(UpdateUserDocument)
-	const [removeUser] = useMutation(RemoveUserDocument)
-	const [updatePasswordUser] = useMutation(UpdatePasswordUserDocument)
+	const [updateUser] = useUpdateUserMutation()
+	const [removeUser] = useRemoveUserMutation()
+	const [updatePasswordUser] = useUpdatePasswordUserMutation()
 
 	const {
 		register,
@@ -47,7 +47,7 @@ const UserInfo: NextPage = () => {
 			await updatePasswordUser({
 				variables: {
 					updatePasswordUserInput: {
-						id: userData?.id,
+						id: userData?.id as number,
 						prevPassword: data.prevPassword,
 						nowPassword: data.nowPassword
 					}
@@ -112,7 +112,7 @@ const UserInfo: NextPage = () => {
 											variables: {
 												updateUserInput: {
 													...updateUserInput,
-													id: userData?.id
+													id: userData?.id as number
 												}
 											}
 										})
@@ -295,7 +295,7 @@ const UserInfo: NextPage = () => {
 										try {
 											await removeUser({
 												variables: {
-													id: userData?.id
+													id: userData?.id as number
 												}
 											})
 										} catch (error) {

@@ -118,9 +118,9 @@ const ManageMember: NextPage = () => {
 
 	const socket = io(process.env.NEXT_PUBLIC_API_DOMAIN_SOCKET as string)
 	useEffect(() => {
-		socket.emit('joinLounge', 21)
+		socket.emit('joinLounge', userData?.id)
 		socket.on('joinedLounge', data => {
-			// console.log(data)
+			console.log(data)
 			// 회원 추가 기능 구현하고 다시 데이터를 봐야 한다.
 		})
 	}, [socket])
@@ -279,7 +279,7 @@ const ManageMember: NextPage = () => {
 																</ColMemberGroup>
 															</div>
 															{!readyDelete ? (
-																<ChatLink />
+																<ChatLink memberId={member.id} />
 															) : deleteLists.has(+member.id) ? (
 																<svg
 																	className="text-green-600"

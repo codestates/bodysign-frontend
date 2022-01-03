@@ -248,7 +248,7 @@ const Detail: NextPage = () => {
 														}
 													}
 												}}>
-												<span>{'카테고리'}</span>
+												<span className="text-[1.6rem]">{'카테고리'}</span>
 												<span className="font-semibold text-black">
 													{exercise.name}
 												</span>
@@ -305,8 +305,7 @@ const Detail: NextPage = () => {
 								className="w-[3.2rem] h-[3.2rem] text-black self-center cursor-pointer "
 								fill="none"
 								viewBox="0 0 24 24"
-								stroke="currentColor"
-								onClick={() => modalVar(true)}>
+								stroke="currentColor">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"

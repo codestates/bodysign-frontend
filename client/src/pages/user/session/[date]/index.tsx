@@ -1,20 +1,17 @@
+import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
+import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
 import React from 'react'
-import { useQuery, useReactiveVar } from '@apollo/client'
-import { useRouter } from 'next/dist/client/router'
 import Layout from '../../../../components/Layout'
 import Loading from '../../../../components/Loading'
-import {
-	sessionExerciseInputVar,
-	userDataVar
-} from '../../../../graphql/vars'
-import { SessionDocument } from '../../../../graphql/graphql'
+import { useSessionQuery } from '../../../../generated/graphql'
+import { sessionExerciseInputVar } from '../../../../graphql/vars'
 
 const Detail: NextPage = () => {
 	const router = useRouter()
 	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
-	const { loading, data } = useQuery(SessionDocument, {
+	const { loading, data } = useSessionQuery({
 		variables: { id: sessionExerciseInput.sessionId }
 	})
 
@@ -48,43 +45,53 @@ const Detail: NextPage = () => {
 				</div>
 
 				<div className="flex flex-col mt-[2.4rem]">
-					{data.session.sessionExercises.map((exercise: any) => {
-						return (
-							<React.Fragment key={exercise.id}>
-								<div
-									className={`mt-[2.4rem] p-[1.6rem] border rounded-3xl first:mt-0 text-[1.8rem] flex-col items-center text-[#9F9F9F]`}>
-									<div
-										className={`grid grid-cols-2 justify-items-center items-center w-full text-center border rounded-3xl py-[2rem] px-[0.8rem] bg-gray-50 cursor-pointer`}
-										data-id={exercise.id}>
-										<span>{'카테고리'}</span>
-										<span className="font-semibold text-black">
-											{exercise.name}
-										</span>
-									</div>
-									{exercise.sessionExerciseVolumes.map(
-										(volume: any, index: any) => {
-											return (
-												<div
-													key={index}
-													className="text-black text-[1.6rem] grid grid-cols-3 justify-items-center items-center w-full py-[0.8rem] px-[0.8rem] border-b last:border-b-0">
-													<span>{volume.weight}kg</span>
-													<span>{volume.reps}회</span>
-													<span>{volume.sets}세트</span>
-												</div>
-											)
-										}
-									)}
-								</div>
-							</React.Fragment>
-						)
-					})}
+					{data &&
+						data.session.sessionExercises &&
+						data.session.sessionExercises.map(exercise => {
+							if (exercise) {
+								return (
+									<React.Fragment key={exercise.id}>
+										<div
+											className={`mt-[2.4rem] p-[1.6rem] border rounded-3xl first:mt-0 text-[1.8rem] flex-col items-center text-[#9F9F9F]`}>
+											<div
+												className={`grid grid-cols-2 justify-items-center items-center w-full text-center border rounded-3xl py-[2rem] px-[0.8rem] bg-gray-50 cursor-pointer`}
+												data-id={exercise.id}>
+												<span className="text-[1.6rem]">{'카테고리'}</span>
+												<span className="font-semibold text-black">
+													{exercise.name}
+												</span>
+											</div>
+											{exercise.sessionExerciseVolumes &&
+												exercise.sessionExerciseVolumes.map(volume => {
+													if (volume) {
+														return (
+															<div
+																key={volume.id}
+																className="text-black text-[1.6rem] grid grid-cols-3 justify-items-center items-center w-full py-[0.8rem] px-[0.8rem] border-b last:border-b-0">
+																<span>{volume.weight}kg</span>
+																<span>{volume.reps}회</span>
+																<span>{volume.sets}세트</span>
+															</div>
+														)
+													}
+												})}
+										</div>
+									</React.Fragment>
+								)
+							}
+						})}
 				</div>
 
 				<textarea
 					className="text-[1.8rem] w-full h-[10rem] border px-[2rem] py-[1.2rem] mt-[2.4rem] resize-none font-IBM"
 					autoFocus
 					autoSave="true"
-					defaultValue={data.session.feedback}
+					disabled
+					defaultValue={
+						data && data.session.feedback
+							? data.session.feedback
+							: undefined
+					}
 				/>
 			</Layout>
 		</>

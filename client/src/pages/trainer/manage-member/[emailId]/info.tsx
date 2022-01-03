@@ -12,6 +12,7 @@ import {
 } from '../../../../generated/graphql'
 import { UserDocument } from '../../../../graphql/graphql'
 import {
+	chatTargetUserIdVar,
 	managedUserInfoVar,
 	modalVar,
 	userDataVar
@@ -25,8 +26,8 @@ interface FormInput {
 	isGraduate: boolean
 }
 
-const labelProperties =
-	'after:absolute after:border after:h-[2.9rem] after:bg-[#FDAD00] after:w-full after:-top-0 after:z-[-1] after:transition-[left] after:duration-500 after:rounded-[2rem] peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
+// const labelProperties =
+// 	'after:absolute after:border after:h-[2.9rem] after:bg-[#FDAD00] after:w-full after:-top-0 after:z-[-1] after:transition-[left] after:duration-500 after:rounded-[2rem] peer-checked:cursor-default peer-checked:text-black peer-checked:after:left-0'
 
 const Info: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
@@ -132,13 +133,13 @@ const Info: NextPage = () => {
 					</span>
 					<Link href={`/trainer/manage-member/chat`} passHref>
 						<svg
-							className="w-[2.8rem] h-[2.8rem]"
+							className="w-[2.8rem] h-[2.8rem] cursor-pointer"
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
 							viewBox="0 0 25 25"
 							stroke="currentColor"
 							onClick={() => {
-								// chatTargetUserIdVar(+member.id)
+								chatTargetUserIdVar(memberData.user.id)
 							}}>
 							<path
 								strokeLinecap="round"

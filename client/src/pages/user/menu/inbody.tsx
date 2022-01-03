@@ -1,13 +1,14 @@
+import { useQuery, useReactiveVar } from '@apollo/client'
+import Chart from 'chart.js/auto'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useEffect, useRef } from 'react'
-import Chart from 'chart.js/auto'
-import { useReactiveVar, useQuery, useMutation } from '@apollo/client'
-import { modalVar, userDataVar } from '../../../graphql/vars'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import Layout from '../../../components/Layout'
 import Loading from '../../../components/Loading'
-import { CreateInbody, UserDocument } from '../../../graphql/graphql'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useCreateInbodyMutation } from '../../../generated/graphql'
+import { UserDocument } from '../../../graphql/graphql'
+import { modalVar, userDataVar } from '../../../graphql/vars'
 
 interface FormInput {
 	date: string
@@ -22,7 +23,7 @@ const Inbody: NextPage = () => {
 	const { loading, data } = useQuery(UserDocument, {
 		variables: { id: userData?.id }
 	})
-	const [createInbody] = useMutation(CreateInbody)
+	const [createInbody] = useCreateInbodyMutation()
 	const canvasRef = useRef(null)
 	const {
 		register,
@@ -37,7 +38,7 @@ const Inbody: NextPage = () => {
 			await createInbody({
 				variables: {
 					createInbodyInput: {
-						userId: userData?.id,
+						userId: userData?.id as number,
 						bodyWeight: +data.bodyWeight,
 						muscleWeight: +data.muscleWeight,
 						bodyFat: +data.bodyFat,
