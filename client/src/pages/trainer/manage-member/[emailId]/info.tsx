@@ -3,7 +3,6 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import Layout from '../../../../components/Layout'
 import Loading from '../../../../components/Loading'
 import {
 	useCreateSessionHistoryMutation,
@@ -109,187 +108,182 @@ const Info: NextPage = () => {
 	if (userLoading) return <Loading />
 	return (
 		<>
-			<Layout>
-				<div className="flex items-center justify-between">
-					<span className="flex text-[3.2rem] items-center">
-						<Link href="/trainer/manage-member" passHref>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M10 19l-7-7m0 0l7-7m-7 7h18"
-								/>
-							</svg>
-						</Link>
-						<div className="ml-[0.8rem] font-bold">
-							{memberData.user.userName} 회원
-						</div>
-					</span>
-					<Link href={`/trainer/manage-member/chat`} passHref>
+			<div className="flex items-center justify-between">
+				<span className="flex text-[3.2rem] items-center">
+					<Link href="/trainer/manage-member" passHref>
 						<svg
-							className="w-[2.8rem] h-[2.8rem] cursor-pointer"
 							xmlns="http://www.w3.org/2000/svg"
+							className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
 							fill="none"
-							viewBox="0 0 25 25"
-							stroke="currentColor"
-							onClick={() => {
-								chatTargetUserIdVar(memberData.user.id)
-							}}>
+							viewBox="0 0 24 24"
+							stroke="currentColor">
 							<path
 								strokeLinecap="round"
 								strokeLinejoin="round"
 								strokeWidth={2}
-								d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+								d="M10 19l-7-7m0 0l7-7m-7 7h18"
 							/>
 						</svg>
 					</Link>
-				</div>
+					<div className="ml-[0.8rem] font-bold">
+						{memberData.user.userName} 회원
+					</div>
+				</span>
+				<Link href={`/trainer/manage-member/chat`} passHref>
+					<svg
+						className="w-[2.8rem] h-[2.8rem] cursor-pointer"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 25 25"
+						stroke="currentColor"
+						onClick={() => {
+							chatTargetUserIdVar(memberData.user.id)
+						}}>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth={2}
+							d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+						/>
+					</svg>
+				</Link>
+			</div>
 
-				<div className="flex justify-between mt-[2.4rem] text-[2.2rem]">
-					<Link
-						href={`/trainer/manage-member/${managedUserInfo.email}/info`}
-						passHref>
-						<span className="pb-[0.4rem] border-b-[3px] border-[#FED06E] cursor-pointer">
-							회원정보
+			<div className="flex justify-between mt-[2.4rem] text-[2.2rem]">
+				<Link
+					href={`/trainer/manage-member/${managedUserInfo.email}/info`}
+					passHref>
+					<span className="pb-[0.4rem] border-b-[3px] border-[#FED06E] cursor-pointer">
+						회원정보
+					</span>
+				</Link>
+				<Link
+					href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}
+					passHref>
+					<span className="ml-[0.8rem] cursor-pointer">인바디</span>
+				</Link>
+				<Link
+					href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}
+					passHref>
+					<span className="ml-[0.8rem] cursor-pointer">수업기록</span>
+				</Link>
+			</div>
+
+			<div className="mt-[2.4rem]">
+				<div className="flex flex-col justify-between text-[1.8rem]">
+					<div className="flex justify-between">
+						<span>이름</span>
+						<span>{memberData.user.userName}</span>
+					</div>
+					<div className="flex justify-between mt-[0.8rem]">
+						<span>성별</span>
+						<span>{memberData.user.gender}</span>
+					</div>
+					<div className="flex justify-between mt-[0.8rem]">
+						<span>생년월일</span>
+						<span>
+							{memberData.user.birthDate.split('T')[0].replace(/\-/g, '.')}
 						</span>
-					</Link>
-					<Link
-						href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}
-						passHref>
-						<span className="ml-[0.8rem] cursor-pointer">인바디</span>
-					</Link>
-					<Link
-						href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}
-						passHref>
-						<span className="ml-[0.8rem] cursor-pointer">수업기록</span>
-					</Link>
-				</div>
-
-				<div className="mt-[2.4rem]">
-					<div className="flex flex-col justify-between text-[1.8rem]">
-						<div className="flex justify-between">
-							<span>이름</span>
-							<span>{memberData.user.userName}</span>
-						</div>
-						<div className="flex justify-between mt-[0.8rem]">
-							<span>성별</span>
-							<span>{memberData.user.gender}</span>
-						</div>
-						<div className="flex justify-between mt-[0.8rem]">
-							<span>생년월일</span>
-							<span>
-								{memberData.user.birthDate
-									.split('T')[0]
-									.replace(/\-/g, '.')}
-							</span>
-						</div>
-						<div className="flex justify-between mt-[0.8rem]">
-							<span>전화번호</span>
-							<span>{memberData.user.phoneNumber}</span>
-						</div>
-						<div className="flex justify-between mt-[2rem]">
-							<label>카테고리</label>
-							{loading ? (
-								<Loading />
-							) : (
-								<select
-									className="p-[0.4rem] w-[15rem] rounded-[2rem] bg-white border "
-									onChange={e => {
-										// 회원 카테고리 변경 API
-										// e.target.value
-										try {
-											updateUser({
-												variables: {
-													updateUserInput: {
-														id: managedUserInfo.userId,
-														userCategoryId: +e.target.value
-													}
-												},
-												refetchQueries: [
-													{
-														query: UserDocument,
-														variables: { id: managedUserInfo.userId }
-													}
-												]
-											})
-										} catch (error) {
-											console.log(error)
-										}
-									}}>
-									<option value={`${memberData.user.userCategoryId}`}>
-										{data &&
-											data.trainer.userCategories &&
-											data.trainer.userCategories.filter(category => {
-												if (
-													category &&
-													category.id === memberData.user.userCategoryId
-												) {
-													return category
+					</div>
+					<div className="flex justify-between mt-[0.8rem]">
+						<span>전화번호</span>
+						<span>{memberData.user.phoneNumber}</span>
+					</div>
+					<div className="flex justify-between mt-[2rem]">
+						<label>카테고리</label>
+						{loading ? (
+							<Loading />
+						) : (
+							<select
+								className="p-[0.4rem] w-[15rem] rounded-[2rem] bg-white border "
+								onChange={e => {
+									// 회원 카테고리 변경 API
+									// e.target.value
+									try {
+										updateUser({
+											variables: {
+												updateUserInput: {
+													id: managedUserInfo.userId,
+													userCategoryId: +e.target.value
 												}
-											})[0]?.name}
-									</option>
+											},
+											refetchQueries: [
+												{
+													query: UserDocument,
+													variables: { id: managedUserInfo.userId }
+												}
+											]
+										})
+									} catch (error) {
+										console.log(error)
+									}
+								}}>
+								<option value={`${memberData.user.userCategoryId}`}>
 									{data &&
 										data.trainer.userCategories &&
-										data.trainer.userCategories.map(category => {
+										data.trainer.userCategories.filter(category => {
 											if (
 												category &&
-												category.id !== memberData.user.userCategoryId
+												category.id === memberData.user.userCategoryId
 											) {
-												return (
-													<option
-														key={category.id}
-														value={`${category.id}`}>
-														{category.name}
-													</option>
-												)
+												return category
 											}
-										})}
-								</select>
-							)}
-						</div>
-						<div className="flex justify-between mt-[0.8rem]">
-							<span>졸업유무</span>
-							<span className="relative inline-block w-[4rem] align-middle select-none">
-								<input
-									className="absolute block w-[2.8rem] h-[2.8rem] bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#FDAD00] peer"
-									type="checkbox"
-									name="toggle"
-									id="toggle"
-									checked={memberData.user.graduate}
-									onChange={async e => {
-										// 피드백 완료 여부 API
-										try {
-											await updateUser({
-												variables: {
-													updateUserInput: {
-														id: managedUserInfo.userId,
-														graduate: e.target.checked
-													}
-												},
-												refetchQueries: [
-													{
-														query: UserDocument,
-														variables: { id: managedUserInfo.userId }
-													}
-												]
-											})
-										} catch (error) {
-											console.log(error)
+										})[0]?.name}
+								</option>
+								{data &&
+									data.trainer.userCategories &&
+									data.trainer.userCategories.map(category => {
+										if (
+											category &&
+											category.id !== memberData.user.userCategoryId
+										) {
+											return (
+												<option key={category.id} value={`${category.id}`}>
+													{category.name}
+												</option>
+											)
 										}
-									}}
-								/>
-								<label
-									className="block h-[2.8rem]	bg-gray-200 rounded-full cursor-pointer peer peer-checked:bg-[#FDAD00] overflow-hidden"
-									htmlFor="toggle"
-								/>
-							</span>
-							{/* <div className="w-[15rem]">
+									})}
+							</select>
+						)}
+					</div>
+					<div className="flex justify-between mt-[0.8rem]">
+						<span>졸업유무</span>
+						<span className="relative inline-block w-[4rem] align-middle select-none">
+							<input
+								className="absolute block w-[2.8rem] h-[2.8rem] bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#FDAD00] peer"
+								type="checkbox"
+								name="toggle"
+								id="toggle"
+								checked={memberData.user.graduate}
+								onChange={async e => {
+									// 피드백 완료 여부 API
+									try {
+										await updateUser({
+											variables: {
+												updateUserInput: {
+													id: managedUserInfo.userId,
+													graduate: e.target.checked
+												}
+											},
+											refetchQueries: [
+												{
+													query: UserDocument,
+													variables: { id: managedUserInfo.userId }
+												}
+											]
+										})
+									} catch (error) {
+										console.log(error)
+									}
+								}}
+							/>
+							<label
+								className="block h-[2.8rem]	bg-gray-200 rounded-full cursor-pointer peer peer-checked:bg-[#FDAD00] overflow-hidden"
+								htmlFor="toggle"
+							/>
+						</span>
+						{/* <div className="w-[15rem]">
 								<span>
 									<input
 										className="hidden peer"
@@ -332,10 +326,9 @@ const Info: NextPage = () => {
 									</label>
 								</span>
 							</div> */}
-						</div>
 					</div>
 				</div>
-			</Layout>
+			</div>
 
 			<div className="flex flex-col mt-[2.4rem] text-[1.4rem] font-thin font-IBM">
 				<div className="border-b border-gray-200">
@@ -407,12 +400,12 @@ const Info: NextPage = () => {
 			</div>
 
 			{modal ? (
-				<div className="fixed bottom-0 w-full font-IBM">
+				<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
 					<div
 						className="fixed inset-0 z-[-1] bg-black opacity-20"
 						onClick={() => modalVar(false)}></div>
 					<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[2rem]">
-						<div className="text-[3.2rem] text-bold">계약 등록</div>
+						<div className="text-[3.2rem] font-bold">계약 등록</div>
 						<form
 							className="flex flex-col mt-[2.4rem]"
 							onSubmit={handleSubmit(onSubmit)}>

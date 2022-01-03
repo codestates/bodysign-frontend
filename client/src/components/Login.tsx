@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import { gql, useMutation, useReactiveVar } from '@apollo/client'
 import type { NextPage } from 'next'
-import { signIn, signOut, useSession } from 'next-auth/client'
-import Layout from '../components/Layout'
-import Loading from './Loading'
-import { gql, useQuery, useMutation, useReactiveVar } from '@apollo/client'
-import { loginTypeVar, accessTokenVar } from '../graphql/vars'
-import Link from 'next/link'
+import { useSession } from 'next-auth/client'
 import { useRouter } from 'next/dist/client/router'
-import axios from 'axios'
+import Link from 'next/link'
+import React, { useState } from 'react'
+import { accessTokenVar, loginTypeVar } from '../graphql/vars'
+import Loading from './Loading'
 // import { Cookies } from 'react-cookie'
 
 // TODO : env로 빼야함
@@ -92,40 +90,38 @@ const Login: NextPage = () => {
 
 	return (
 		<>
-			<Layout>
-				<div className="flex flex-col text-[15px] items-center justify-center mx-auto">
-					<div className="max-w-screen-md">
-						<input
-							className="w-4/5 p-1 m-1 font-thin border font-IBM rounded-xl"
-							type="text"
-							placeholder="이메일"
-							onChange={onChangeId}
-						/>
-						<input
-							className="w-4/5 p-1 m-1 font-thin border font-IBM rounded-xl"
-							type="password"
-							placeholder="비밀번호"
-							onChange={onChangePassword}
-						/>
-						<button
-							onClick={onSubmit}
-							className="w-4/5 py-1 m-1 font-thin text-gray-800 rounded font-IBM hover:bg-gray-400 hover:text-white bg-[#FED06E]">
-							로그인
+			<div className="flex flex-col text-[15px] items-center justify-center mx-auto">
+				<div className="max-w-screen-md">
+					<input
+						className="w-4/5 p-1 m-1 font-thin border font-IBM rounded-xl"
+						type="text"
+						placeholder="이메일"
+						onChange={onChangeId}
+					/>
+					<input
+						className="w-4/5 p-1 m-1 font-thin border font-IBM rounded-xl"
+						type="password"
+						placeholder="비밀번호"
+						onChange={onChangePassword}
+					/>
+					<button
+						onClick={onSubmit}
+						className="w-4/5 py-1 m-1 font-thin text-gray-800 rounded font-IBM hover:bg-gray-400 hover:text-white bg-[#FED06E]">
+						로그인
+					</button>
+					<button
+						onClick={onGoogleLogin}
+						className="w-4/5 py-1 m-1 font-thin text-gray-800 bg-gray-200 rounded font-IBM hover:bg-gray-400 hover:text-white ">
+						GOOGLE로 로그인
+					</button>
+					<div className="flex w-4/5 border-0"></div>
+					<Link href="/signup" passHref>
+						<button className="w-4/5 py-1 m-1 font-thin text-gray-500 transition-colors duration-150 border border-gray-300 rounded font-IBM focus:shadow-outline hover:bg-gray-300 hover:text-white">
+							회원가입
 						</button>
-						<button
-							onClick={onGoogleLogin}
-							className="w-4/5 py-1 m-1 font-thin text-gray-800 bg-gray-200 rounded font-IBM hover:bg-gray-400 hover:text-white ">
-							GOOGLE로 로그인
-						</button>
-						<div className="flex w-4/5 border-0"></div>
-						<Link href="/signup" passHref>
-							<button className="w-4/5 py-1 m-1 font-thin text-gray-500 transition-colors duration-150 border border-gray-300 rounded font-IBM focus:shadow-outline hover:bg-gray-300 hover:text-white">
-								회원가입
-							</button>
-						</Link>
-					</div>
+					</Link>
 				</div>
-			</Layout>
+			</div>
 		</>
 	)
 }

@@ -7,16 +7,19 @@ import BotNavMenuLink from '../molecules/Link/BotNavMenuLink'
 import BotNavSessionLink from '../molecules/Link/BotNavSessionLink'
 
 interface ComponentProps {
-	variant?: string
 	children?: React.ReactNode
 }
 
-const BottomBar = ({ variant = 'Trainer' }: ComponentProps) => {
+const BottomBar = ({}: ComponentProps) => {
 	const router = useRouter()
 	const pathName = router.pathname
+	let variant = 'Trainer'
+	if (pathName.includes('user')) {
+		variant = 'Member'
+	}
 
 	return (
-		<div className="sticky bottom-0 flex justify-between px-8 py-2 text-gray-400 border-t bg-gray-50 sm:w-[450px] m-auto">
+		<div className="fixed bottom-0 right-0 flex w-full justify-between px-[3.2rem] py-[0.8rem] text-gray-400 bg-gray-50">
 			{variant === 'Trainer' ? (
 				<>
 					<BotNavHomeLink variant={variant} pathName={pathName} />

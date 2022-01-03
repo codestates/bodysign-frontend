@@ -9,13 +9,11 @@ import Avatar from '../../../components/atoms/Avatar'
 import AddCategoryIcon from '../../../components/atoms/icons/AddCategoryIcon'
 import CheckIcon from '../../../components/atoms/icons/CheckIcon'
 import DeleteIcon from '../../../components/atoms/icons/DeleteIcon'
-import Layout from '../../../components/Layout'
 import Loading from '../../../components/Loading'
 import AddItem from '../../../components/molecules/Entities/AddItem'
 import ColMemberGroup from '../../../components/molecules/Entities/ColMemberGroup'
 import RowMemberItem from '../../../components/molecules/Entities/RowMemberItem'
 import ChatLink from '../../../components/molecules/Link/ChatLink'
-import BottomBar from '../../../components/organisms/BottomBar'
 import Entities from '../../../components/organisms/Entities'
 import Header from '../../../components/organisms/Header'
 import {
@@ -212,96 +210,92 @@ const ManageMember: NextPage = () => {
 	if (loading) return <Loading />
 	return (
 		<>
-			<Layout>
-				<Header category={category} handleSetCategory={handleCategory}>
-					{!readyDelete ? (
-						<>
-							{/* <AddMemberIcon handleModal={handleModal} /> */}
-							<AddCategoryIcon handleModal={handleModal} />
-							<DeleteIcon handleReadyDelete={handleReadyDelete} />
-						</>
-					) : (
-						<CheckIcon handleDelete={handleDelete} />
-					)}
-				</Header>
+			<Header category={category} handleSetCategory={handleCategory}>
+				{!readyDelete ? (
+					<>
+						{/* <AddMemberIcon handleModal={handleModal} /> */}
+						<AddCategoryIcon handleModal={handleModal} />
+						<DeleteIcon handleReadyDelete={handleReadyDelete} />
+					</>
+				) : (
+					<CheckIcon handleDelete={handleDelete} />
+				)}
+			</Header>
 
-				{data &&
-					data.trainer.userCategories &&
-					data.trainer.userCategories.map(userCategory => {
-						return (
-							<Entities
-								key={userCategory?.id as number}
-								userCategory={userCategory?.name as string}>
-								{userCategory?.users &&
-									userCategory.users
-										.filter(member => {
-											if (category === '관리중' && !member?.graduate) {
-												return member
-											} else if (category === '졸업' && member?.graduate) {
-												return member
+			{data &&
+				data.trainer.userCategories &&
+				data.trainer.userCategories.map(userCategory => {
+					return (
+						<Entities
+							key={userCategory?.id as number}
+							userCategory={userCategory?.name as string}>
+							{userCategory?.users &&
+								userCategory.users
+									.filter(member => {
+										if (category === '관리중' && !member?.graduate) {
+											return member
+										} else if (category === '졸업' && member?.graduate) {
+											return member
+										}
+									})
+									.map(member => {
+										if (member) {
+											let sumUsedCount = 0
+											let sumTotalCount = 0
+											for (
+												let i = 0;
+												i < member.sessionHistories.length;
+												i++
+											) {
+												sumUsedCount =
+													sumUsedCount +
+													member.sessionHistories[i].usedCount
+												sumTotalCount =
+													sumTotalCount +
+													member.sessionHistories[i].totalCount
 											}
-										})
-										.map(member => {
-											if (member) {
-												let sumUsedCount = 0
-												let sumTotalCount = 0
-												for (
-													let i = 0;
-													i < member.sessionHistories.length;
-													i++
-												) {
-													sumUsedCount =
-														sumUsedCount +
-														member.sessionHistories[i].usedCount
-													sumTotalCount =
-														sumTotalCount +
-														member.sessionHistories[i].totalCount
-												}
 
-												return (
-													<>
-														<RowMemberItem
-															member={member}
-															deleteLists={deleteLists}
-															handleManagedMember={handleManagedMember}>
-															<div className="flex">
-																<Avatar gender={member.gender} />
-																<ColMemberGroup>
-																	<div className="text-left">
-																		{member.userName} 회원
-																	</div>
-																	<div className="text-[1.4rem] text-right text-[#9F9F9F]">
-																		{`${sumUsedCount} / ${sumTotalCount}`}
-																		회
-																	</div>
-																</ColMemberGroup>
-															</div>
-															{!readyDelete ? (
-																<ChatLink memberId={member.id} />
-															) : null}
-														</RowMemberItem>
-													</>
-												)
-											}
-										})}
-								<AddItem
-									dataCheckModal="addmember"
-									handleModal={handleModal}
-								/>
-							</Entities>
-						)
-					})}
-			</Layout>
-			<BottomBar variant="Trainer" />
+											return (
+												<>
+													<RowMemberItem
+														member={member}
+														deleteLists={deleteLists}
+														handleManagedMember={handleManagedMember}>
+														<div className="flex">
+															<Avatar gender={member.gender} />
+															<ColMemberGroup>
+																<div className="text-left">
+																	{member.userName} 회원
+																</div>
+																<div className="text-[1.4rem] text-right text-[#9F9F9F]">
+																	{`${sumUsedCount} / ${sumTotalCount}`}회
+																</div>
+															</ColMemberGroup>
+														</div>
+														{!readyDelete ? (
+															<ChatLink memberId={member.id} />
+														) : null}
+													</RowMemberItem>
+												</>
+											)
+										}
+									})}
+							<AddItem
+								dataCheckModal="addmember"
+								handleModal={handleModal}
+							/>
+						</Entities>
+					)
+				})}
 
 			{modal ? (
 				checkModal === 'addmember' ? (
-					<div className="fixed bottom-0 w-full font-IBM">
+					<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
 						<div
 							className="fixed inset-0 z-[-1] bg-black opacity-20"
 							onClick={() => modalVar(false)}></div>
 						<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[2rem]">
-							<div className="text-[3.2rem] text-bold">회원 추가</div>
+							<div className="text-[3.2rem] font-bold">회원 추가</div>
 							<Link href="/trainer/manage-member/add-member" passHref>
 								<div className="w-full py-[1.2rem] text-center mt-[2.4rem] border rounded-3xl shadow-md cursor-pointer h-[5.5rem]">
 									새로운 회원정보 등록
@@ -320,12 +314,12 @@ const ManageMember: NextPage = () => {
 						</div>
 					</div>
 				) : checkModal === 'addcategory' ? (
-					<div className="fixed bottom-0 w-full font-IBM">
+					<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
 						<div
 							className="fixed inset-0 z-[-1] bg-black opacity-20"
 							onClick={() => modalVar(false)}></div>
 						<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[1.6rem]">
-							<div className="text-[3.2rem] text-bold">카테고리 추가</div>
+							<div className="text-[3.2rem] font-bold">카테고리 추가</div>
 							<form
 								className="flex flex-col mt-[2.4rem]"
 								onSubmit={handleSubmit(onSubmit)}>
@@ -363,12 +357,12 @@ const ManageMember: NextPage = () => {
 
 			{modal ? (
 				checkModal === 'linktraineruser' ? (
-					<div className="fixed bottom-0 w-full font-IBM">
+					<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
 						<div
 							className="fixed inset-0 z-[-1] bg-black opacity-20"
 							onClick={() => modalVar(false)}></div>
 						<div className="bg-white flex z-[50] h-full flex-col p-[2rem] pb-[4rem] rounded-t-3xl text-[1.6rem]">
-							<div className="text-[3.2rem] text-bold">회원 검색</div>
+							<div className="text-[3.2rem] font-bold">회원 검색</div>
 							<form
 								className="flex flex-col mt-[2.4rem]"
 								onSubmit={handleSubmit(onSubmit)}>
