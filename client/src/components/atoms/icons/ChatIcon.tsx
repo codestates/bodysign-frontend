@@ -1,15 +1,11 @@
 const ChatIcon = () => {
 	return (
 		<svg
-			className="w-[2.8rem] h-[2.8rem] mt-[0.4rem]"
-			// data-id={member.id}
+			className="w-[2.8rem] h-[2.8rem] mt-[0.4rem] cursor-pointer"
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
 			viewBox="0 0 25 25"
-			stroke="currentColor"
-			onClick={() => {
-				// chatTargetUserIdVar(+member.id)
-			}}>
+			stroke="currentColor">
 			<path
 				strokeLinecap="round"
 				strokeLinejoin="round"

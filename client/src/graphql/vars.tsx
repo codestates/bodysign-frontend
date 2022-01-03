@@ -1,16 +1,17 @@
 import { makeVar } from '@apollo/client'
 
 interface UserData {
-	birthDate: Date
-	createdAt: Date
-	email: string
-	gender: string
 	id: number
-	loginType: string
-	phoneNumber: null
-	status: string
-	updatedAt: Date
+	email: string
 	userName: string
+	birthDate: Date
+	phoneNumber: null
+	gender: string
+	trainerId: number
+	loginType: string
+	status: string
+	createdAt: Date
+	updatedAt: Date
 }
 
 export const loginTypeVar = makeVar('local')

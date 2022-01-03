@@ -1,15 +1,15 @@
+import { useQuery, useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
+import { useRouter } from 'next/dist/client/router'
 import React from 'react'
 import Layout from '../../../components/Layout'
+import Loading from '../../../components/Loading'
+import BottomBar from '../../../components/organisms/BottomBar'
+import { UserDocument } from '../../../graphql/graphql'
 import {
 	sessionExerciseInputVar,
 	userDataVar
 } from '../../../graphql/vars'
-import { useQuery, useReactiveVar } from '@apollo/client'
-import BottomBar from '../../../components/organisms/BottomBar'
-import { UserDocument } from '../../../graphql/graphql'
-import Loading from '../../../components/Loading'
-import { useRouter } from 'next/dist/client/router'
 
 interface MemberSession {
 	id: number
@@ -23,6 +23,8 @@ const Session: NextPage = () => {
 	const { loading, data } = useQuery(UserDocument, {
 		variables: { id: userData?.id }
 	})
+
+	const week = ['일', '월', '화', '수', '목', '금', '토']
 
 	const sessionObject: Record<string, MemberSession[]> = {}
 	const completedSessionObject: Record<string, MemberSession[]> = {}
@@ -87,7 +89,7 @@ const Session: NextPage = () => {
 									return (
 										<React.Fragment key={session.id}>
 											<div
-												className={`h-[7rem] flex justify-between items-center px-[4rem] mt-[0.8rem] border text-[2rem] rounded-full shadow-md bg-white`}
+												className={`h-[7rem] flex justify-around items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white	`}
 												onClick={e => {
 													if (
 														e !== null &&
@@ -102,18 +104,13 @@ const Session: NextPage = () => {
 														)
 													}
 												}}>
-												<div className="flex">
-													<div
-														className="self-center ml-[1.2rem] cursor-pointer"
-														data-id={session.id}>
-														{session.date
-															.split('T')[0]
-															.replace(/\-/g, '.')}
-													</div>
-												</div>
-												<div>
-													{`${hours}:${minutes === '0' ? '00' : minutes}`}
-												</div>
+												<span>
+													{session.date.split('T')[0].replace(/\-/g, '.')}{' '}
+													({week[new Date(session.date).getDay()]})
+												</span>
+												<span>{`${hours}:${
+													minutes === '0' ? '00' : minutes
+												}`}</span>
 											</div>
 										</React.Fragment>
 									)
