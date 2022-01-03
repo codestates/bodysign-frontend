@@ -8,17 +8,10 @@ import Loading from '../../../../components/Loading'
 import { useTrainerQuery } from '../../../../generated/graphql'
 import { managedUserInfoVar, userDataVar } from '../../../../graphql/vars'
 
-interface MemberSession {
-	id: number
-	email: string
-	userName: string
-	gender: string
-	usedCount: number
-	totalCount: number
-}
-
 const SelectMember: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
+	const managedUserInfo = useReactiveVar(managedUserInfoVar)
+
 	const { loading, data } = useTrainerQuery({
 		variables: { id: userData?.id as number }
 	})
@@ -93,9 +86,11 @@ const SelectMember: NextPage = () => {
 												return (
 													<React.Fragment key={member.id}>
 														<div
-															className={`
-													${managedUserInfoVar().userId === member.id ? 'bg-[#FDAD00]' : 'bg-black'}
-													h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white hover:ring-2`}
+															className={`${
+																member.id === managedUserInfo.userId
+																	? 'ring-2 ring-[#FED06E]'
+																	: ''
+															} h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white hover:ring-2 hover:ring-[#FED06E]`}
 															data-id={member.id}
 															onClick={e => {
 																if (
@@ -104,8 +99,6 @@ const SelectMember: NextPage = () => {
 																) {
 																	const userId = e.target.dataset
 																		.id as string
-																	console.log(userId)
-
 																	managedUserInfoVar({
 																		userId: +userId,
 																		email: member.email,

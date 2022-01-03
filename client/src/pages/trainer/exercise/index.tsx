@@ -175,14 +175,14 @@ const Exercise: NextPage = () => {
 												return (
 													<React.Fragment key={exercise.id}>
 														<div
-															className={`flex justify-center h-[7rem] mt-[0.8rem] border text-[1.8rem] text-center rounded-full shadow-md bg-white ${
+															className={`${
 																!readyDelete ? '' : 'cursor-pointer'
 															} ${
-																exercise.id === deleteItemId
-																	? 'ring-2'
+																exercise.id ===
+																deleteLists.keys().next().value
+																	? 'ring-2 ring-[#FED06E]'
 																	: ''
-															}
-														`}
+															} flex justify-center h-[7rem] mt-[0.8rem] border text-[1.8rem] text-center rounded-full shadow-md bg-white hover:ring-2 hover:ring-[#FED06E]`}
 															data-id={exercise.id}
 															onClick={
 																!readyDelete
@@ -227,10 +227,12 @@ const Exercise: NextPage = () => {
 												)
 											}
 										})}
-									<AddItem
-										dataCheckModal="addexercise"
-										handleModal={handleModal}
-									/>
+									{!readyDelete ? (
+										<AddItem
+											dataCheckModal="addexercise"
+											handleModal={handleModal}
+										/>
+									) : null}
 								</div>
 							</React.Fragment>
 						)

@@ -74,8 +74,6 @@ const Detail: NextPage = () => {
 		}
 	}
 
-	console.log(data)
-
 	if (loading) return <Loading />
 	return (
 		<>
@@ -208,53 +206,58 @@ const Detail: NextPage = () => {
 					{data &&
 						data.session.sessionExercises &&
 						data.session.sessionExercises.map(exercise => {
-							const deleteItemId = Array.from(deleteLists)[0]
 							if (exercise) {
 								return (
 									<React.Fragment key={exercise.id}>
 										<div
-											className={`mt-[2.4rem] p-[1.6rem] border rounded-3xl first:mt-0 text-[1.8rem] flex-col items-center text-[#9F9F9F] ${
-												exercise.id === deleteItemId ? 'ring-2' : ''
-											}`}>
-											<div
-												className={`grid grid-cols-3 justify-items-center items-center w-full text-center border rounded-3xl py-[2rem] px-[0.8rem] bg-gray-50 cursor-pointer ${
-													exercise.id === deleteItemId ? 'ring-2' : ''
-												}`}
-												data-id={exercise.id}
-												onClick={e => {
-													if (
-														e !== null &&
-														e.target instanceof HTMLElement
-													) {
-														// 운동 종목 삭제 step 1
-														if (e.target.dataset.id) {
-															const id = +e.target.dataset.id
-															// 하나만 가능한 조건
-															if (deleteLists.size > 0) {
-																setDeleteLists(prev => new Set())
-															}
-															if (deleteLists.has(id)) {
-																setDeleteLists(
-																	prev =>
-																		new Set(
-																			[...prev].filter(el => el !== id)
+											className={`${
+												exercise.id === deleteLists.keys().next().value
+													? 'ring-2 ring-[#FED06E]'
+													: ''
+											} mt-[2.4rem] p-[1.6rem] border rounded-3xl first:mt-0 text-[1.8rem] flex-col items-center text-[#9F9F9F] hover:ring-2 hover:ring-[#FED06E]`}
+											data-id={exercise.id}
+											onClick={
+												readyDelete
+													? e => {
+															if (
+																e !== null &&
+																e.target instanceof HTMLElement
+															) {
+																// 운동 종목 삭제 step 1
+																if (e.target.dataset.id) {
+																	const id = +e.target.dataset.id
+																	// 하나만 가능한 조건
+																	if (deleteLists.size > 0) {
+																		setDeleteLists(prev => new Set())
+																	}
+																	if (deleteLists.has(id)) {
+																		setDeleteLists(
+																			prev =>
+																				new Set(
+																					[...prev].filter(el => el !== id)
+																				)
 																		)
-																)
-															} else {
-																setDeleteLists(
-																	prev => new Set(prev.add(id))
-																)
+																	} else {
+																		setDeleteLists(
+																			prev => new Set(prev.add(id))
+																		)
+																	}
+																}
 															}
-														}
-													}
-												}}>
+													  }
+													: undefined
+											}>
+											<div
+												className={`${
+													readyDelete ? 'pointer-events-none poin' : ''
+												} grid grid-cols-3 justify-items-center items-center w-full text-center border rounded-3xl py-[2rem] px-[0.8rem] bg-gray-50`}>
 												<span className="text-[1.6rem]">{'카테고리'}</span>
 												<span className="font-semibold text-black">
 													{exercise.name}
 												</span>
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
-													className="w-[2.8rem] h-[2.8rem] text-[#9F9F9F]"
+													className="w-[2.8rem] h-[2.8rem] text-[#9F9F9F] cursor-pointer"
 													fill="none"
 													viewBox="0 0 24 24"
 													stroke="currentColor"
@@ -285,7 +288,9 @@ const Detail: NextPage = () => {
 														return (
 															<div
 																key={index}
-																className="text-black text-[1.6rem] grid grid-cols-3 justify-items-center items-center w-full py-[0.8rem] px-[0.8rem] border-b last:border-b-0">
+																className={`${
+																	readyDelete ? 'pointer-events-none' : ''
+																} text-black text-[1.6rem] grid grid-cols-3 justify-items-center items-center w-full py-[0.8rem] px-[0.8rem] border-b last:border-b-0`}>
 																<span>{volume.weight}kg</span>
 																<span>{volume.reps}회</span>
 																<span>{volume.sets}세트</span>

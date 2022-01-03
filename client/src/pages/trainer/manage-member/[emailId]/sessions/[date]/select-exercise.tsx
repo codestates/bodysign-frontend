@@ -57,7 +57,6 @@ const Exercise: NextPage = () => {
 						stroke="currentColor"
 						onClick={() => {
 							// 운동 종목 추가 API
-							// 어떤 사람의, 어떤 세션의, 어떤 운동의, 어떤 볼륨을 update한다.
 							try {
 								createSessionExercise({
 									variables: {
@@ -129,12 +128,12 @@ const Exercise: NextPage = () => {
 												return (
 													<React.Fragment key={exercise.id}>
 														<div
-															className={`h-[7rem] flex justify-center items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md hover:ring-4 hover:ring-[#FDAD00] cursor-pointer ${
+															className={`${
 																exercise.name ===
 																sessionExerciseInput.exerciseName
-																	? 'bg-[#FDAD00]'
+																	? 'ring-2 ring-[#FED06E]'
 																	: ''
-															}`}
+															} h-[7rem] flex justify-center items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md cursor-pointer hover:ring-2 hover:ring-[#FED06E]`}
 															onClick={e => {
 																if (
 																	e !== null &&

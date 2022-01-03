@@ -120,8 +120,8 @@ const ManageMember: NextPage = () => {
 	useEffect(() => {
 		socket.emit('joinLounge', userData?.id)
 		socket.on('joinedLounge', data => {
-			console.log(data)
-			// 회원 추가 기능 구현하고 다시 데이터를 봐야 한다.
+			// console.log(data)
+			// 배포 이후 소켓 통신에 문제가 없는지부터 확인.
 		})
 	}, [socket])
 
@@ -227,7 +227,7 @@ const ManageMember: NextPage = () => {
 
 				{data &&
 					data.trainer.userCategories &&
-					data.trainer.userCategories.map((userCategory, idx) => {
+					data.trainer.userCategories.map(userCategory => {
 						return (
 							<Entities
 								key={userCategory?.id as number}
@@ -260,16 +260,14 @@ const ManageMember: NextPage = () => {
 
 												return (
 													<>
-														<RowMemberItem memberId={member.id}>
+														<RowMemberItem
+															member={member}
+															deleteLists={deleteLists}
+															handleManagedMember={handleManagedMember}>
 															<div className="flex">
 																<Avatar gender={member.gender} />
 																<ColMemberGroup>
-																	<div
-																		className="text-left cursor-pointer"
-																		data-id={member.id}
-																		onClick={e =>
-																			handleManagedMember(member, e)
-																		}>
+																	<div className="text-left">
 																		{member.userName} 회원
 																	</div>
 																	<div className="text-[1.4rem] text-right text-[#9F9F9F]">
@@ -280,18 +278,6 @@ const ManageMember: NextPage = () => {
 															</div>
 															{!readyDelete ? (
 																<ChatLink memberId={member.id} />
-															) : deleteLists.has(+member.id) ? (
-																<svg
-																	className="text-green-600"
-																	viewBox="0 0 15 15"
-																	fill="none"
-																	xmlns="http://www.w3.org/2000/svg"
-																	width="20"
-																	height="20">
-																	<path
-																		d="M4 7.5L7 10l4-5m-3.5 9.5a7 7 0 110-14 7 7 0 010 14z"
-																		stroke="currentColor"></path>
-																</svg>
 															) : null}
 														</RowMemberItem>
 													</>

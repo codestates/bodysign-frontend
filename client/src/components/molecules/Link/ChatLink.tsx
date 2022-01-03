@@ -10,7 +10,11 @@ interface ChatLinkProps {
 const ChatLink = ({ memberId }: ChatLinkProps) => {
 	return (
 		<Link href={`/trainer/manage-member/chat`} passHref>
-			<span onClick={() => chatTargetUserIdVar(memberId)}>
+			<span
+				onClick={e => {
+					e.stopPropagation()
+					chatTargetUserIdVar(memberId)
+				}}>
 				<ChatIcon />
 			</span>
 		</Link>
