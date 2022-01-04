@@ -3,7 +3,7 @@ import axios from 'axios'
 import { NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { io } from 'socket.io-client'
 import { userDataVar } from '../../../graphql/vars'
 
@@ -26,6 +26,7 @@ interface Chat {
 
 const Chat: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
+	const botRef = useRef<HTMLDivElement>(null)
 	const [message, setMessage] = useState('')
 	const [chats, setChat] = useState<Chat[]>([])
 	const [dataUrl, setDataUrl] = useState('')
@@ -76,6 +77,10 @@ const Chat: NextPage = () => {
 			)
 		})
 	}, [])
+
+	useEffect(() => {
+		botRef.current?.scrollIntoView()
+	})
 
 	const fileChange = async (target: HTMLInputElement) => {
 		const { files } = target
@@ -148,7 +153,7 @@ const Chat: NextPage = () => {
 								strokeLinecap="round"
 								strokeLinejoin="round"
 								strokeWidth={2}
-								d="M15 19l-7-7 7-7"
+								d="M10 19l-7-7m0 0l7-7m-7 7h18"
 							/>
 						</svg>
 					</Link>
@@ -176,8 +181,8 @@ const Chat: NextPage = () => {
 					</span>
 				</div> */}
 
-			<div className="flex flex-col mt-4 border">
-				<div className="p-[1.2rem] flex flex-col overflow-y-scroll no-scrollbar h-[calc(100vh-37px-16px-68px)]">
+			<div className="flex flex-col mt-[1.6rem] border">
+				<div className="p-[1.2rem] flex flex-col overflow-y-scroll no-scrollbar h-[calc(100vh-103px-48px-60px-26px)]">
 					{chats.map((chat, idx) => {
 						const url = chat.imgs[0]?.url
 						return chat.imgs.length ? (
@@ -209,6 +214,7 @@ const Chat: NextPage = () => {
 							</div>
 						)
 					})}
+					<div ref={botRef} />
 				</div>
 				<div className="flex flex-col">
 					<div className="flex p-[1.2rem]">

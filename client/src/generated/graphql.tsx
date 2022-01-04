@@ -184,8 +184,10 @@ export type Img = {
 	__typename?: 'Img'
 	chat: Chat
 	chatId?: Maybe<Scalars['Int']>
+	createdAt: Scalars['DateTime']
 	id?: Maybe<Scalars['Int']>
 	trainerId?: Maybe<Scalars['Int']>
+	updatedAt: Scalars['DateTime']
 	url: Scalars['String']
 	userId?: Maybe<Scalars['Int']>
 }
@@ -1191,6 +1193,24 @@ export type UpdateUserMutation = {
 		graduate: boolean
 		userCategoryId?: number | null | undefined
 	}
+}
+
+export type FindImgsByUserIdAndTrainerIdQueryVariables = Exact<{
+	findImgsInput: FindImgsInput
+}>
+
+export type FindImgsByUserIdAndTrainerIdQuery = {
+	__typename?: 'Query'
+	findImgsByUserIdAndTrainerId: Array<{
+		__typename?: 'Img'
+		id?: number | null | undefined
+		url: string
+		chatId?: number | null | undefined
+		userId?: number | null | undefined
+		trainerId?: number | null | undefined
+		createdAt: any
+		updatedAt: any
+	}>
 }
 
 export type SessionQueryVariables = Exact<{
@@ -2782,6 +2802,70 @@ export type UpdateUserMutationResult =
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<
 	UpdateUserMutation,
 	UpdateUserMutationVariables
+>
+export const FindImgsByUserIdAndTrainerIdDocument = gql`
+	query FindImgsByUserIdAndTrainerId($findImgsInput: FindImgsInput!) {
+		findImgsByUserIdAndTrainerId(findImgsInput: $findImgsInput) {
+			id
+			url
+			chatId
+			userId
+			trainerId
+			createdAt
+			updatedAt
+		}
+	}
+`
+
+/**
+ * __useFindImgsByUserIdAndTrainerIdQuery__
+ *
+ * To run a query within a React component, call `useFindImgsByUserIdAndTrainerIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindImgsByUserIdAndTrainerIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindImgsByUserIdAndTrainerIdQuery({
+ *   variables: {
+ *      findImgsInput: // value for 'findImgsInput'
+ *   },
+ * });
+ */
+export function useFindImgsByUserIdAndTrainerIdQuery(
+	baseOptions: Apollo.QueryHookOptions<
+		FindImgsByUserIdAndTrainerIdQuery,
+		FindImgsByUserIdAndTrainerIdQueryVariables
+	>
+) {
+	const options = { ...defaultOptions, ...baseOptions }
+	return Apollo.useQuery<
+		FindImgsByUserIdAndTrainerIdQuery,
+		FindImgsByUserIdAndTrainerIdQueryVariables
+	>(FindImgsByUserIdAndTrainerIdDocument, options)
+}
+export function useFindImgsByUserIdAndTrainerIdLazyQuery(
+	baseOptions?: Apollo.LazyQueryHookOptions<
+		FindImgsByUserIdAndTrainerIdQuery,
+		FindImgsByUserIdAndTrainerIdQueryVariables
+	>
+) {
+	const options = { ...defaultOptions, ...baseOptions }
+	return Apollo.useLazyQuery<
+		FindImgsByUserIdAndTrainerIdQuery,
+		FindImgsByUserIdAndTrainerIdQueryVariables
+	>(FindImgsByUserIdAndTrainerIdDocument, options)
+}
+export type FindImgsByUserIdAndTrainerIdQueryHookResult = ReturnType<
+	typeof useFindImgsByUserIdAndTrainerIdQuery
+>
+export type FindImgsByUserIdAndTrainerIdLazyQueryHookResult = ReturnType<
+	typeof useFindImgsByUserIdAndTrainerIdLazyQuery
+>
+export type FindImgsByUserIdAndTrainerIdQueryResult = Apollo.QueryResult<
+	FindImgsByUserIdAndTrainerIdQuery,
+	FindImgsByUserIdAndTrainerIdQueryVariables
 >
 export const SessionDocument = gql`
 	query Session($id: Int!) {
