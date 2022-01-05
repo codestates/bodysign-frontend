@@ -2,18 +2,14 @@ import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import CheckIcon from '../../../../../components/atoms/icons/CheckIcon'
-import DeleteIcon from '../../../../../components/atoms/icons/DeleteIcon'
-import Loading from '../../../../../components/Loading'
-import { useFindImgsByUserIdAndTrainerIdQuery } from '../../../../../generated/graphql'
-import {
-	chatTargetUserIdVar,
-	userDataVar
-} from '../../../../../graphql/vars'
+import CheckIcon from '../../../../components/atoms/icons/CheckIcon'
+import DeleteIcon from '../../../../components/atoms/icons/DeleteIcon'
+import Loading from '../../../../components/Loading'
+import { useFindImgsByUserIdAndTrainerIdQuery } from '../../../../generated/graphql'
+import { userDataVar } from '../../../../graphql/vars'
 
 const Photos: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
-	const chatTargetUserId = useReactiveVar(chatTargetUserIdVar)
 	const [imgs, setImgs] = useState<Record<string, string[]>>()
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
@@ -22,8 +18,8 @@ const Photos: NextPage = () => {
 			findImgsInput: {
 				page: 0,
 				per: 20,
-				trainerId: userData?.id as number,
-				userId: chatTargetUserId as number
+				trainerId: userData?.trainerId as number,
+				userId: userData?.id as number
 			}
 		}
 	})
@@ -78,7 +74,7 @@ const Photos: NextPage = () => {
 		<>
 			<div className="flex items-center justify-between">
 				<span className="flex text-[3.2rem] items-center">
-					<Link href="/trainer/manage-member/chat" passHref>
+					<Link href="/user/chat" passHref>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
