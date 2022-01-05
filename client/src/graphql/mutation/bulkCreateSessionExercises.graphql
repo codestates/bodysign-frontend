@@ -1,0 +1,7 @@
+mutation BulkCreateSessionExercises($names: [String!]!, $sessionId: Int!) {
+	bulkCreateSessionExercises(names: $names, sessionId: $sessionId) {
+		id
+		name
+		sessionId
+	}
+}
