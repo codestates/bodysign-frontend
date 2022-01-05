@@ -20,13 +20,18 @@ const Exercise: NextPage = () => {
 	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
 	const refs = useRef<(HTMLSpanElement | null)[]>([])
 	// const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
-	const [addLists, setAddLists] = useState<Set<string>>(new Set())
+	const [exerciseNames, setExerciseNames] = useState<Set<string>>(
+		new Set()
+	)
+	const [exerciseCategoryNames, setExerciseCategoryNames] = useState<
+		string[]
+	>([])
 	const { loading, data } = useTrainerQuery({
 		variables: { id: userData?.id as number }
 	})
-	// const [createSessionExercise] = useCreateSessionExerciseMutation()
 	const [bulkCreateSessionExercises] =
 		useBulkCreateSessionExercisesMutation()
+	console.log(exerciseNames, exerciseCategoryNames)
 
 	if (loading) return <Loading />
 	return (
@@ -61,18 +66,11 @@ const Exercise: NextPage = () => {
 						try {
 							bulkCreateSessionExercises({
 								variables: {
-									names: [...addLists],
+									exerciseCategoryNames: [...exerciseCategoryNames],
+									names: [...exerciseNames],
 									sessionId: sessionExerciseInput.sessionId
 								}
 							})
-							// createSessionExercise({
-							// 	variables: {
-							// 		createSessionExerciseInput: {
-							// 			name: sessionExerciseInput.exerciseName,
-							// 			sessionId: sessionExerciseInput.sessionId
-							// 		}
-							// 	}
-							// })
 							router.push(router.asPath.split('select')[0])
 						} catch (error) {
 							console.log(error)
@@ -136,7 +134,7 @@ const Exercise: NextPage = () => {
 												<React.Fragment key={exercise.id}>
 													<div
 														className={`${
-															addLists.has(exercise.name)
+															exerciseNames.has(exercise.name)
 																? 'ring-2 ring-[#FED06E]'
 																: ''
 														} h-[7rem] flex justify-center items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md cursor-pointer hover:ring-2 hover:ring-[#FED06E]`}
@@ -145,8 +143,13 @@ const Exercise: NextPage = () => {
 																e !== null &&
 																e.target instanceof HTMLElement
 															) {
-																if (addLists.has(exercise.name)) {
-																	setAddLists(
+																if (
+																	exerciseNames.has(exercise.name) &&
+																	exerciseCategoryNames.includes(
+																		exerciseCategory.name
+																	)
+																) {
+																	setExerciseNames(
 																		prev =>
 																			new Set(
 																				[...prev].filter(
@@ -154,16 +157,21 @@ const Exercise: NextPage = () => {
 																				)
 																			)
 																	)
+																	setExerciseCategoryNames(prev =>
+																		[...prev].filter(
+																			el => el !== exerciseCategory.name
+																		)
+																	)
 																} else {
-																	setAddLists(
+																	setExerciseNames(
 																		prev =>
 																			new Set(prev.add(exercise.name))
 																	)
+																	setExerciseCategoryNames(prev => [
+																		...prev,
+																		exerciseCategory.name
+																	])
 																}
-																// sessionExerciseInputVar({
-																// 	...sessionExerciseInput,
-																// 	exerciseName: exercise.name
-																// })
 															}
 														}}>
 														<div>{exercise.name}</div>

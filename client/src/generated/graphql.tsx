@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -73,6 +73,7 @@ export type CreateNonRegisteredUserInput = {
 };
 
 export type CreateSessionExerciseInput = {
+  exerciseCategoryName: Scalars['String'];
   name: Scalars['String'];
   sessionId: Scalars['Int'];
 };
@@ -259,6 +260,7 @@ export type Mutation = {
 
 
 export type MutationBulkCreateSessionExercisesArgs = {
+  exerciseCategoryNames: Array<Scalars['String']>;
   names: Array<Scalars['String']>;
   sessionId: Scalars['Int'];
 };
@@ -644,6 +646,7 @@ export type Session = {
 
 export type SessionExercise = {
   __typename?: 'SessionExercise';
+  exerciseCategoryName: Scalars['String'];
   id: Scalars['Int'];
   name: Scalars['String'];
   session: Session;
@@ -866,12 +869,13 @@ export type UserCategory = {
 };
 
 export type BulkCreateSessionExercisesMutationVariables = Exact<{
+  exerciseCategoryNames: Array<Scalars['String']> | Scalars['String'];
   names: Array<Scalars['String']> | Scalars['String'];
   sessionId: Scalars['Int'];
 }>;
 
 
-export type BulkCreateSessionExercisesMutation = { __typename?: 'Mutation', bulkCreateSessionExercises: Array<{ __typename?: 'SessionExercise', id: number, name: string, sessionId: number }> };
+export type BulkCreateSessionExercisesMutation = { __typename?: 'Mutation', bulkCreateSessionExercises: Array<{ __typename?: 'SessionExercise', id: number, name: string, sessionId: number, exerciseCategoryName: string }> };
 
 export type CreateExerciseMutationVariables = Exact<{
   createExerciseInput: CreateExerciseInput;
@@ -913,7 +917,7 @@ export type CreateSessionExerciseMutationVariables = Exact<{
 }>;
 
 
-export type CreateSessionExerciseMutation = { __typename?: 'Mutation', createSessionExercise: { __typename?: 'SessionExercise', id: number, name: string, sessionId: number } };
+export type CreateSessionExerciseMutation = { __typename?: 'Mutation', createSessionExercise: { __typename?: 'SessionExercise', id: number, name: string, sessionId: number, exerciseCategoryName: string } };
 
 export type CreateSessionExerciseVolumeMutationVariables = Exact<{
   createSessionExerciseVolumeInput: CreateSessionExerciseVolumeInput;
@@ -1074,11 +1078,16 @@ export type UserCategoryQuery = { __typename?: 'Query', userCategory: { __typena
 
 
 export const BulkCreateSessionExercisesDocument = gql`
-    mutation BulkCreateSessionExercises($names: [String!]!, $sessionId: Int!) {
-  bulkCreateSessionExercises(names: $names, sessionId: $sessionId) {
+    mutation BulkCreateSessionExercises($exerciseCategoryNames: [String!]!, $names: [String!]!, $sessionId: Int!) {
+  bulkCreateSessionExercises(
+    exerciseCategoryNames: $exerciseCategoryNames
+    names: $names
+    sessionId: $sessionId
+  ) {
     id
     name
     sessionId
+    exerciseCategoryName
   }
 }
     `;
@@ -1097,6 +1106,7 @@ export type BulkCreateSessionExercisesMutationFn = Apollo.MutationFunction<BulkC
  * @example
  * const [bulkCreateSessionExercisesMutation, { data, loading, error }] = useBulkCreateSessionExercisesMutation({
  *   variables: {
+ *      exerciseCategoryNames: // value for 'exerciseCategoryNames'
  *      names: // value for 'names'
  *      sessionId: // value for 'sessionId'
  *   },
@@ -1299,6 +1309,7 @@ export const CreateSessionExerciseDocument = gql`
     id
     name
     sessionId
+    exerciseCategoryName
   }
 }
     `;

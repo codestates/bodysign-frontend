@@ -1,7 +1,16 @@
-mutation BulkCreateSessionExercises($names: [String!]!, $sessionId: Int!) {
-	bulkCreateSessionExercises(names: $names, sessionId: $sessionId) {
+mutation BulkCreateSessionExercises(
+	$exerciseCategoryNames: [String!]!
+	$names: [String!]!
+	$sessionId: Int!
+) {
+	bulkCreateSessionExercises(
+		exerciseCategoryNames: $exerciseCategoryNames
+		names: $names
+		sessionId: $sessionId
+	) {
 		id
 		name
 		sessionId
+		exerciseCategoryName
 	}
 }
