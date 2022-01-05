@@ -9,6 +9,8 @@ query Session($id: Int!) {
 		sessionExercises {
 			id
 			name
+			sessionId
+			exerciseCategoryName
 			sessionExerciseVolumes {
 				id
 				reps
