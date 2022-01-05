@@ -1,4 +1,4 @@
-mutation FindOneUserByPhoneNumber($phoneNumber: String!) {
+query FindOneUserByPhoneNumber($phoneNumber: String!) {
 	findOneUserByPhoneNumber(phoneNumber: $phoneNumber) {
 		id
 		email

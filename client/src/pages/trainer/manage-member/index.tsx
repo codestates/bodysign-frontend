@@ -18,7 +18,7 @@ import Header from '../../../components/organisms/Header'
 import {
 	TrainerDocument,
 	useCreateUserCategoryMutation,
-	useFindOneUserByPhoneNumberMutation,
+	useFindOneUserByPhoneNumberLazyQuery,
 	useTrainerQuery,
 	useUpdateUserMutation
 } from '../../../generated/graphql'
@@ -27,14 +27,6 @@ import {
 	modalVar,
 	userDataVar
 } from '../../../graphql/vars'
-
-interface Member {
-	id: string
-	email: string
-	userName: string
-	gender: string
-	count: string
-}
 
 interface FormInput {
 	phoneNumber: string
@@ -57,9 +49,9 @@ const ManageMember: NextPage = () => {
 	const [createUserCategory] = useCreateUserCategoryMutation()
 	const [updateUser] = useUpdateUserMutation()
 	const [
-		findOneUserByPhoneNumber,
+		findOneUserByPhoneNumberLazyQuery,
 		{ loading: isUserLoading, data: isUserData }
-	] = useFindOneUserByPhoneNumberMutation()
+	] = useFindOneUserByPhoneNumberLazyQuery()
 	const {
 		register,
 		formState: { errors },
@@ -379,18 +371,16 @@ const ManageMember: NextPage = () => {
 										/>
 										<button
 											className="w-[20%] p-[1rem] bg-[#FED06E] border shadow-md rounded-3xl h-[5.5rem] mt-[0.4rem]"
-											// disabled={isUserData ? false : true}
+											// disabled={isUserData && isUserData ? false : true}
 											type="button"
 											onClick={async e => {
 												// 트레이너와 회원을 연결하는 API
-												// 값이 트루인지 확인하고 추가 버튼 disabled
-												// setPhoneNumber(e.target.value)
 												try {
 													if (
 														e !== null &&
 														e.target instanceof HTMLElement
 													) {
-														await findOneUserByPhoneNumber({
+														await findOneUserByPhoneNumberLazyQuery({
 															variables: {
 																phoneNumber: phoneNumber
 															}
