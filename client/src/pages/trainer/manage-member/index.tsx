@@ -29,14 +29,6 @@ import {
 	userDataVar
 } from '../../../graphql/vars'
 
-interface Member {
-	id: string
-	email: string
-	userName: string
-	gender: string
-	count: string
-}
-
 interface FormInput {
 	phoneNumber: string
 	userCategoryId: number

@@ -159,7 +159,6 @@ const Exercise: NextPage = () => {
 			{data &&
 				data.trainer.exerciseCategories &&
 				data.trainer.exerciseCategories.map((exerciseCategory, idx) => {
-					const deleteItemId = Array.from(deleteLists)[0]
 					return (
 						<React.Fragment key={idx}>
 							<div className="mt-[2.4rem]">

@@ -1,0 +1,10 @@
+query FindImgsByUserIdAndTrainerId($findImgsInput: FindImgsInput!) {
+	findImgsByUserIdAndTrainerId(findImgsInput: $findImgsInput) {
+		id
+		url
+		chatId
+		userId
+		trainerId
+		createdAt
+	}
+}
