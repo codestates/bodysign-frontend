@@ -1,7 +1,3 @@
 mutation RemoveSessionExercise($id: Int!) {
-	removeSessionExercise(id: $id) {
-		id
-		name
-		sessionId
-	}
+	removeSessionExercise(id: $id)
 }
