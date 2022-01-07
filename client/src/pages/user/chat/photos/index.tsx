@@ -14,7 +14,7 @@ import { userDataVar } from '../../../../graphql/vars'
 
 const Photos: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
-	const [imgs, setImgs] = useState<Record<string, string[]>>()
+	const [imgs, setImgs] = useState<Record<string, string[][]>>()
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const { loading, data } = useFindImgsByUserIdAndTrainerIdQuery({
@@ -37,7 +37,7 @@ const Photos: NextPage = () => {
 				if (!imgs[date]) {
 					imgs[date] = []
 				}
-				imgs[date].push([img.id + '', img.url])
+				imgs[date].push([img.id + '', img.url, img.chat.sender])
 			})
 			setImgs(imgs)
 		}
@@ -70,10 +70,10 @@ const Photos: NextPage = () => {
 						}
 					]
 				})
-				deleteLists.clear()
 			} catch (error) {
 				console.log(error)
 			}
+			deleteLists.clear()
 		}
 		setReadyDelete(false)
 	}
@@ -109,59 +109,80 @@ const Photos: NextPage = () => {
 
 			{imgs &&
 				Object.entries(imgs).map(entry => {
+					const [date, imgs] = entry
 					return (
-						<React.Fragment key={entry[0]}>
+						<React.Fragment key={date}>
 							<div className="mt-[2.4rem]">
-								<div className="font-semibold text-[1.8rem]">
-									{entry[0]}
-								</div>
+								<div className="font-semibold text-[1.8rem]">{date}</div>
 								<div className="grid grid-cols-3 gap-[1.2rem] mt-[0.8rem]">
-									{entry[1].map(img => {
-										const imgId = +img[0]
-										const url = img[1]
+									{imgs.map(img => {
+										const [imgId, url, sender] = img
 										return (
-											<img
-												className={`
+											<span className="relative">
+												<img
+													className={`
 												${!readyDelete ? '' : 'cursor-pointer'} ${
-													deleteLists.has(imgId)
-														? 'ring-2 ring-[#FED06E]'
-														: ''
-												}
+														deleteLists.has(+imgId)
+															? 'ring-2 ring-[#FED06E] opacity-60'
+															: ''
+													}
 												w-full min-h-[10.5rem] h-full`}
-												src={url}
-												alt="image"
-												data-id={imgId}
-												onClick={
-													!readyDelete
-														? undefined
-														: e => {
-																if (
-																	e !== null &&
-																	e.target instanceof HTMLElement
-																) {
-																	// 사진 삭제 step 1
-																	if (e.target.dataset.id) {
-																		const id = +e.target.dataset.id
-
-																		if (deleteLists.has(id)) {
-																			setDeleteLists(
-																				prev =>
-																					new Set(
-																						[...prev].filter(
-																							el => el !== id
+													src={url}
+													alt="image"
+												/>
+												{readyDelete ? (
+													sender === 'User' ? (
+														<div
+															className="w-[2.5rem] h-[2.5rem] absolute bg-white/50 top-[0.5rem] right-[0.5rem] rounded-full"
+															data-id={imgId}
+															onClick={
+																!readyDelete
+																	? undefined
+																	: e => {
+																			if (
+																				e !== null &&
+																				e.target instanceof HTMLElement
+																			) {
+																				// 사진 삭제 step 1
+																				if (e.target.dataset.id) {
+																					const id = +e.target.dataset.id
+																					if (deleteLists.has(id)) {
+																						setDeleteLists(
+																							prev =>
+																								new Set(
+																									[...prev].filter(
+																										el => el !== id
+																									)
+																								)
 																						)
-																					)
-																			)
-																		} else {
-																			setDeleteLists(
-																				prev => new Set(prev.add(id))
-																			)
-																		}
-																	}
-																}
-														  }
-												}
-											/>
+																					} else {
+																						setDeleteLists(
+																							prev => new Set(prev.add(id))
+																						)
+																					}
+																				}
+																			}
+																	  }
+															}
+														/>
+													) : null
+												) : null}
+												{deleteLists.has(+imgId) ? (
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														className="w-[2.5rem] h-[2.5rem] absolute text-[#FED06E] bg-white top-[0.5rem] right-[0.5rem] rounded-full pointer-events-none"
+														fill="none"
+														viewBox="0 0 24 24"
+														stroke="currentColor">
+														<path
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															strokeWidth={2}
+															d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+														/>
+													</svg>
+												) : null}
+											</span>
 										)
 									})}
 								</div>

@@ -1063,7 +1063,7 @@ export type FindImgsByUserIdAndTrainerIdQueryVariables = Exact<{
 }>;
 
 
-export type FindImgsByUserIdAndTrainerIdQuery = { __typename?: 'Query', findImgsByUserIdAndTrainerId: Array<{ __typename?: 'Img', id?: number | null | undefined, url: string, chatId?: number | null | undefined, userId?: number | null | undefined, trainerId?: number | null | undefined, createdAt: any }> };
+export type FindImgsByUserIdAndTrainerIdQuery = { __typename?: 'Query', findImgsByUserIdAndTrainerId: Array<{ __typename?: 'Img', id?: number | null | undefined, url: string, chatId?: number | null | undefined, userId?: number | null | undefined, trainerId?: number | null | undefined, createdAt: any, chat: { __typename?: 'Chat', sender: string } }> };
 
 export type FindOneUserByPhoneNumberQueryVariables = Exact<{
   phoneNumber: Scalars['String'];
@@ -2049,6 +2049,9 @@ export const FindImgsByUserIdAndTrainerIdDocument = gql`
     userId
     trainerId
     createdAt
+    chat {
+      sender
+    }
   }
 }
     `;
