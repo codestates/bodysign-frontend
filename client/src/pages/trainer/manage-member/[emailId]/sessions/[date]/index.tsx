@@ -249,13 +249,15 @@ const Detail: NextPage = () => {
 											className={`${
 												readyDelete ? 'pointer-events-none poin' : ''
 											} grid grid-cols-3 justify-items-center items-center w-full text-center border rounded-3xl py-[2rem] px-[0.8rem] bg-gray-50`}>
-											<span className="text-[1.6rem]">{'카테고리'}</span>
-											<span className="font-semibold text-black">
+											<span className="text-[1.6rem] col-span-2">
+												{exercise.exerciseCategoryName}
+											</span>
+											<span className="font-semibold text-black col-span-2">
 												{exercise.name}
 											</span>
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
-												className="w-[2.8rem] h-[2.8rem] text-[#9F9F9F] cursor-pointer"
+												className="col-start-3 row-start-1 row-end-3 w-[2.8rem] h-[2.8rem] text-[#9F9F9F] cursor-pointer"
 												fill="none"
 												viewBox="0 0 24 24"
 												stroke="currentColor"

@@ -2,9 +2,8 @@ import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { io } from 'socket.io-client'
 import Avatar from '../../../components/atoms/Avatar'
 import AddCategoryIcon from '../../../components/atoms/icons/AddCategoryIcon'
 import CheckIcon from '../../../components/atoms/icons/CheckIcon'
@@ -19,7 +18,7 @@ import Header from '../../../components/organisms/Header'
 import {
 	TrainerDocument,
 	useCreateUserCategoryMutation,
-	useFindOneUserByPhoneNumberMutation,
+	useFindOneUserByPhoneNumberLazyQuery,
 	useTrainerQuery,
 	useUpdateUserMutation
 } from '../../../generated/graphql'
@@ -50,9 +49,9 @@ const ManageMember: NextPage = () => {
 	const [createUserCategory] = useCreateUserCategoryMutation()
 	const [updateUser] = useUpdateUserMutation()
 	const [
-		findOneUserByPhoneNumber,
+		findOneUserByPhoneNumberLazyQuery,
 		{ loading: isUserLoading, data: isUserData }
-	] = useFindOneUserByPhoneNumberMutation()
+	] = useFindOneUserByPhoneNumberLazyQuery()
 	const {
 		register,
 		formState: { errors },
@@ -106,14 +105,14 @@ const ManageMember: NextPage = () => {
 		}
 	}
 
-	const socket = io(process.env.NEXT_PUBLIC_API_DOMAIN_SOCKET as string)
-	useEffect(() => {
-		socket.emit('joinLounge', userData?.id)
-		socket.on('joinedLounge', data => {
-			// console.log(data)
-			// 배포 이후 소켓 통신에 문제가 없는지부터 확인.
-		})
-	}, [socket])
+	// const socket = io(process.env.NEXT_PUBLIC_API_DOMAIN_SOCKET as string)
+	// useEffect(() => {
+	// 	socket.emit('joinLounge', userData?.id)
+	// 	socket.on('joinedLounge', data => {
+	// 		// console.log(data)
+	// 		// 배포 이후 소켓 통신에 문제가 없는지부터 확인.
+	// 	})
+	// }, [socket])
 
 	const handleCategory = (category: string) => {
 		setCategory(category)
@@ -272,10 +271,12 @@ const ManageMember: NextPage = () => {
 											)
 										}
 									})}
-							<AddItem
-								dataCheckModal="addmember"
-								handleModal={handleModal}
-							/>
+							{!readyDelete ? (
+								<AddItem
+									dataCheckModal="addmember"
+									handleModal={handleModal}
+								/>
+							) : null}
 						</Entities>
 					)
 				})}
@@ -324,11 +325,6 @@ const ManageMember: NextPage = () => {
 									})}
 								/>
 
-								{/* <button
-									className="w-full mt-[2.4rem] text-center border rounded-3xl shadow-md cursor-pointer h-[5.5rem] bg-[#FED06E]"
-									type="submit">
-									확인
-								</button> */}
 								<div className="flex justify-between mt-[2.4rem]">
 									<button
 										className="w-[45%] p-[1.2rem] border shadow-md rounded-3xl"
@@ -375,18 +371,16 @@ const ManageMember: NextPage = () => {
 										/>
 										<button
 											className="w-[20%] p-[1rem] bg-[#FED06E] border shadow-md rounded-3xl h-[5.5rem] mt-[0.4rem]"
-											// disabled={isUserData ? false : true}
-											type="submit"
+											// disabled={isUserData && isUserData ? false : true}
+											type="button"
 											onClick={async e => {
 												// 트레이너와 회원을 연결하는 API
-												// 값이 트루인지 확인하고 추가 버튼 disabled
-												// setPhoneNumber(e.target.value)
 												try {
 													if (
 														e !== null &&
 														e.target instanceof HTMLElement
 													) {
-														await findOneUserByPhoneNumber({
+														await findOneUserByPhoneNumberLazyQuery({
 															variables: {
 																phoneNumber: phoneNumber
 															}

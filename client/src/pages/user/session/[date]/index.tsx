@@ -49,13 +49,12 @@ const Detail: NextPage = () => {
 						if (exercise) {
 							return (
 								<React.Fragment key={exercise.id}>
-									<div
-										className={`mt-[2.4rem] p-[1.6rem] border rounded-3xl first:mt-0 text-[1.8rem] flex-col items-center text-[#9F9F9F]`}>
-										<div
-											className={`grid grid-cols-2 justify-items-center items-center w-full text-center border rounded-3xl py-[2rem] px-[0.8rem] bg-gray-50 cursor-pointer`}
-											data-id={exercise.id}>
-											<span className="text-[1.6rem]">{'카테고리'}</span>
-											<span className="font-semibold text-black">
+									<div className="mt-[2.4rem] p-[1.6rem] border rounded-3xl first:mt-0 text-[1.8rem] flex-col items-center text-[#9F9F9F]">
+										<div className="grid grid-cols-1 w-full text-center border rounded-3xl py-[2rem] px-[0.8rem] bg-gray-50">
+											<span className="text-[1.6rem] col-span-2">
+												{exercise.exerciseCategoryName}
+											</span>
+											<span className="font-semibold text-black col-span-2">
 												{exercise.name}
 											</span>
 										</div>

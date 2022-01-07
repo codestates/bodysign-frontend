@@ -2,10 +2,10 @@ import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import Loading from '../../../../../../components/Loading'
 import {
-	useCreateSessionExerciseMutation,
+	useBulkCreateSessionExercisesMutation,
 	useTrainerQuery
 } from '../../../../../../generated/graphql'
 import {
@@ -20,10 +20,18 @@ const Exercise: NextPage = () => {
 	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
 	const refs = useRef<(HTMLSpanElement | null)[]>([])
 	// const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
+	const [exerciseNames, setExerciseNames] = useState<Set<string>>(
+		new Set()
+	)
+	const [exerciseCategoryNames, setExerciseCategoryNames] = useState<
+		string[]
+	>([])
 	const { loading, data } = useTrainerQuery({
 		variables: { id: userData?.id as number }
 	})
-	const [createSessionExercise] = useCreateSessionExerciseMutation()
+	const [bulkCreateSessionExercises] =
+		useBulkCreateSessionExercisesMutation()
+	console.log(exerciseNames, exerciseCategoryNames)
 
 	if (loading) return <Loading />
 	return (
@@ -56,12 +64,11 @@ const Exercise: NextPage = () => {
 					onClick={() => {
 						// 운동 종목 추가 API
 						try {
-							createSessionExercise({
+							bulkCreateSessionExercises({
 								variables: {
-									createSessionExerciseInput: {
-										name: sessionExerciseInput.exerciseName,
-										sessionId: sessionExerciseInput.sessionId
-									}
+									exerciseCategoryNames: [...exerciseCategoryNames],
+									names: [...exerciseNames],
+									sessionId: sessionExerciseInput.sessionId
 								}
 							})
 							router.push(router.asPath.split('select')[0])
@@ -127,8 +134,7 @@ const Exercise: NextPage = () => {
 												<React.Fragment key={exercise.id}>
 													<div
 														className={`${
-															exercise.name ===
-															sessionExerciseInput.exerciseName
+															exerciseNames.has(exercise.name)
 																? 'ring-2 ring-[#FED06E]'
 																: ''
 														} h-[7rem] flex justify-center items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md cursor-pointer hover:ring-2 hover:ring-[#FED06E]`}
@@ -137,10 +143,35 @@ const Exercise: NextPage = () => {
 																e !== null &&
 																e.target instanceof HTMLElement
 															) {
-																sessionExerciseInputVar({
-																	...sessionExerciseInput,
-																	exerciseName: exercise.name
-																})
+																if (
+																	exerciseNames.has(exercise.name) &&
+																	exerciseCategoryNames.includes(
+																		exerciseCategory.name
+																	)
+																) {
+																	setExerciseNames(
+																		prev =>
+																			new Set(
+																				[...prev].filter(
+																					el => el !== exercise.name
+																				)
+																			)
+																	)
+																	setExerciseCategoryNames(prev =>
+																		[...prev].filter(
+																			el => el !== exerciseCategory.name
+																		)
+																	)
+																} else {
+																	setExerciseNames(
+																		prev =>
+																			new Set(prev.add(exercise.name))
+																	)
+																	setExerciseCategoryNames(prev => [
+																		...prev,
+																		exerciseCategory.name
+																	])
+																}
 															}
 														}}>
 														<div>{exercise.name}</div>

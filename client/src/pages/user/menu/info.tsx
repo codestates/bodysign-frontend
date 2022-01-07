@@ -52,6 +52,7 @@ const UserInfo: NextPage = () => {
 					}
 				}
 			})
+			modalVar(false)
 		} catch (error) {
 			console.log(error)
 		}
@@ -182,7 +183,7 @@ const UserInfo: NextPage = () => {
 				</button>
 			</div>
 			<div
-				className="text-[1.8rem] text-red-600 hover:text-gray-400 cursor-pointer"
+				className="text-[1.8rem] text-red-600 hover:text-gray-400 cursor-pointer absolute bottom-[2rem]"
 				data-check-modal="deleteaccount"
 				onClick={e => {
 					if (e !== null && e.target instanceof HTMLElement) {

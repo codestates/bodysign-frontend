@@ -1,4 +1,3 @@
-import { useRouter } from 'next/dist/client/router'
 import BotNavChatLink from '../molecules/Link/BotNavChatLink'
 import BotNavExerciseLink from '../molecules/Link/BotNavExerciseLink'
 import BotNavHomeLink from '../molecules/Link/BotNavHomeLink'
@@ -6,13 +5,12 @@ import BotNavMemberLink from '../molecules/Link/BotNavMemberLink'
 import BotNavMenuLink from '../molecules/Link/BotNavMenuLink'
 import BotNavSessionLink from '../molecules/Link/BotNavSessionLink'
 
-interface ComponentProps {
+interface BottomBarProps {
+	pathName: string
 	children?: React.ReactNode
 }
 
-const BottomBar = ({}: ComponentProps) => {
-	const router = useRouter()
-	const pathName = router.pathname
+const BottomBar = ({ pathName }: BottomBarProps) => {
 	let variant = 'Trainer'
 	if (pathName.includes('user')) {
 		variant = 'Member'
