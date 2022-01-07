@@ -1045,6 +1045,24 @@ export type FindOneUserByPhoneNumberQueryVariables = Exact<{
 
 export type FindOneUserByPhoneNumberQuery = { __typename?: 'Query', findOneUserByPhoneNumber: { __typename?: 'User', id: number, email: string, userName: string, birthDate: any, phoneNumber: string, gender: string, graduate: boolean } };
 
+export type FindImgsByUserIdAndTrainerIdQueryVariables = Exact<{
+	findImgsInput: FindImgsInput
+}>
+
+export type FindImgsByUserIdAndTrainerIdQuery = {
+	__typename?: 'Query'
+	findImgsByUserIdAndTrainerId: Array<{
+		__typename?: 'Img'
+		id?: number | null | undefined
+		url: string
+		chatId?: number | null | undefined
+		userId?: number | null | undefined
+		trainerId?: number | null | undefined
+		createdAt: any
+		updatedAt: any
+	}>
+}
+
 export type SessionQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
@@ -1972,6 +1990,7 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, U
  *   },
  * });
  */
+
 export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, options);
@@ -1998,6 +2017,7 @@ export const FindOneUserByPhoneNumberDocument = gql`
  *
  * To run a query within a React component, call `useFindOneUserByPhoneNumberQuery` and pass it any options that fit your needs.
  * When your component renders, `useFindOneUserByPhoneNumberQuery` returns an object from Apollo Client that contains loading, error, and data properties
+
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -2020,6 +2040,7 @@ export function useFindOneUserByPhoneNumberLazyQuery(baseOptions?: Apollo.LazyQu
 export type FindOneUserByPhoneNumberQueryHookResult = ReturnType<typeof useFindOneUserByPhoneNumberQuery>;
 export type FindOneUserByPhoneNumberLazyQueryHookResult = ReturnType<typeof useFindOneUserByPhoneNumberLazyQuery>;
 export type FindOneUserByPhoneNumberQueryResult = Apollo.QueryResult<FindOneUserByPhoneNumberQuery, FindOneUserByPhoneNumberQueryVariables>;
+
 export const SessionDocument = gql`
     query Session($id: Int!) {
   session(id: $id) {

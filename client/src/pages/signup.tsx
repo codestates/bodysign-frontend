@@ -1,15 +1,15 @@
-import { useMutation, useReactiveVar } from '@apollo/client'
+import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import React, { useState } from 'react'
 import 'react-datepicker/dist/react-datepicker.css'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import {
-	CreateSocialTrainer,
-	CreateSocialUser,
-	CreateTrainerDocument,
-	CreateUserDocument
-} from '../graphql/graphql'
+	useCreateSocialTrainerMutation,
+	useCreateSocialUserMutation,
+	useCreateTrainerMutation,
+	useCreateUserMutation
+} from '../generated/graphql'
 import { loginTypeVar, modalVar } from '../graphql/vars'
 
 interface FormInput {
@@ -41,12 +41,10 @@ const Signup: NextPage<FormInput> = () => {
 	const [checkedPersonalInfo, setCheckedPersonalInfo] = useState(false)
 	const loginType = useReactiveVar(loginTypeVar)
 	const modal = useReactiveVar(modalVar)
-	const [createTrainerUser] = useMutation(
-		areYouTrainer ? CreateTrainerDocument : CreateUserDocument
-	)
-	const [createSocialTrainerUser] = useMutation(
-		areYouTrainer ? CreateSocialTrainer : CreateSocialUser
-	)
+	const [createTrainer] = useCreateTrainerMutation()
+	const [createUser] = useCreateUserMutation()
+	const [createSocialTrainer] = useCreateSocialTrainerMutation()
+	const [createSocialUser] = useCreateSocialUserMutation()
 
 	const {
 		register,
@@ -63,10 +61,10 @@ const Signup: NextPage<FormInput> = () => {
 		if (queryLoginType === 'google') {
 			try {
 				areYouTrainer
-					? await createSocialTrainerUser({
+					? await createSocialTrainer({
 							variables: {
 								createSocialTrainerInput: {
-									email: googleEmail,
+									email: googleEmail as string,
 									userName: data.userName,
 									gender: data.gender,
 									interests: test,
@@ -74,10 +72,10 @@ const Signup: NextPage<FormInput> = () => {
 								}
 							}
 					  })
-					: await createSocialTrainerUser({
+					: await createSocialUser({
 							variables: {
 								createSocialUserInput: {
-									email: googleEmail,
+									email: googleEmail as string,
 									userName: data.userName,
 									phoneNumber: data.phoneNumber,
 									gender: data.gender,
@@ -93,10 +91,10 @@ const Signup: NextPage<FormInput> = () => {
 		} else {
 			try {
 				areYouTrainer
-					? await createTrainerUser({
+					? await createTrainer({
 							variables: {
 								createTrainerInput: {
-									email: data.email,
+									email: data.email as string,
 									userName: data.userName,
 									password: data.password,
 									gender: data.gender,
@@ -105,10 +103,10 @@ const Signup: NextPage<FormInput> = () => {
 								}
 							}
 					  })
-					: await createTrainerUser({
+					: await createUser({
 							variables: {
 								createUserInput: {
-									email: data.email,
+									email: data.email as string,
 									userName: data.userName,
 									password: data.password,
 									phoneNumber: data.phoneNumber,
@@ -131,7 +129,7 @@ const Signup: NextPage<FormInput> = () => {
 
 	return (
 		<>
-			<div>
+			<div className={`${modal ? 'hidden' : ''}`}>
 				<div className="text-[3.2rem] text-left font-bold">회원가입</div>
 				<form
 					className="mt-[2.4rem] text-[1.8rem]"
@@ -394,11 +392,11 @@ const Signup: NextPage<FormInput> = () => {
 			</div>
 
 			{modal ? (
-				<div className="fixed bottom-[6.3rem] right-0 h-full overflow-auto">
+				<div className="fixed bottom-0 right-0 h-full overflow-auto">
 					<div
-						className="fixed inset-0 z-[-1] bg-black opacity-20 "
+						className="fixed inset-0 -z-10 opacity-30"
 						onClick={() => modalVar(false)}></div>
-					<div className="flex flex-col p-[2rem] z-[50] bg-white text-[1.4rem]">
+					<div className="flex flex-col p-[2rem] text-[1.4rem] bg-white z-10">
 						<div className="text-left text-[2.4rem] font-bold">
 							Bodysign 개인정보처리방침
 						</div>
@@ -406,117 +404,119 @@ const Signup: NextPage<FormInput> = () => {
 						<div className="mt-[1.6rem]">
 							<div className="font-semibold bg-gray-100">목적</div>
 							<div className="mt-[0.4rem]">
-								{`Bodysign (이하 "서비스"라 합니다.)과 관련하여, 서비스와
-									이용 고객 간에 서비스의 이용조건 및 절차, 서비스와 회원
-									간의 권리, 의무 및 기타 필요한 사항을 규정`}
+								{`<Bodysign>`} (이하 "서비스"라 합니다.)과 관련하여,
+								서비스와 이용 고객 간에 서비스의 이용조건 및 절차, 서비스와
+								회원 간의 권리, 의무 및 기타 필요한 사항을 규정
 							</div>
 						</div>
-					</div>
 
-					<div className="mt-[1.6rem]">
-						<div className="font-semibold bg-gray-100">
-							처리 및 보유기간
+						<div className="mt-[1.6rem]">
+							<div className="font-semibold bg-gray-100">
+								처리 및 보유기간
+							</div>
+							<div className="mt-[0.4rem]">
+								{`<Bodysign>`}은 법령에 따른 개인정보 보유 이용기간 또는
+								정보주체로부터 개인정보를 수집 시에 동의받은 개인정보 보유
+								이용기간 내에서 개인정보를 처리 보유 (서비스 종료시까지)
+							</div>
 						</div>
-						<div className="mt-[0.4rem]">
-							{`<Bodysign>`}은 법령에 따른 개인정보 보유 이용기간 또는
-							정보주체로부터 개인정보를 수집 시에 동의받은 개인정보 보유
-							이용기간 내에서 개인정보를 처리 보유 (서비스 종료시까지)
-						</div>
-					</div>
 
-					<div className="mt-[1.6rem]">
-						<div className="font-semibold bg-gray-100">
-							개인정보 파기절차 및 파기방법
+						<div className="mt-[1.6rem]">
+							<div className="font-semibold bg-gray-100">
+								개인정보 파기절차 및 파기방법
+							</div>
+							<div className="mt-[0.4rem]">
+								{`<Bodysign>`}은 개인정보 보유기간의 경과, 처리목적 달성 등
+								개인정보가 불필요하게 되었을 때에는 지체없이 해당
+								개인정보를 파기( {`<Bodysign>`}은 전자적 파일 형태롤 기록
+								저장된 개인정보는 기록을 재생할 수 없도록 파기)
+							</div>
 						</div>
-						<div className="mt-[0.4rem]">
-							{`<Bodysign>`}은 개인정보 보유기간의 경과, 처리목적 달성 등
-							개인정보가 불필요하게 되었을 때에는 지체없이 해당 개인정보를
-							파기( {`<Bodysign>`}은 전자적 파일 형태롤 기록 저장된
-							개인정보는 기록을 재생할 수 없도록 파기)
-						</div>
-					</div>
 
-					<div className="mt-[1.6rem]">
-						<div className="font-semibold bg-gray-100">
-							개인정보 권리 & 의무 행사방법
+						<div className="mt-[1.6rem]">
+							<div className="font-semibold bg-gray-100">
+								개인정보 권리 & 의무 행사방법
+							</div>
+							<div className="mt-[0.4rem]">
+								정보 주체는 {`<Bodysign>`}에 대해 언제든지 개인정보 열람
+								정정 삭제 처리정지 요구 등의 권리 행사 가능
+							</div>
 						</div>
-						<div className="mt-[0.4rem]">
-							정보 주체는 {`<Bodysign>`}에 대해 언제든지 개인정보 열람 정정
-							삭제 처리정지 요구 등의 권리 행사 가능
-						</div>
-					</div>
 
-					<div className="mt-[1.6rem]">
-						<div className="font-semibold bg-gray-100">
-							개인정보 보호책임자
+						<div className="mt-[1.6rem]">
+							<div className="font-semibold bg-gray-100">
+								개인정보 보호책임자
+							</div>
+							<div className="mt-[0.4rem]">
+								<p>성명 : 김창동</p>
+								<p>연락처 : 010-7204-6072</p>
+							</div>
 						</div>
-						<div className="mt-[0.4rem]">
-							<p>성명 : 김창동</p>
-							<p>연락처 : 010-7204-6072</p>
-						</div>
-					</div>
 
-					<div className="mt-[1.6rem]">
-						<div className="font-semibold bg-gray-100">
-							개인정보 처리항목
+						<div className="mt-[1.6rem]">
+							<div className="font-semibold bg-gray-100">
+								개인정보 처리항목
+							</div>
+							<div className="mt-[0.4rem]">
+								이메일, 비밀번호, 이름, 생년월일, 전화번호, 근무환경
+							</div>
 						</div>
-						<div className="mt-[0.4rem]">
-							이메일, 비밀번호, 이름, 생년월일, 전화번호, 근무환경
-						</div>
-					</div>
 
-					<div className="mt-[1.6rem]">
-						<div className="font-semibold bg-gray-100">
-							안정성 확보조치
+						<div className="mt-[1.6rem]">
+							<div className="font-semibold bg-gray-100">
+								안정성 확보조치
+							</div>
+							<div className="mt-[0.4rem]">
+								개인정보 처리시스템 등의 접근권한 관리, 고유식별번호 등의
+								암호화
+							</div>
 						</div>
-						<div className="mt-[0.4rem]">
-							개인정보 처리시스템 등의 접근권한 관리, 고유식별번호 등의
-							암호화
-						</div>
-					</div>
 
-					<div className="mt-[1.6rem]">
-						<div className="font-semibold bg-gray-100">
-							개인정보 처리방침 변경사항
+						<div className="mt-[1.6rem]">
+							<div className="font-semibold bg-gray-100">
+								개인정보 처리방침 변경사항
+							</div>
+							<div className="mt-[0.4rem]">
+								개인정보 처리 방침은 2021.12.21 부터 시행
+							</div>
 						</div>
-						<div className="mt-[0.4rem]">
-							개인정보 처리 방침은 2021.12.21 부터 시행
-						</div>
-					</div>
 
-					<div className="mt-[1.6rem]">
-						<div className="font-semibold bg-gray-100">
-							개인정보의 열람청구를 접수 및 처리하는 부서
+						<div className="mt-[1.6rem]">
+							<div className="font-semibold bg-gray-100">
+								개인정보의 열람청구를 접수 및 처리하는 부서
+							</div>
+							<div className="mt-[0.4rem]">개인정보 보호책임자와 동일</div>
 						</div>
-						<div className="mt-[0.4rem]">개인정보 보호책임자와 동일</div>
-					</div>
 
-					<div className="mt-[1.6rem]">
-						<div className="font-semibold bg-gray-100">
-							정보주체의 권익침해에 대한 구제방법
+						<div className="mt-[1.6rem]">
+							<div className="font-semibold bg-gray-100">
+								정보주체의 권익침해에 대한 구제방법
+							</div>
+							<div className="mt-[0.4rem]">
+								<ul className="ml-[1.6rem] list-decimal">
+									<li>
+										개인정보분쟁조정위원회 : (국번없이) 1833-6972
+										(www.kopico.go.kr)
+									</li>
+									<li>
+										개인정보침해신고센터 : (국번없이) 118
+										(privacy.kisa.or.kr)
+									</li>
+									<li>대검찰청 : (국번없이) 1301 (ww.spo.go.kr)</li>
+									<li>
+										경찰청 : (국번없이) 182 (cyberbureau.police.go.kr)
+									</li>
+								</ul>
+							</div>
 						</div>
-						<div className="mt-[0.4rem]">
-							<ul className="ml-[1.6rem] list-decimal">
-								<li>
-									개인정보분쟁조정위원회 : (국번없이) 1833-6972
-									(www.kopico.go.kr)
-								</li>
-								<li>
-									개인정보침해신고센터 : (국번없이) 118
-									(privacy.kisa.or.kr)
-								</li>
-								<li>대검찰청 : (국번없이) 1301 (ww.spo.go.kr)</li>
-								<li>경찰청 : (국번없이) 182 (cyberbureau.police.go.kr)</li>
-							</ul>
-						</div>
-					</div>
 
-					<button
-						className="w-full mt-[2.4rem] text-center border rounded-3xl shadow-md cursor-pointer h-[5.5rem] bg-[#FDAD00]"
-						type="submit"
-						onClick={() => modalVar(false)}>
-						확인
-					</button>
+						<button
+							className="w-full h-[4.8rem] mt-[1.6rem] p-[1.2rem] text-black bg-[#FDAD00] cursor-pointer shadow-md rounded-[2rem]"
+							type="submit"
+							onClick={() => modalVar(false)}>
+							확인
+						</button>
+					</div>
 				</div>
 			) : null}
 		</>

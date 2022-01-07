@@ -167,7 +167,6 @@ const Session: NextPage = () => {
 			{Object.entries(
 				category === '일정' ? sessionObject : completedSessionObject
 			).map((entry, idx) => {
-				const deleteItemId = Array.from(deleteLists)[0]
 				const date = entry[0].split('-')
 				return (
 					<React.Fragment key={idx}>
