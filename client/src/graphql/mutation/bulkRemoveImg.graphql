@@ -1,0 +1,3 @@
+mutation BulkRemoveImg($ids: [Int!]!) {
+	bulkRemoveImg(ids: $ids)
+}

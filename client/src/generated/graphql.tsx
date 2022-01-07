@@ -890,6 +890,13 @@ export type BulkCreateSessionExercisesMutationVariables = Exact<{
 
 export type BulkCreateSessionExercisesMutation = { __typename?: 'Mutation', bulkCreateSessionExercises: Array<{ __typename?: 'SessionExercise', id: number, name: string, sessionId: number, exerciseCategoryName: string }> };
 
+export type BulkRemoveImgMutationVariables = Exact<{
+  ids: Array<Scalars['Int']> | Scalars['Int'];
+}>;
+
+
+export type BulkRemoveImgMutation = { __typename?: 'Mutation', bulkRemoveImg: boolean };
+
 export type CreateExerciseMutationVariables = Exact<{
   createExerciseInput: CreateExerciseInput;
 }>;
@@ -1051,6 +1058,13 @@ export type UpdateUserMutationVariables = Exact<{
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: number, email: string, userName: string, birthDate: any, phoneNumber: string, gender: string, graduate: boolean, userCategoryId?: number | null | undefined } };
 
+export type FindImgsByUserIdAndTrainerIdQueryVariables = Exact<{
+  findImgsInput: FindImgsInput;
+}>;
+
+
+export type FindImgsByUserIdAndTrainerIdQuery = { __typename?: 'Query', findImgsByUserIdAndTrainerId: Array<{ __typename?: 'Img', id?: number | null | undefined, url: string, chatId?: number | null | undefined, userId?: number | null | undefined, trainerId?: number | null | undefined, createdAt: any }> };
+
 export type FindOneUserByPhoneNumberQueryVariables = Exact<{
   phoneNumber: Scalars['String'];
 }>;
@@ -1139,6 +1153,37 @@ export function useBulkCreateSessionExercisesMutation(baseOptions?: Apollo.Mutat
 export type BulkCreateSessionExercisesMutationHookResult = ReturnType<typeof useBulkCreateSessionExercisesMutation>;
 export type BulkCreateSessionExercisesMutationResult = Apollo.MutationResult<BulkCreateSessionExercisesMutation>;
 export type BulkCreateSessionExercisesMutationOptions = Apollo.BaseMutationOptions<BulkCreateSessionExercisesMutation, BulkCreateSessionExercisesMutationVariables>;
+export const BulkRemoveImgDocument = gql`
+    mutation BulkRemoveImg($ids: [Int!]!) {
+  bulkRemoveImg(ids: $ids)
+}
+    `;
+export type BulkRemoveImgMutationFn = Apollo.MutationFunction<BulkRemoveImgMutation, BulkRemoveImgMutationVariables>;
+
+/**
+ * __useBulkRemoveImgMutation__
+ *
+ * To run a mutation, you first call `useBulkRemoveImgMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkRemoveImgMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkRemoveImgMutation, { data, loading, error }] = useBulkRemoveImgMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useBulkRemoveImgMutation(baseOptions?: Apollo.MutationHookOptions<BulkRemoveImgMutation, BulkRemoveImgMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkRemoveImgMutation, BulkRemoveImgMutationVariables>(BulkRemoveImgDocument, options);
+      }
+export type BulkRemoveImgMutationHookResult = ReturnType<typeof useBulkRemoveImgMutation>;
+export type BulkRemoveImgMutationResult = Apollo.MutationResult<BulkRemoveImgMutation>;
+export type BulkRemoveImgMutationOptions = Apollo.BaseMutationOptions<BulkRemoveImgMutation, BulkRemoveImgMutationVariables>;
 export const CreateExerciseDocument = gql`
     mutation CreateExercise($createExerciseInput: CreateExerciseInput!) {
   createExercise(createExerciseInput: $createExerciseInput) {
@@ -1995,6 +2040,46 @@ export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
+export const FindImgsByUserIdAndTrainerIdDocument = gql`
+    query FindImgsByUserIdAndTrainerId($findImgsInput: FindImgsInput!) {
+  findImgsByUserIdAndTrainerId(findImgsInput: $findImgsInput) {
+    id
+    url
+    chatId
+    userId
+    trainerId
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useFindImgsByUserIdAndTrainerIdQuery__
+ *
+ * To run a query within a React component, call `useFindImgsByUserIdAndTrainerIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindImgsByUserIdAndTrainerIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindImgsByUserIdAndTrainerIdQuery({
+ *   variables: {
+ *      findImgsInput: // value for 'findImgsInput'
+ *   },
+ * });
+ */
+export function useFindImgsByUserIdAndTrainerIdQuery(baseOptions: Apollo.QueryHookOptions<FindImgsByUserIdAndTrainerIdQuery, FindImgsByUserIdAndTrainerIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindImgsByUserIdAndTrainerIdQuery, FindImgsByUserIdAndTrainerIdQueryVariables>(FindImgsByUserIdAndTrainerIdDocument, options);
+      }
+export function useFindImgsByUserIdAndTrainerIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindImgsByUserIdAndTrainerIdQuery, FindImgsByUserIdAndTrainerIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindImgsByUserIdAndTrainerIdQuery, FindImgsByUserIdAndTrainerIdQueryVariables>(FindImgsByUserIdAndTrainerIdDocument, options);
+        }
+export type FindImgsByUserIdAndTrainerIdQueryHookResult = ReturnType<typeof useFindImgsByUserIdAndTrainerIdQuery>;
+export type FindImgsByUserIdAndTrainerIdLazyQueryHookResult = ReturnType<typeof useFindImgsByUserIdAndTrainerIdLazyQuery>;
+export type FindImgsByUserIdAndTrainerIdQueryResult = Apollo.QueryResult<FindImgsByUserIdAndTrainerIdQuery, FindImgsByUserIdAndTrainerIdQueryVariables>;
 export const FindOneUserByPhoneNumberDocument = gql`
     query FindOneUserByPhoneNumber($phoneNumber: String!) {
   findOneUserByPhoneNumber(phoneNumber: $phoneNumber) {

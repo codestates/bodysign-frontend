@@ -3,7 +3,7 @@ import axios from 'axios'
 import { NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { io } from 'socket.io-client'
 import { chatTargetUserIdVar, userDataVar } from '../../../../graphql/vars'
 
@@ -27,6 +27,7 @@ interface Chat {
 const Chat: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
 	const chatTargetUserId = useReactiveVar(chatTargetUserIdVar)
+	const botRef = useRef<HTMLDivElement>(null)
 	const [message, setMessage] = useState('')
 	const [chats, setChat] = useState<Chat[]>([])
 	const [dataUrl, setDataUrl] = useState('')
@@ -80,6 +81,10 @@ const Chat: NextPage = () => {
 			)
 		})
 	}, [])
+
+	useEffect(() => {
+		botRef.current?.scrollIntoView()
+	})
 
 	const fileChange = async (target: HTMLInputElement) => {
 		const { files } = target
@@ -152,7 +157,7 @@ const Chat: NextPage = () => {
 								strokeLinecap="round"
 								strokeLinejoin="round"
 								strokeWidth={2}
-								d="M15 19l-7-7 7-7"
+								d="M10 19l-7-7m0 0l7-7m-7 7h18"
 							/>
 						</svg>
 					</Link>
@@ -160,19 +165,22 @@ const Chat: NextPage = () => {
 						{userData?.userName} 회원
 					</div>
 				</span>
-				<span className="flex">
+
+				<Link href="/trainer/manage-member/chat/photos" passHref>
 					<svg
-						className="w-[2.8rem] h-[2.8rem] cursor-pointer"
-						viewBox="0 0 15 15"
-						fill="none"
 						xmlns="http://www.w3.org/2000/svg"
-						width="25"
-						height="25">
+						className="w-[2.8rem] h-[2.8rem] cursor-pointer"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor">
 						<path
-							d="M5.5.5h-4a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1v-4a1 1 0 00-1-1zm8 0h-4a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1v-4a1 1 0 00-1-1zm0 8h-4a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1v-4a1 1 0 00-1-1zm-8 0h-4a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1v-4a1 1 0 00-1-1z"
-							stroke="currentColor"></path>
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth={2}
+							d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+						/>
 					</svg>
-				</span>
+				</Link>
 			</div>
 
 			{/* <div className="flex justify-between mt-4">
@@ -182,8 +190,8 @@ const Chat: NextPage = () => {
 						</span>
 					</div> */}
 
-			<div className="flex flex-col mt-4 border">
-				<div className="p-[1.2rem] flex flex-col overflow-y-scroll no-scrollbar h-[calc(100vh-37px-16px-68px)]">
+			<div className="flex flex-col mt-[1.6rem] border">
+				<div className="p-[1.2rem] flex flex-col overflow-y-scroll no-scrollbar h-[calc(100vh-103px-48px-60px-26px)]">
 					{chats.map((chat, idx) => {
 						const url = chat.imgs[0]?.url
 						return chat.imgs.length ? (
@@ -215,6 +223,7 @@ const Chat: NextPage = () => {
 							</div>
 						)
 					})}
+					<div ref={botRef} />
 				</div>
 				<div className="flex flex-col">
 					<div className="flex p-[1.2rem]">
@@ -253,17 +262,18 @@ const Chat: NextPage = () => {
 								e.target.scrollTop = e.target.scrollHeight
 							}}
 						/>
-						<button className="h-[3.6rem]" type="submit">
+						<button
+							className="h-[3.6rem]"
+							onClick={() => {
+								sendChat()
+							}}>
 							<svg
 								className="text-[#FED06E]"
 								viewBox="0 0 15 15"
 								fill="none"
 								xmlns="http://www.w3.org/2000/svg"
 								width="30"
-								height="30"
-								onClick={() => {
-									sendChat()
-								}}>
+								height="30">
 								<path
 									d="M14.954.71a.5.5 0 01-.1.144L5.4 10.306l2.67 4.451a.5.5 0 00.889-.06L14.954.71zM4.694 9.6L.243 6.928a.5.5 0 01.06-.889L14.293.045a.5.5 0 00-.146.101L4.694 9.6z"
 									fill="currentColor"></path>
