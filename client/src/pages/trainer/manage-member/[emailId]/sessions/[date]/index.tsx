@@ -108,15 +108,15 @@ const Detail: NextPage = () => {
 									type="checkbox"
 									name="toggle"
 									id="toggle"
-									checked={data && data.session.sentFeedback}
+									checked={data && data.session.completedSession}
 									onChange={async e => {
-										// 피드백 완료 여부 API
+										// 수업 완료 API
 										try {
 											await updateSession({
 												variables: {
 													updateSessionInput: {
 														id: sessionExerciseInput.sessionId,
-														sentFeedback: e.target.checked
+														completedSession: e.target.checked
 													}
 												},
 												refetchQueries: [
@@ -332,11 +332,14 @@ const Detail: NextPage = () => {
 					// 피드백 작성 API
 					// e.target.value
 					try {
+						console.log(e.target.value)
+
 						updateSession({
 							variables: {
 								updateSessionInput: {
 									id: sessionExerciseInput.sessionId,
-									feedback: e.target.value
+									feedback: e.target.value,
+									sentFeedback: e.target.value === '' ? false : true
 								}
 							}
 						})

@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -1070,7 +1070,7 @@ export type SessionQueryVariables = Exact<{
 }>;
 
 
-export type SessionQuery = { __typename?: 'Query', session: { __typename?: 'Session', id?: number | null | undefined, userId: number, trainerId: number, feedback?: string | null | undefined, sentFeedback: boolean, date: any, sessionExercises?: Array<{ __typename?: 'SessionExercise', id: number, name: string, sessionId: number, exerciseCategoryName: string, sessionExerciseVolumes?: Array<{ __typename?: 'SessionExerciseVolume', id: number, reps: number, sets: number, weight: number, seq: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined } };
+export type SessionQuery = { __typename?: 'Query', session: { __typename?: 'Session', id?: number | null | undefined, userId: number, trainerId: number, feedback?: string | null | undefined, sentFeedback: boolean, completedSession: boolean, date: any, sessionExercises?: Array<{ __typename?: 'SessionExercise', id: number, name: string, sessionId: number, exerciseCategoryName: string, sessionExerciseVolumes?: Array<{ __typename?: 'SessionExerciseVolume', id: number, reps: number, sets: number, weight: number, seq: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined } };
 
 export type SessionHistoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2084,6 +2084,7 @@ export const SessionDocument = gql`
     trainerId
     feedback
     sentFeedback
+    completedSession
     date
     sessionExercises {
       id
