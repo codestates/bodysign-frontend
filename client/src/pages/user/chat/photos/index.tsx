@@ -86,7 +86,7 @@ const Photos: NextPage = () => {
 					<Link href="/user/chat" passHref>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
+							className="w-[2.8rem] h-[2.8rem] cursor-pointer"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke="currentColor">

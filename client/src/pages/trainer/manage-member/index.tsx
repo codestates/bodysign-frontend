@@ -134,6 +134,7 @@ const ManageMember: NextPage = () => {
 	}
 
 	const handleDelete = async () => {
+		// 회원 삭제 step 2
 		const deleteItemId = Array.from(deleteLists)[0]
 		if (deleteItemId) {
 			try {
@@ -151,10 +152,10 @@ const ManageMember: NextPage = () => {
 						}
 					]
 				})
-				deleteLists.clear()
 			} catch (error) {
 				console.log(error)
 			}
+			deleteLists.clear()
 		}
 		setReadyDelete(false)
 	}

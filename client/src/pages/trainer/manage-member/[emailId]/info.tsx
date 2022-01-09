@@ -302,7 +302,7 @@ const Info: NextPage = () => {
 						<span>졸업유무</span>
 						<span className="relative inline-block w-[4rem] align-middle select-none">
 							<input
-								className="absolute block w-[2.8rem] h-[2.8rem] bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#FDAD00] peer"
+								className="absolute block w-[2.8rem] h-[2.8rem] bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#FED06E] peer"
 								type="checkbox"
 								name="toggle"
 								id="toggle"
@@ -334,7 +334,7 @@ const Info: NextPage = () => {
 								}}
 							/>
 							<label
-								className="block h-[2.8rem]	bg-gray-200 rounded-full cursor-pointer peer peer-checked:bg-[#FDAD00] overflow-hidden"
+								className="block h-[2.8rem]	bg-gray-200 rounded-full cursor-pointer peer peer-checked:bg-[#FED06E] overflow-hidden"
 								htmlFor="toggle"
 							/>
 						</span>

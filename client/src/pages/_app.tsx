@@ -35,20 +35,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 function MyApp({ Component, pageProps }: AppProps) {
 	const client = new ApolloClient({
 		link: concat(authMiddleware, httpLink),
-		cache: new InMemoryCache({
-			addTypename: true
-			// typePolicies: {
-			// 	Query: {
-			// 		fields: {
-			// 			chatTargetUserId: {
-			// 				read(_, {}) {
-			// 					return chatTargetUserIdVar()
-			// 				}
-			// 			}
-			// 		}
-			// 	}
-			// }
-		}),
+		cache: new InMemoryCache(),
 		connectToDevTools: true
 	})
 

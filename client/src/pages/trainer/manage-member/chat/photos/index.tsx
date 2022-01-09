@@ -90,7 +90,7 @@ const Photos: NextPage = () => {
 					<Link href="/trainer/manage-member/chat" passHref>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							className="self-center w-[2.8rem] h-[2.8rem] cursor-pointer"
+							className="w-[2.8rem] h-[2.8rem] cursor-pointer"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke="currentColor">
@@ -129,8 +129,7 @@ const Photos: NextPage = () => {
 														deleteLists.has(+imgId)
 															? 'ring-2 ring-[#FED06E] opacity-60'
 															: ''
-													}
-												w-full min-h-[10.5rem] h-full`}
+													} w-full min-h-[10.5rem] h-full`}
 													src={url}
 													alt="image"
 												/>

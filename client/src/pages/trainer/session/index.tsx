@@ -147,10 +147,10 @@ const Session: NextPage = () => {
 												}
 											]
 										})
-										deleteLists.clear()
 									} catch (error) {
 										console.log(error)
 									}
+									deleteLists.clear()
 								}
 								setReadyDelete(false)
 							}}>
