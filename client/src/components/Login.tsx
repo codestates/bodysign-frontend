@@ -7,6 +7,7 @@ import React, { useState } from 'react'
 import { accessTokenVar, loginTypeVar } from '../graphql/vars'
 import Loading from './Loading'
 // import { Cookies } from 'react-cookie'
+import axios from 'axios'
 
 // TODO : env로 빼야함
 const GOOGLE_CLIENT_ID =
@@ -57,15 +58,19 @@ const Login: NextPage = () => {
 	}
 
 	const onSubmit = async (e: any) => {
-		//? 왜 두번 눌러야 들어오지?
-
 		try {
-			await loginAuth({
-				variables: {
-					loginUserInput: {
-						...form
-					}
-				}
+			axios.post("http://localhost:4000/auth/localLogin", {
+				email: form.email,
+				password: form.password
+			},
+			{
+				withCredentials: true
+			}
+			).then(function(res){
+				console.log(res)
+				// window.location.href = res.request.responseURL
+				// ! 여기서 유저나 트레이너 페이지로 이동할 떄 해당 유저의 정보를 받아서 이동해야할텐데?
+				// ! 쿠키에 담긴 토큰 정보 가져오기
 			})
 		} catch (error) {
 			console.log(error)
