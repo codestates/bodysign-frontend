@@ -16,7 +16,7 @@ import Head from 'next/head'
 import { useEffect } from 'react'
 import Layout from '../components/Layout'
 import '../components/loading.css'
-import { accessTokenVar, userDataVar } from '../graphql/vars'
+import { userDataVar } from '../graphql/vars'
 import '../styles/globals.css'
 
 const httpLink = new HttpLink({
@@ -29,7 +29,9 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 	operation.setContext(({ headers = {} }) => ({
 		headers: {
 			...headers,
-			authorization: accessTokenVar() ? `Bearer ${accessTokenVar()}` : ''
+			authorization: getCookies().accessToken
+				? `Bearer ${getCookies().accessToken}`
+				: ''
 		}
 	}))
 
