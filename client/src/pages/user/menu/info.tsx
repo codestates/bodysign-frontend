@@ -198,7 +198,7 @@ const UserInfo: NextPage = () => {
 
 			{modal ? (
 				checkModal === 'changepassword' ? (
-					<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
+					<div className="fixed bottom-0 right-0 w-full font-IBM">
 						<div
 							className="fixed inset-0 z-[-1] bg-black opacity-20"
 							onClick={() => modalVar(false)}></div>
@@ -269,7 +269,7 @@ const UserInfo: NextPage = () => {
 						</div>
 					</div>
 				) : (
-					<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
+					<div className="fixed bottom-0 right-0 w-full font-IBM">
 						<div
 							className="fixed inset-0 z-[-1] bg-black opacity-20"
 							onClick={() => modalVar(false)}></div>

@@ -173,9 +173,9 @@ const Ledger: NextPage = () => {
 
 			<div className="mt-[2.4rem] text-[1.8rem]">
 				<form className="flex flex-col" onSubmit={e => handleSubmit(e)}>
-					<div className="flex items-center justify-around">
+					<div className="flex items-center justify-between">
 						<DatePicker
-							className="w-[12rem] p-[0.8rem] border text-center mr-[0.8rem] rounded-2xl"
+							className="w-[12rem] py-[0.5rem] border text-center rounded-2xl"
 							selected={startDate}
 							onChange={date => setStartDate(date as Date)}
 							selectsStart
@@ -184,7 +184,7 @@ const Ledger: NextPage = () => {
 						/>
 						~
 						<DatePicker
-							className="w-[12rem] p-[0.8rem] border text-center ml-[0.8rem] rounded-2xl"
+							className="w-[12rem] py-[0.5rem] border text-center rounded-2xl"
 							selected={endDate}
 							onChange={date => setEndDate(date as Date)}
 							selectsEnd
@@ -193,7 +193,7 @@ const Ledger: NextPage = () => {
 							minDate={startDate}
 						/>
 						<button
-							className="p-[0.8rem] bg-[#FDAD00] border rounded-2xl"
+							className="p-[0.6rem] bg-[#FDAD00] border rounded-2xl"
 							type="submit">
 							조회
 						</button>
@@ -211,16 +211,16 @@ const Ledger: NextPage = () => {
 					<table className="min-w-full divide-y divide-gray-200">
 						<thead className="bg-gray-50">
 							<tr>
-								<th className="p-[1.2rem] text-left text-gray-500">
+								<th className="p-[0.8rem] text-left text-gray-500">
 									기간
 								</th>
-								<th className="p-[1.2rem] text-left text-gray-500">
+								<th className="p-[0.8rem] text-left text-gray-500">
 									총 수업료
 								</th>
-								<th className="p-[1.2rem] text-left text-gray-500">
+								<th className="p-[0.8rem] text-left text-gray-500">
 									수업횟수
 								</th>
-								<th className="p-[1.2rem] text-left text-gray-500"></th>
+								<th className="p-[0.8rem] text-left text-gray-500"></th>
 							</tr>
 						</thead>
 						<tbody className="bg-white divide-y divide-gray-200">
@@ -228,19 +228,19 @@ const Ledger: NextPage = () => {
 								return (
 									<React.Fragment key={idx}>
 										<tr>
-											<td className="p-[1.2rem] text-gray-500">
+											<td className="p-[0.8rem] text-gray-500">
 												{`${sessionHistory[0].split('.')[0]}.${
 													sessionHistory[0].split('.')[1]
 												}`}
 											</td>
-											<td className="p-[1.2rem] text-gray-500">
+											<td className="p-[0.8rem] text-gray-500">
 												{sessionHistory[1].reduce((acc, cur) => acc + cur)}
 												원
 											</td>
-											<td className="p-[1.2rem] text-gray-500">
+											<td className="p-[0.8rem] text-gray-500">
 												{sessionHistory[1].length}회
 											</td>
-											<td className="flex justify-end p-1 text-gray-500">
+											<td className="flex justify-end p-[0.4rem] text-gray-500">
 												<span
 													className="flex items-center cursor-pointer"
 													onClick={() => {
