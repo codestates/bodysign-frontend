@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 
 const useSessionStorage = (key: string, initialState?: any) => {
-	const [state, setState] = useState(
-		() =>
-			JSON.parse(window.sessionStorage.getItem(key) as string) ||
-			initialState
+	const [state, setState] = useState<any>(() =>
+		JSON.parse(
+			typeof window !== 'undefined'
+				? (window.sessionStorage.getItem(key) as string)
+				: '' || initialState
+		)
 	)
 
 	useEffect(() => {

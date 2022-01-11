@@ -1,4 +1,5 @@
 import { gql, useMutation, useReactiveVar } from '@apollo/client'
+import axios from 'axios'
 import type { NextPage } from 'next'
 import { useSession } from 'next-auth/client'
 import { useRouter } from 'next/dist/client/router'
@@ -24,7 +25,6 @@ const LOGIN = gql`
 `
 
 const Login: NextPage = () => {
-	console.log(process.env.NEXT_PUBLIC_API_DOMAIN)
 	const [form, setForm] = useState({
 		email: '',
 		password: ''
@@ -57,16 +57,19 @@ const Login: NextPage = () => {
 	}
 
 	const onSubmit = async (e: any) => {
-		//? 왜 두번 눌러야 들어오지?
-
 		try {
-			await loginAuth({
-				variables: {
-					loginUserInput: {
-						...form
-					}
-				}
-			})
+			axios
+				.post(
+					'http://localhost:4000/auth/localLogin',
+					{
+						email: form.email,
+						password: form.password
+					},
+					{ withCredentials: true }
+				)
+				.then(function (res) {
+					router.push(res.data.redirectUrl)
+				})
 		} catch (error) {
 			console.log(error)
 		}
