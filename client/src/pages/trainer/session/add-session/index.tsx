@@ -47,7 +47,7 @@ const AddSession: NextPage = () => {
 				</span>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
-					className="cursor-pointer w-[3.6rem] h-[3.6rem] text-[#FDAD00]"
+					className="cursor-pointer w-[3.6rem] h-[3.6rem] text-[#FED06E]"
 					fill="none"
 					viewBox="0 0 24 24"
 					stroke="currentColor"

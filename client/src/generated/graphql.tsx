@@ -213,7 +213,8 @@ export type LoginUserInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   bulkCreateSessionExercises: Array<SessionExercise>;
-  bulkDeleteExerciseCategory: Scalars['Boolean'];
+  bulkRemoveExerciseCategory: Scalars['Boolean'];
+  bulkRemoveImg: Scalars['Boolean'];
   createChat: Chat;
   createExercise: Exercise;
   createExerciseCategory: ExerciseCategory;
@@ -233,10 +234,11 @@ export type Mutation = {
   removeChat: Scalars['Boolean'];
   removeExercise: Exercise;
   removeExerciseCategory: Scalars['Boolean'];
+  removeImg: Scalars['Boolean'];
   removeInbody: Inbody;
   removeNonRegisteredUser: NonRegisteredUser;
   removeSession: Session;
-  removeSessionExercise: SessionExercise;
+  removeSessionExercise: Scalars['Boolean'];
   removeSessionExerciseVolume: Scalars['Boolean'];
   removeSessionHistory: SessionHistory;
   removeTrainer: Trainer;
@@ -265,7 +267,12 @@ export type MutationBulkCreateSessionExercisesArgs = {
 };
 
 
-export type MutationBulkDeleteExerciseCategoryArgs = {
+export type MutationBulkRemoveExerciseCategoryArgs = {
+  ids: Array<Scalars['Int']>;
+};
+
+
+export type MutationBulkRemoveImgArgs = {
   ids: Array<Scalars['Int']>;
 };
 
@@ -361,6 +368,11 @@ export type MutationRemoveExerciseArgs = {
 
 
 export type MutationRemoveExerciseCategoryArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRemoveImgArgs = {
   id: Scalars['Int'];
 };
 
@@ -825,6 +837,7 @@ export type UpdateUserInput = {
   gender?: InputMaybe<Scalars['String']>;
   graduate?: InputMaybe<Scalars['Boolean']>;
   id: Scalars['Int'];
+  phoneNumber?: InputMaybe<Scalars['String']>;
   status?: InputMaybe<Scalars['String']>;
   trainerId?: InputMaybe<Scalars['Int']>;
   userCategoryId?: InputMaybe<Scalars['Int']>;
@@ -876,6 +889,13 @@ export type BulkCreateSessionExercisesMutationVariables = Exact<{
 
 
 export type BulkCreateSessionExercisesMutation = { __typename?: 'Mutation', bulkCreateSessionExercises: Array<{ __typename?: 'SessionExercise', id: number, name: string, sessionId: number, exerciseCategoryName: string }> };
+
+export type BulkRemoveImgMutationVariables = Exact<{
+  ids: Array<Scalars['Int']> | Scalars['Int'];
+}>;
+
+
+export type BulkRemoveImgMutation = { __typename?: 'Mutation', bulkRemoveImg: boolean };
 
 export type CreateExerciseMutationVariables = Exact<{
   createExerciseInput: CreateExerciseInput;
@@ -987,7 +1007,7 @@ export type RemoveSessionExerciseMutationVariables = Exact<{
 }>;
 
 
-export type RemoveSessionExerciseMutation = { __typename?: 'Mutation', removeSessionExercise: { __typename?: 'SessionExercise', id: number, name: string, sessionId: number } };
+export type RemoveSessionExerciseMutation = { __typename?: 'Mutation', removeSessionExercise: boolean };
 
 export type RemoveTrainerMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -1038,6 +1058,13 @@ export type UpdateUserMutationVariables = Exact<{
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: number, email: string, userName: string, birthDate: any, phoneNumber: string, gender: string, graduate: boolean, userCategoryId?: number | null | undefined } };
 
+export type FindImgsByUserIdAndTrainerIdQueryVariables = Exact<{
+  findImgsInput: FindImgsInput;
+}>;
+
+
+export type FindImgsByUserIdAndTrainerIdQuery = { __typename?: 'Query', findImgsByUserIdAndTrainerId: Array<{ __typename?: 'Img', id?: number | null | undefined, url: string, chatId?: number | null | undefined, userId?: number | null | undefined, trainerId?: number | null | undefined, createdAt: any, chat: { __typename?: 'Chat', sender: string } }> };
+
 export type FindOneUserByPhoneNumberQueryVariables = Exact<{
   phoneNumber: Scalars['String'];
 }>;
@@ -1045,30 +1072,19 @@ export type FindOneUserByPhoneNumberQueryVariables = Exact<{
 
 export type FindOneUserByPhoneNumberQuery = { __typename?: 'Query', findOneUserByPhoneNumber: { __typename?: 'User', id: number, email: string, userName: string, birthDate: any, phoneNumber: string, gender: string, graduate: boolean } };
 
-export type FindImgsByUserIdAndTrainerIdQueryVariables = Exact<{
-	findImgsInput: FindImgsInput
-}>
+export type NonRegisteredUserQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
 
-export type FindImgsByUserIdAndTrainerIdQuery = {
-	__typename?: 'Query'
-	findImgsByUserIdAndTrainerId: Array<{
-		__typename?: 'Img'
-		id?: number | null | undefined
-		url: string
-		chatId?: number | null | undefined
-		userId?: number | null | undefined
-		trainerId?: number | null | undefined
-		createdAt: any
-		updatedAt: any
-	}>
-}
+
+export type NonRegisteredUserQuery = { __typename?: 'Query', nonRegisteredUser: { __typename?: 'NonRegisteredUser', id?: number | null | undefined, userName: string, phoneNumber: string, graduate: boolean, gender: string, userCategoryId: number } };
 
 export type SessionQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type SessionQuery = { __typename?: 'Query', session: { __typename?: 'Session', id?: number | null | undefined, userId: number, trainerId: number, feedback?: string | null | undefined, sentFeedback: boolean, date: any, sessionExercises?: Array<{ __typename?: 'SessionExercise', id: number, name: string, sessionId: number, exerciseCategoryName: string, sessionExerciseVolumes?: Array<{ __typename?: 'SessionExerciseVolume', id: number, reps: number, sets: number, weight: number, seq: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined } };
+export type SessionQuery = { __typename?: 'Query', session: { __typename?: 'Session', id?: number | null | undefined, userId: number, trainerId: number, feedback?: string | null | undefined, sentFeedback: boolean, completedSession: boolean, date: any, sessionExercises?: Array<{ __typename?: 'SessionExercise', id: number, name: string, sessionId: number, exerciseCategoryName: string, sessionExerciseVolumes?: Array<{ __typename?: 'SessionExerciseVolume', id: number, reps: number, sets: number, weight: number, seq: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined } };
 
 export type SessionHistoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1080,7 +1096,7 @@ export type TrainerQueryVariables = Exact<{
 }>;
 
 
-export type TrainerQuery = { __typename?: 'Query', trainer: { __typename?: 'Trainer', id: number, email: string, userName: string, birthDate?: any | null | undefined, phoneNumber?: string | null | undefined, gender: string, users?: Array<{ __typename?: 'User', id: number, email: string, userName: string, birthDate: any, phoneNumber: string, gender: string, graduate: boolean, userCategoryId?: number | null | undefined, sessionHistories: Array<{ __typename?: 'SessionHistory', id?: number | null | undefined, date: any, costPerSession: number, totalCount: number, usedCount: number, commission: number, userId: number, user: { __typename?: 'User', userName: string } }> } | null | undefined> | null | undefined, sessions?: Array<{ __typename?: 'Session', id?: number | null | undefined, userId: number, trainerId: number, feedback?: string | null | undefined, sentFeedback: boolean, completedSession: boolean, date: any, user: { __typename?: 'User', id: number, userName: string, gender: string }, sessionExercises?: Array<{ __typename?: 'SessionExercise', name: string, sessionExerciseVolumes?: Array<{ __typename?: 'SessionExerciseVolume', id: number, reps: number, sets: number, weight: number, seq: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined } | null | undefined> | null | undefined, exerciseCategories?: Array<{ __typename?: 'ExerciseCategory', id?: number | null | undefined, name: string, trainerId: number, exercises?: Array<{ __typename?: 'Exercise', id?: number | null | undefined, name: string, exerciseCategoryId: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined, userCategories?: Array<{ __typename?: 'UserCategory', id?: number | null | undefined, name: string, trainerId: number, users?: Array<{ __typename?: 'User', id: number, email: string, userName: string, gender: string, graduate: boolean, sessionHistories: Array<{ __typename?: 'SessionHistory', id?: number | null | undefined, date: any, costPerSession: number, totalCount: number, usedCount: number, commission: number }> } | null | undefined> | null | undefined } | null | undefined> | null | undefined } };
+export type TrainerQuery = { __typename?: 'Query', trainer: { __typename?: 'Trainer', id: number, email: string, userName: string, birthDate?: any | null | undefined, phoneNumber?: string | null | undefined, gender: string, users?: Array<{ __typename?: 'User', id: number, email: string, userName: string, birthDate: any, phoneNumber: string, gender: string, graduate: boolean, userCategoryId?: number | null | undefined, sessionHistories: Array<{ __typename?: 'SessionHistory', id?: number | null | undefined, date: any, costPerSession: number, totalCount: number, usedCount: number, commission: number, userId: number, user: { __typename?: 'User', userName: string } }> } | null | undefined> | null | undefined, sessions?: Array<{ __typename?: 'Session', id?: number | null | undefined, userId: number, trainerId: number, feedback?: string | null | undefined, sentFeedback: boolean, completedSession: boolean, date: any, user: { __typename?: 'User', id: number, userName: string, gender: string }, sessionExercises?: Array<{ __typename?: 'SessionExercise', name: string, sessionExerciseVolumes?: Array<{ __typename?: 'SessionExerciseVolume', id: number, reps: number, sets: number, weight: number, seq: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined } | null | undefined> | null | undefined, exerciseCategories?: Array<{ __typename?: 'ExerciseCategory', id?: number | null | undefined, name: string, trainerId: number, exercises?: Array<{ __typename?: 'Exercise', id?: number | null | undefined, name: string, exerciseCategoryId: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined, userCategories?: Array<{ __typename?: 'UserCategory', id?: number | null | undefined, name: string, trainerId: number, users?: Array<{ __typename?: 'User', id: number, email: string, userName: string, gender: string, graduate: boolean, sessionHistories: Array<{ __typename?: 'SessionHistory', id?: number | null | undefined, date: any, costPerSession: number, totalCount: number, usedCount: number, commission: number }> } | null | undefined> | null | undefined, nonRegisteredUsers?: Array<{ __typename?: 'NonRegisteredUser', id?: number | null | undefined, userName: string, phoneNumber: string, graduate: boolean, gender: string, userCategory: { __typename?: 'UserCategory', name: string } } | null | undefined> | null | undefined } | null | undefined> | null | undefined } };
 
 export type UserCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1137,6 +1153,37 @@ export function useBulkCreateSessionExercisesMutation(baseOptions?: Apollo.Mutat
 export type BulkCreateSessionExercisesMutationHookResult = ReturnType<typeof useBulkCreateSessionExercisesMutation>;
 export type BulkCreateSessionExercisesMutationResult = Apollo.MutationResult<BulkCreateSessionExercisesMutation>;
 export type BulkCreateSessionExercisesMutationOptions = Apollo.BaseMutationOptions<BulkCreateSessionExercisesMutation, BulkCreateSessionExercisesMutationVariables>;
+export const BulkRemoveImgDocument = gql`
+    mutation BulkRemoveImg($ids: [Int!]!) {
+  bulkRemoveImg(ids: $ids)
+}
+    `;
+export type BulkRemoveImgMutationFn = Apollo.MutationFunction<BulkRemoveImgMutation, BulkRemoveImgMutationVariables>;
+
+/**
+ * __useBulkRemoveImgMutation__
+ *
+ * To run a mutation, you first call `useBulkRemoveImgMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkRemoveImgMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkRemoveImgMutation, { data, loading, error }] = useBulkRemoveImgMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useBulkRemoveImgMutation(baseOptions?: Apollo.MutationHookOptions<BulkRemoveImgMutation, BulkRemoveImgMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkRemoveImgMutation, BulkRemoveImgMutationVariables>(BulkRemoveImgDocument, options);
+      }
+export type BulkRemoveImgMutationHookResult = ReturnType<typeof useBulkRemoveImgMutation>;
+export type BulkRemoveImgMutationResult = Apollo.MutationResult<BulkRemoveImgMutation>;
+export type BulkRemoveImgMutationOptions = Apollo.BaseMutationOptions<BulkRemoveImgMutation, BulkRemoveImgMutationVariables>;
 export const CreateExerciseDocument = gql`
     mutation CreateExercise($createExerciseInput: CreateExerciseInput!) {
   createExercise(createExerciseInput: $createExerciseInput) {
@@ -1697,11 +1744,7 @@ export type RemoveSessionMutationResult = Apollo.MutationResult<RemoveSessionMut
 export type RemoveSessionMutationOptions = Apollo.BaseMutationOptions<RemoveSessionMutation, RemoveSessionMutationVariables>;
 export const RemoveSessionExerciseDocument = gql`
     mutation RemoveSessionExercise($id: Int!) {
-  removeSessionExercise(id: $id) {
-    id
-    name
-    sessionId
-  }
+  removeSessionExercise(id: $id)
 }
     `;
 export type RemoveSessionExerciseMutationFn = Apollo.MutationFunction<RemoveSessionExerciseMutation, RemoveSessionExerciseMutationVariables>;
@@ -1990,7 +2033,6 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, U
  *   },
  * });
  */
-
 export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, options);
@@ -1998,6 +2040,49 @@ export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
+export const FindImgsByUserIdAndTrainerIdDocument = gql`
+    query FindImgsByUserIdAndTrainerId($findImgsInput: FindImgsInput!) {
+  findImgsByUserIdAndTrainerId(findImgsInput: $findImgsInput) {
+    id
+    url
+    chatId
+    userId
+    trainerId
+    createdAt
+    chat {
+      sender
+    }
+  }
+}
+    `;
+
+/**
+ * __useFindImgsByUserIdAndTrainerIdQuery__
+ *
+ * To run a query within a React component, call `useFindImgsByUserIdAndTrainerIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindImgsByUserIdAndTrainerIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindImgsByUserIdAndTrainerIdQuery({
+ *   variables: {
+ *      findImgsInput: // value for 'findImgsInput'
+ *   },
+ * });
+ */
+export function useFindImgsByUserIdAndTrainerIdQuery(baseOptions: Apollo.QueryHookOptions<FindImgsByUserIdAndTrainerIdQuery, FindImgsByUserIdAndTrainerIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindImgsByUserIdAndTrainerIdQuery, FindImgsByUserIdAndTrainerIdQueryVariables>(FindImgsByUserIdAndTrainerIdDocument, options);
+      }
+export function useFindImgsByUserIdAndTrainerIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindImgsByUserIdAndTrainerIdQuery, FindImgsByUserIdAndTrainerIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindImgsByUserIdAndTrainerIdQuery, FindImgsByUserIdAndTrainerIdQueryVariables>(FindImgsByUserIdAndTrainerIdDocument, options);
+        }
+export type FindImgsByUserIdAndTrainerIdQueryHookResult = ReturnType<typeof useFindImgsByUserIdAndTrainerIdQuery>;
+export type FindImgsByUserIdAndTrainerIdLazyQueryHookResult = ReturnType<typeof useFindImgsByUserIdAndTrainerIdLazyQuery>;
+export type FindImgsByUserIdAndTrainerIdQueryResult = Apollo.QueryResult<FindImgsByUserIdAndTrainerIdQuery, FindImgsByUserIdAndTrainerIdQueryVariables>;
 export const FindOneUserByPhoneNumberDocument = gql`
     query FindOneUserByPhoneNumber($phoneNumber: String!) {
   findOneUserByPhoneNumber(phoneNumber: $phoneNumber) {
@@ -2017,7 +2102,6 @@ export const FindOneUserByPhoneNumberDocument = gql`
  *
  * To run a query within a React component, call `useFindOneUserByPhoneNumberQuery` and pass it any options that fit your needs.
  * When your component renders, `useFindOneUserByPhoneNumberQuery` returns an object from Apollo Client that contains loading, error, and data properties
-
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -2040,7 +2124,46 @@ export function useFindOneUserByPhoneNumberLazyQuery(baseOptions?: Apollo.LazyQu
 export type FindOneUserByPhoneNumberQueryHookResult = ReturnType<typeof useFindOneUserByPhoneNumberQuery>;
 export type FindOneUserByPhoneNumberLazyQueryHookResult = ReturnType<typeof useFindOneUserByPhoneNumberLazyQuery>;
 export type FindOneUserByPhoneNumberQueryResult = Apollo.QueryResult<FindOneUserByPhoneNumberQuery, FindOneUserByPhoneNumberQueryVariables>;
+export const NonRegisteredUserDocument = gql`
+    query NonRegisteredUser($id: Int!) {
+  nonRegisteredUser(id: $id) {
+    id
+    userName
+    phoneNumber
+    graduate
+    gender
+    userCategoryId
+  }
+}
+    `;
 
+/**
+ * __useNonRegisteredUserQuery__
+ *
+ * To run a query within a React component, call `useNonRegisteredUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNonRegisteredUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNonRegisteredUserQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useNonRegisteredUserQuery(baseOptions: Apollo.QueryHookOptions<NonRegisteredUserQuery, NonRegisteredUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NonRegisteredUserQuery, NonRegisteredUserQueryVariables>(NonRegisteredUserDocument, options);
+      }
+export function useNonRegisteredUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NonRegisteredUserQuery, NonRegisteredUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NonRegisteredUserQuery, NonRegisteredUserQueryVariables>(NonRegisteredUserDocument, options);
+        }
+export type NonRegisteredUserQueryHookResult = ReturnType<typeof useNonRegisteredUserQuery>;
+export type NonRegisteredUserLazyQueryHookResult = ReturnType<typeof useNonRegisteredUserLazyQuery>;
+export type NonRegisteredUserQueryResult = Apollo.QueryResult<NonRegisteredUserQuery, NonRegisteredUserQueryVariables>;
 export const SessionDocument = gql`
     query Session($id: Int!) {
   session(id: $id) {
@@ -2049,6 +2172,7 @@ export const SessionDocument = gql`
     trainerId
     feedback
     sentFeedback
+    completedSession
     date
     sessionExercises {
       id
@@ -2216,6 +2340,16 @@ export const TrainerDocument = gql`
           totalCount
           usedCount
           commission
+        }
+      }
+      nonRegisteredUsers {
+        id
+        userName
+        phoneNumber
+        graduate
+        gender
+        userCategory {
+          name
         }
       }
     }

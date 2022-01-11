@@ -32,7 +32,11 @@ const Layout = ({ children }: LayoutProps) => {
 
 	return (
 		<>
-			<div className="sm-max:w-screen sm:w-screen sm:mx-auto p-[2rem] mb-[6.3rem] font-IBM">
+			<div
+				className={`
+			${
+				checkHrefPathName === true ? 'mb-[6.3rem]' : ''
+			} sm-max:w-screen sm:w-screen sm:mx-auto p-[2rem] font-IBM`}>
 				{children}
 			</div>
 			{checkHrefPathName === true ? (

@@ -104,19 +104,19 @@ const Detail: NextPage = () => {
 						<>
 							<span className="relative inline-block w-[4rem] align-middle select-none">
 								<input
-									className="absolute block w-[2.8rem] h-[2.8rem] bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#FDAD00] peer"
+									className="absolute block w-[2.8rem] h-[2.8rem] bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#FED06E] peer"
 									type="checkbox"
 									name="toggle"
 									id="toggle"
-									checked={data && data.session.sentFeedback}
+									checked={data && data.session.completedSession}
 									onChange={async e => {
-										// 피드백 완료 여부 API
+										// 수업 완료 API
 										try {
 											await updateSession({
 												variables: {
 													updateSessionInput: {
 														id: sessionExerciseInput.sessionId,
-														sentFeedback: e.target.checked
+														completedSession: e.target.checked
 													}
 												},
 												refetchQueries: [
@@ -134,7 +134,7 @@ const Detail: NextPage = () => {
 									}}
 								/>
 								<label
-									className="block h-[2.8rem]	bg-gray-200 rounded-full cursor-pointer peer peer-checked:bg-[#FDAD00] overflow-hidden"
+									className="block h-[2.8rem]	bg-gray-200 rounded-full cursor-pointer peer peer-checked:bg-[#FED06E] overflow-hidden"
 									htmlFor="toggle"
 								/>
 							</span>
@@ -178,10 +178,10 @@ const Detail: NextPage = () => {
 												}
 											]
 										})
-										deleteLists.clear()
 									} catch (error) {
 										console.log(error)
 									}
+									deleteLists.clear()
 								}
 								setReadyDelete(false)
 							}}>
@@ -332,11 +332,14 @@ const Detail: NextPage = () => {
 					// 피드백 작성 API
 					// e.target.value
 					try {
+						console.log(e.target.value)
+
 						updateSession({
 							variables: {
 								updateSessionInput: {
 									id: sessionExerciseInput.sessionId,
-									feedback: e.target.value
+									feedback: e.target.value,
+									sentFeedback: e.target.value === '' ? false : true
 								}
 							}
 						})

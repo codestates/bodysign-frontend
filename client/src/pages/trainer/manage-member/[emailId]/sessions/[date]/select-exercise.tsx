@@ -119,7 +119,7 @@ const Exercise: NextPage = () => {
 				data.trainer.exerciseCategories.map((exerciseCategory, idx) => {
 					return (
 						<React.Fragment key={idx}>
-							<div className="mt-[2.4rem]">
+							<div className="mt-[2.4rem] ">
 								<div
 									className="text-[1.8rem] font-semibold"
 									ref={span => {
@@ -137,7 +137,7 @@ const Exercise: NextPage = () => {
 															exerciseNames.has(exercise.name)
 																? 'ring-2 ring-[#FED06E]'
 																: ''
-														} h-[7rem] flex justify-center items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md cursor-pointer hover:ring-2 hover:ring-[#FED06E]`}
+														} relative h-[7rem] flex justify-center items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md cursor-pointer hover:ring-2 hover:ring-[#FED06E]`}
 														onClick={e => {
 															if (
 																e !== null &&
@@ -175,6 +175,21 @@ const Exercise: NextPage = () => {
 															}
 														}}>
 														<div>{exercise.name}</div>
+														{exerciseNames.has(exercise.name) ? (
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																className="w-[3.2rem] h-[3.2rem] bg-white absolute text-[#FED06E] -top-[1rem] -right-[0.5rem] rounded-full z-[10]"
+																fill="none"
+																viewBox="0 0 24 24"
+																stroke="currentColor">
+																<path
+																	strokeLinecap="round"
+																	strokeLinejoin="round"
+																	strokeWidth={2}
+																	d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+																/>
+															</svg>
+														) : null}
 													</div>
 												</React.Fragment>
 											)

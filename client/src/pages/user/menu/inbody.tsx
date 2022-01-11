@@ -31,8 +31,6 @@ const Inbody: NextPage = () => {
 	} = useForm<FormInput>()
 	const onSubmit: SubmitHandler<FormInput> = async data => {
 		// 인바디 추가 API
-		console.log(data)
-
 		try {
 			await createInbody({
 				variables: {

@@ -18,11 +18,6 @@ const Main: NextPage = () => {
 	})
 	console.log(data)
 
-	// if (!loading && data) {
-	// 	console.log(data)
-	// }
-	// 2
-
 	let accessToken: string
 	if (accessTokenVar()) {
 		accessToken = accessTokenVar()

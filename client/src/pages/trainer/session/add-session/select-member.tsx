@@ -84,7 +84,13 @@ const SelectMember: NextPage = () => {
 											return (
 												<React.Fragment key={member.id}>
 													<div
-														className={`${
+														className={`
+														${
+															!member.sessionHistories.length
+																? 'bg-gray-50 hover:ring-0 pointer-events-none'
+																: ''
+														}
+														${
 															member.id === managedUserInfo.userId
 																? 'ring-2 ring-[#FED06E]'
 																: ''

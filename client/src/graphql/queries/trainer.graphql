@@ -81,6 +81,16 @@ query Trainer($id: Int!) {
 					commission
 				}
 			}
+			nonRegisteredUsers {
+				id
+				userName
+				phoneNumber
+				graduate
+				gender
+				userCategory {
+					name
+				}
+			}
 		}
 	}
 }

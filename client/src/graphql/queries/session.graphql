@@ -5,6 +5,7 @@ query Session($id: Int!) {
 		trainerId
 		feedback
 		sentFeedback
+		completedSession
 		date
 		sessionExercises {
 			id

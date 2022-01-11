@@ -27,6 +27,7 @@ import {
 	modalVar,
 	userDataVar
 } from '../../../graphql/vars'
+import useSessionStorage from '../../../hooks/useSessionStorage'
 
 interface FormInput {
 	phoneNumber: string
@@ -43,6 +44,7 @@ const ManageMember: NextPage = () => {
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const [phoneNumber, setPhoneNumber] = useState('')
+	const [_, setIsUser] = useSessionStorage('isUser', false)
 	const { loading, data } = useTrainerQuery({
 		variables: { id: userData?.id as number }
 	})
@@ -132,6 +134,7 @@ const ManageMember: NextPage = () => {
 	}
 
 	const handleDelete = async () => {
+		// 회원 삭제 step 2
 		const deleteItemId = Array.from(deleteLists)[0]
 		if (deleteItemId) {
 			try {
@@ -149,10 +152,10 @@ const ManageMember: NextPage = () => {
 						}
 					]
 				})
-				deleteLists.clear()
 			} catch (error) {
 				console.log(error)
 			}
+			deleteLists.clear()
 		}
 		setReadyDelete(false)
 	}
@@ -167,16 +170,29 @@ const ManageMember: NextPage = () => {
 		e: React.MouseEvent<HTMLDivElement, MouseEvent>
 	) => {
 		if (!readyDelete) {
-			managedUserInfoVar({
-				userId: +member.id,
-				email: member.email.split('@')[0],
-				userName: member.userName,
-				gender: member.gender
-			})
-			const url = `/trainer/manage-member/${
-				member.email.split('@')[0]
-			}/info`
-			router.push(url)
+			if (!member.email) {
+				setIsUser(false)
+				managedUserInfoVar({
+					userId: +member.id,
+					email: '',
+					userName: member.userName,
+					gender: member.gender
+				})
+				const url = `/trainer/manage-member/${member.id}/info`
+				// router.push(url)
+			} else {
+				setIsUser(true)
+				managedUserInfoVar({
+					userId: +member.id,
+					email: member.email.split('@')[0],
+					userName: member.userName,
+					gender: member.gender
+				})
+				const url = `/trainer/manage-member/${
+					member.email.split('@')[0]
+				}/info`
+				router.push(url)
+			}
 		} else {
 			if (e !== null && e.target instanceof HTMLElement) {
 				// 회원 삭제 step 1
@@ -266,6 +282,48 @@ const ManageMember: NextPage = () => {
 														{!readyDelete ? (
 															<ChatLink memberId={member.id} />
 														) : null}
+													</RowMemberItem>
+												</>
+											)
+										}
+									})}
+
+							{userCategory?.nonRegisteredUsers &&
+								userCategory?.nonRegisteredUsers
+									.filter(nonRegisteredMember => {
+										if (
+											category === '관리중' &&
+											!nonRegisteredMember?.graduate
+										) {
+											return nonRegisteredMember
+										} else if (
+											category === '졸업' &&
+											nonRegisteredMember?.graduate
+										) {
+											return nonRegisteredMember
+										}
+									})
+									.map(nonRegisteredMember => {
+										if (nonRegisteredMember) {
+											return (
+												<>
+													<RowMemberItem
+														member={nonRegisteredMember}
+														deleteLists={deleteLists}
+														handleManagedMember={handleManagedMember}>
+														<div className="flex">
+															<Avatar
+																gender={nonRegisteredMember.gender}
+															/>
+															<ColMemberGroup>
+																<div className="text-left">
+																	{nonRegisteredMember.userName} 회원
+																</div>
+																{/* <div className="text-[1.4rem] text-right text-[#9F9F9F]">
+																	{`${sumUsedCount} / ${sumTotalCount}`}회
+																</div> */}
+															</ColMemberGroup>
+														</div>
 													</RowMemberItem>
 												</>
 											)
