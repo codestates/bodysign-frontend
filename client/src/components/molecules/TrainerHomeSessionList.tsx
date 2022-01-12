@@ -2,11 +2,13 @@ import React from 'react'
 import { Session } from '../../generated/graphql'
 import Avatar from '../atoms/Avatar'
 
-interface HomeSessionListProps {
-	sessions: Session[] | null
+interface TrainerHomeSessionListProps {
+	sessions: Session[] | null | undefined
 }
 
-const HomeSessionList = ({ sessions }: HomeSessionListProps) => {
+const TrainerHomeSessionList = ({
+	sessions
+}: TrainerHomeSessionListProps) => {
 	return (
 		<>
 			<div className="absolute bottom-0 w-full">
@@ -46,4 +48,4 @@ const HomeSessionList = ({ sessions }: HomeSessionListProps) => {
 	)
 }
 
-export default HomeSessionList
+export default TrainerHomeSessionList

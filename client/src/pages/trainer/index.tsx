@@ -3,10 +3,11 @@ import type { NextPage } from 'next'
 import React, { useEffect, useState } from 'react'
 import Loading from '../../components/Loading'
 import HomeLogoHeader from '../../components/molecules/Header/HomeLogoHeader'
-import HomeIntro from '../../components/molecules/HomeIntro'
-import HomeSessionList from '../../components/molecules/HomeSessionList'
+import HomeTrainerIntro from '../../components/molecules/TrainerHomeIntro'
+import HomeSessionList from '../../components/molecules/TrainerHomeSessionList'
 import { Session, useTrainerQuery } from '../../generated/graphql'
 import { userDataVar } from '../../graphql/vars'
+
 // TODO: CSS 애니메이션 꾸미기
 // https://codepen.io/Tbgse/pen/dYaJyJ
 // https://codepen.io/CheeseTurtle/pen/jzdgI?editors=1010
@@ -61,7 +62,7 @@ const Main: NextPage = () => {
 		<>
 			<div className="relative h-[calc(100vh-40px-63px)]">
 				<HomeLogoHeader />
-				<HomeIntro
+				<HomeTrainerIntro
 					userName={data?.trainer.userName as string}
 					monthAccountsData={monthAccountsData}
 				/>
