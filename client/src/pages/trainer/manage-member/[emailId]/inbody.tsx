@@ -1,13 +1,17 @@
-import { useQuery, useReactiveVar } from '@apollo/client'
+import { useReactiveVar } from '@apollo/client'
 import Chart from 'chart.js/auto'
 import { NextPage } from 'next'
 import Link from 'next/link'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Loading from '../../../../components/Loading'
-import { useCreateInbodyMutation } from '../../../../generated/graphql'
-import { UserDocument } from '../../../../graphql/graphql'
-import { managedUserInfoVar, modalVar } from '../../../../graphql/vars'
+import {
+	useCreateInbodyMutation,
+	UserDocument,
+	useUserLazyQuery
+} from '../../../../generated/graphql'
+import { modalVar } from '../../../../graphql/vars'
+import useSessionStorage from '../../../../hooks/useSessionStorage'
 
 interface FormInput {
 	date: string
@@ -18,12 +22,11 @@ interface FormInput {
 
 const Inbody: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
-	const managedUserInfo = useReactiveVar(managedUserInfoVar)
-	const { loading, data } = useQuery(UserDocument, {
-		variables: { id: managedUserInfo.userId }
-	})
-	const [createInbody] = useCreateInbodyMutation()
+	const [mangedMemberInfo, __] = useSessionStorage('mangedMemberInfo')
 	const canvasRef = useRef(null)
+	const [emailId, setEmailId] = useState('')
+	const [userLazyQuery, { loading, data }] = useUserLazyQuery()
+	const [createInbody] = useCreateInbodyMutation()
 	const {
 		register,
 		formState: { errors },
@@ -35,7 +38,7 @@ const Inbody: NextPage = () => {
 			await createInbody({
 				variables: {
 					createInbodyInput: {
-						userId: managedUserInfo.userId as number,
+						userId: mangedMemberInfo.userId as number,
 						bodyWeight: +data.bodyWeight,
 						muscleWeight: +data.muscleWeight,
 						bodyFat: +data.bodyFat,
@@ -45,7 +48,7 @@ const Inbody: NextPage = () => {
 				refetchQueries: [
 					{
 						query: UserDocument,
-						variables: { id: managedUserInfo.userId }
+						variables: { id: mangedMemberInfo.userId }
 					}
 				]
 			})
@@ -56,37 +59,55 @@ const Inbody: NextPage = () => {
 	}
 
 	useEffect(() => {
+		userLazyQuery({
+			variables: { id: mangedMemberInfo.userId }
+		})
+	}, [mangedMemberInfo])
+
+	useEffect(() => {
+		setEmailId(`${mangedMemberInfo.emailId}/`)
+	}, [mangedMemberInfo])
+
+	useEffect(() => {
 		if (canvasRef.current) {
 			const chart = new Chart(canvasRef.current, {
 				type: 'line',
 				data: {
-					labels: data.user.inbodies.map(
-						(inbodyData: any) => inbodyData.measuredDate.split('T')[0]
-					),
+					labels:
+						data &&
+						data.user.inbodies.map(
+							(inbodyData: any) => inbodyData.measuredDate.split('T')[0]
+						),
 					datasets: [
 						{
 							label: '체중',
-							data: data.user.inbodies.map(
-								(inbodyData: any) => inbodyData.bodyWeight
-							),
+							data:
+								data &&
+								data.user.inbodies.map(
+									(inbodyData: any) => inbodyData.bodyWeight
+								),
 							fill: false,
 							borderColor: 'rgba(255, 206, 86, 1)',
 							borderWidth: 1
 						},
 						{
 							label: '근육량',
-							data: data.user.inbodies.map(
-								(inbodyData: any) => inbodyData.muscleWeight
-							),
+							data:
+								data &&
+								data.user.inbodies.map(
+									(inbodyData: any) => inbodyData.muscleWeight
+								),
 							fill: false,
 							borderColor: 'rgba(54, 162, 235, 1)',
 							borderWidth: 1
 						},
 						{
 							label: '체지방',
-							data: data.user.inbodies.map(
-								(inbodyData: any) => inbodyData.bodyFat
-							),
+							data:
+								data &&
+								data.user.inbodies.map(
+									(inbodyData: any) => inbodyData.bodyFat
+								),
 							fill: false,
 							borderColor: 'rgba(255, 99, 132, 1)',
 							borderWidth: 1
@@ -122,7 +143,7 @@ const Inbody: NextPage = () => {
 						</svg>
 					</Link>
 					<div className="ml-[0.8rem] font-bold">
-						{data.user.userName} 회원
+						{data && data.user.userName} 회원
 					</div>
 				</span>
 				<Link href={`/trainer/manage-member/chat`} passHref>
@@ -146,21 +167,15 @@ const Inbody: NextPage = () => {
 			</div>
 
 			<div className="flex justify-between mt-[2.4rem] text-[2.2rem]">
-				<Link
-					href={`/trainer/manage-member/${managedUserInfo.email}/info`}
-					passHref>
+				<Link href={`/trainer/manage-member/${emailId}info`} passHref>
 					<span className="pb-[0.4rem] cursor-pointer">회원정보</span>
 				</Link>
-				<Link
-					href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}
-					passHref>
+				<Link href={`/trainer/manage-member/${emailId}inbody`} passHref>
 					<span className="ml-[0.8rem] border-b-[3px] border-[#FED06E] cursor-pointer">
 						인바디
 					</span>
 				</Link>
-				<Link
-					href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}
-					passHref>
+				<Link href={`/trainer/manage-member/${emailId}sessions`} passHref>
 					<span className="ml-[0.8rem] cursor-pointer">수업기록</span>
 				</Link>
 			</div>
@@ -189,26 +204,27 @@ const Inbody: NextPage = () => {
 							</tr>
 						</thead>
 						<tbody className="bg-white divide-y divide-gray-200">
-							{data.user.inbodies.map((inbodyData: any) => {
-								return (
-									<React.Fragment key={inbodyData.id}>
-										<tr>
-											<td className="p-[1.2rem] font-thin text-gray-500">
-												{inbodyData.measuredDate.split('T')[0]}
-											</td>
-											<td className="p-[1.2rem] font-thin text-gray-500">
-												{inbodyData.bodyWeight}kg
-											</td>
-											<td className="p-[1.2rem] font-thin text-gray-500">
-												{inbodyData.muscleWeight}kg
-											</td>
-											<td className="p-[1.2rem] font-thin text-gray-500">
-												{inbodyData.bodyFat}kg
-											</td>
-										</tr>
-									</React.Fragment>
-								)
-							})}
+							{data &&
+								data.user.inbodies.map((inbodyData: any) => {
+									return (
+										<React.Fragment key={inbodyData.id}>
+											<tr>
+												<td className="p-[1.2rem] font-thin text-gray-500">
+													{inbodyData.measuredDate.split('T')[0]}
+												</td>
+												<td className="p-[1.2rem] font-thin text-gray-500">
+													{inbodyData.bodyWeight}kg
+												</td>
+												<td className="p-[1.2rem] font-thin text-gray-500">
+													{inbodyData.muscleWeight}kg
+												</td>
+												<td className="p-[1.2rem] font-thin text-gray-500">
+													{inbodyData.bodyFat}kg
+												</td>
+											</tr>
+										</React.Fragment>
+									)
+								})}
 						</tbody>
 					</table>
 				</div>

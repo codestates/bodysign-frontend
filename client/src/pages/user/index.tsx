@@ -1,11 +1,11 @@
 import { useReactiveVar } from '@apollo/client'
 import type { NextPage } from 'next'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Loading from '../../components/Loading'
 import HomeLogoHeader from '../../components/molecules/Header/HomeLogoHeader'
 import HomeMemberIntro from '../../components/molecules/MemberHomeIntro'
 import MemberHomeSessionList from '../../components/molecules/MemberHomeSessionList'
-import { Inbody, Session, useUserQuery } from '../../generated/graphql'
+import { Inbody, Session, useUserLazyQuery } from '../../generated/graphql'
 import { userDataVar } from '../../graphql/vars'
 
 // TODO: CSS 애니메이션 꾸미기
@@ -14,9 +14,15 @@ import { userDataVar } from '../../graphql/vars'
 
 const Main: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
-	const { loading, data } = useUserQuery({
-		variables: { id: userData?.id as number }
-	})
+	const [userLazyQuery, { loading, data }] = useUserLazyQuery()
+
+	useEffect(() => {
+		if (userData) {
+			userLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	if (loading) return <Loading />
 	return (

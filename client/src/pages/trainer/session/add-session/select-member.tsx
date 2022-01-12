@@ -2,18 +2,25 @@ import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Loading from '../../../../components/Loading'
-import { useTrainerQuery } from '../../../../generated/graphql'
-import { managedUserInfoVar, userDataVar } from '../../../../graphql/vars'
+import { useTrainerLazyQuery } from '../../../../generated/graphql'
+import { userDataVar } from '../../../../graphql/vars'
+import useSessionStorage from '../../../../hooks/useSessionStorage'
 
 const SelectMember: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
-	const managedUserInfo = useReactiveVar(managedUserInfoVar)
+	const [mangedMemberInfo, setMangedMemberInfo] =
+		useSessionStorage('mangedMemberInfo')
+	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 
-	const { loading, data } = useTrainerQuery({
-		variables: { id: userData?.id as number }
-	})
+	useEffect(() => {
+		if (userData) {
+			trainerLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	if (loading) return <Loading />
 	return (
@@ -91,7 +98,7 @@ const SelectMember: NextPage = () => {
 																: ''
 														}
 														${
-															member.id === managedUserInfo.userId
+															member.id === mangedMemberInfo.userId
 																? 'ring-2 ring-[#FED06E]'
 																: ''
 														} h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white hover:ring-2 hover:ring-[#FED06E]`}
@@ -103,9 +110,9 @@ const SelectMember: NextPage = () => {
 															) {
 																const userId = e.target.dataset
 																	.id as string
-																managedUserInfoVar({
+																setMangedMemberInfo({
 																	userId: +userId,
-																	email: member.email,
+																	emailId: member.email,
 																	userName: member.userName,
 																	gender: member.gender
 																})

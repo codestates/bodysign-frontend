@@ -1,12 +1,12 @@
 import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Loading from '../../../components/Loading'
 import {
 	useRemoveTrainerMutation,
-	useTrainerQuery,
+	useTrainerLazyQuery,
 	useUpdatePasswordTrainerMutation,
 	useUpdateTrainerMutation
 } from '../../../generated/graphql'
@@ -26,9 +26,7 @@ const TrainerInfo: NextPage = () => {
 	const [updateTrainerInput, setUpdateTrainerInput] = useState({
 		phoneNumber: ''
 	})
-	const { loading, data } = useTrainerQuery({
-		variables: { id: userData?.id as number }
-	})
+	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 	const [updateTrainer] = useUpdateTrainerMutation()
 	const [removeTrainer] = useRemoveTrainerMutation()
 	const [updatePasswordTrainer] = useUpdatePasswordTrainerMutation()
@@ -56,6 +54,14 @@ const TrainerInfo: NextPage = () => {
 			console.log(error)
 		}
 	}
+
+	useEffect(() => {
+		if (userData) {
+			trainerLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	if (loading) return <Loading />
 	return (

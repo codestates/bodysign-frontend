@@ -2,22 +2,19 @@ import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Loading from '../../../../../../components/Loading'
 import {
 	SessionDocument,
 	useCreateSessionExerciseVolumeMutation,
+	UserDocument,
 	useRemoveSessionExerciseMutation,
-	useSessionQuery,
+	useSessionLazyQuery,
 	useUpdateSessionMutation
 } from '../../../../../../generated/graphql'
-import { UserDocument } from '../../../../../../graphql/graphql'
-import {
-	managedUserInfoVar,
-	modalVar,
-	sessionExerciseInputVar
-} from '../../../../../../graphql/vars'
+import { modalVar } from '../../../../../../graphql/vars'
+import useSessionStorage from '../../../../../../hooks/useSessionStorage'
 
 interface FormInput {
 	weight: string
@@ -28,13 +25,12 @@ interface FormInput {
 const Detail: NextPage = () => {
 	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
-	const managedUserInfo = useReactiveVar(managedUserInfoVar)
-	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
+	const [mangedMemberInfo, _] = useSessionStorage('mangedMemberInfo')
+	const [sessionExerciseInput, setSessionExerciseInput] =
+		useSessionStorage('sessionExerciseInput')
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
-	const { loading, data } = useSessionQuery({
-		variables: { id: sessionExerciseInput.sessionId }
-	})
+	const [sessionLazyQuery, { loading, data }] = useSessionLazyQuery()
 	const [createSessionExerciseVolume] =
 		useCreateSessionExerciseVolumeMutation()
 	const [updateSession] = useUpdateSessionMutation()
@@ -59,11 +55,11 @@ const Detail: NextPage = () => {
 				refetchQueries: [
 					{
 						query: UserDocument,
-						variables: { id: managedUserInfo.userId }
+						variables: { id: mangedMemberInfo.userId }
 					}
 				]
 			})
-			sessionExerciseInputVar({
+			setSessionExerciseInput({
 				...sessionExerciseInput,
 				sessionExerciseId: 0
 			})
@@ -72,6 +68,12 @@ const Detail: NextPage = () => {
 			console.log(error)
 		}
 	}
+
+	useEffect(() => {
+		sessionLazyQuery({
+			variables: { id: sessionExerciseInput.sessionId }
+		})
+	}, [sessionExerciseInput])
 
 	if (loading) return <Loading />
 	return (
@@ -196,7 +198,7 @@ const Detail: NextPage = () => {
 				</span>
 
 				{/* <span className="text-[1.6rem] text-right">
-								{managedUserInfo.userName} 회원
+								{mangedMemberInfo.userName} 회원
 							</span> */}
 			</div>
 
@@ -264,7 +266,7 @@ const Detail: NextPage = () => {
 												onClick={
 													!readyDelete
 														? () => {
-																sessionExerciseInputVar({
+																setSessionExerciseInput({
 																	...sessionExerciseInput,
 																	exerciseName: exercise.name,
 																	sessionExerciseId: exercise.id
@@ -332,8 +334,6 @@ const Detail: NextPage = () => {
 					// 피드백 작성 API
 					// e.target.value
 					try {
-						console.log(e.target.value)
-
 						updateSession({
 							variables: {
 								updateSessionInput: {

@@ -1,12 +1,15 @@
-import { useQuery, useReactiveVar } from '@apollo/client'
+import { useReactiveVar } from '@apollo/client'
 import Chart from 'chart.js/auto'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useEffect, useRef } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Loading from '../../../components/Loading'
-import { useCreateInbodyMutation } from '../../../generated/graphql'
-import { UserDocument } from '../../../graphql/graphql'
+import {
+	useCreateInbodyMutation,
+	UserDocument,
+	useUserLazyQuery
+} from '../../../generated/graphql'
 import { modalVar, userDataVar } from '../../../graphql/vars'
 
 interface FormInput {
@@ -19,11 +22,9 @@ interface FormInput {
 const Inbody: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
 	const userData = useReactiveVar(userDataVar)
-	const { loading, data } = useQuery(UserDocument, {
-		variables: { id: userData?.id }
-	})
-	const [createInbody] = useCreateInbodyMutation()
 	const canvasRef = useRef(null)
+	const [userLazyQuery, { loading, data }] = useUserLazyQuery()
+	const [createInbody] = useCreateInbodyMutation()
 	const {
 		register,
 		formState: { errors },
@@ -56,37 +57,53 @@ const Inbody: NextPage = () => {
 	}
 
 	useEffect(() => {
+		if (userData) {
+			userLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
+
+	useEffect(() => {
 		if (canvasRef.current) {
 			const chart = new Chart(canvasRef.current, {
 				type: 'line',
 				data: {
-					labels: data.user.inbodies.map(
-						(inbodyData: any) => inbodyData.measuredDate.split('T')[0]
-					),
+					labels:
+						data &&
+						data.user.inbodies.map(
+							(inbodyData: any) => inbodyData.measuredDate.split('T')[0]
+						),
 					datasets: [
 						{
 							label: '체중',
-							data: data.user.inbodies.map(
-								(inbodyData: any) => inbodyData.bodyWeight
-							),
+							data:
+								data &&
+								data.user.inbodies.map(
+									(inbodyData: any) => inbodyData.bodyWeight
+								),
 							fill: false,
 							borderColor: 'rgba(255, 206, 86, 1)',
 							borderWidth: 1
 						},
 						{
 							label: '근육량',
-							data: data.user.inbodies.map(
-								(inbodyData: any) => inbodyData.muscleWeight
-							),
+							data:
+								data &&
+								data.user.inbodies.map(
+									(inbodyData: any) => inbodyData.muscleWeight
+								),
 							fill: false,
 							borderColor: 'rgba(54, 162, 235, 1)',
 							borderWidth: 1
 						},
 						{
 							label: '체지방',
-							data: data.user.inbodies.map(
-								(inbodyData: any) => inbodyData.bodyFat
-							),
+							data:
+								data &&
+								data.user.inbodies.map(
+									(inbodyData: any) => inbodyData.bodyFat
+								),
 							fill: false,
 							borderColor: 'rgba(255, 99, 132, 1)',
 							borderWidth: 1
@@ -149,26 +166,27 @@ const Inbody: NextPage = () => {
 							</tr>
 						</thead>
 						<tbody className="bg-white divide-y divide-gray-200">
-							{data.user.inbodies.map((inbodyData: any) => {
-								return (
-									<React.Fragment key={inbodyData.id}>
-										<tr>
-											<td className="p-[1.2rem] font-thin text-gray-500">
-												{inbodyData.measuredDate.split('T')[0]}
-											</td>
-											<td className="p-[1.2rem] font-thin text-gray-500">
-												{inbodyData.bodyWeight}kg
-											</td>
-											<td className="p-[1.2rem] font-thin text-gray-500">
-												{inbodyData.muscleWeight}kg
-											</td>
-											<td className="p-[1.2rem] font-thin text-gray-500">
-												{inbodyData.bodyFat}kg
-											</td>
-										</tr>
-									</React.Fragment>
-								)
-							})}
+							{data &&
+								data.user.inbodies.map((inbodyData: any) => {
+									return (
+										<React.Fragment key={inbodyData.id}>
+											<tr>
+												<td className="p-[1.2rem] font-thin text-gray-500">
+													{inbodyData.measuredDate.split('T')[0]}
+												</td>
+												<td className="p-[1.2rem] font-thin text-gray-500">
+													{inbodyData.bodyWeight}kg
+												</td>
+												<td className="p-[1.2rem] font-thin text-gray-500">
+													{inbodyData.muscleWeight}kg
+												</td>
+												<td className="p-[1.2rem] font-thin text-gray-500">
+													{inbodyData.bodyFat}kg
+												</td>
+											</tr>
+										</React.Fragment>
+									)
+								})}
 						</tbody>
 					</table>
 				</div>

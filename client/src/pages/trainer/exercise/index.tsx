@@ -1,6 +1,6 @@
 import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import AddCategoryIcon from '../../../components/atoms/icons/AddCategoryIcon'
 import Loading from '../../../components/Loading'
@@ -10,7 +10,7 @@ import {
 	useCreateExerciseCategoryMutation,
 	useCreateExerciseMutation,
 	useRemoveExerciseMutation,
-	useTrainerQuery
+	useTrainerLazyQuery
 } from '../../../generated/graphql'
 import { modalVar, userDataVar } from '../../../graphql/vars'
 
@@ -26,9 +26,7 @@ const Exercise: NextPage = () => {
 	const [checkModal, setCheckModal] = useState('addexercise')
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
-	const { loading, data } = useTrainerQuery({
-		variables: { id: userData?.id as number }
-	})
+	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 	const [createExerciseCategory] = useCreateExerciseCategoryMutation()
 	const [createExercise] = useCreateExerciseMutation()
 	const [removeExercise] = useRemoveExerciseMutation()
@@ -79,6 +77,14 @@ const Exercise: NextPage = () => {
 			}
 		}
 	}
+
+	useEffect(() => {
+		if (userData) {
+			trainerLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	const handleModal = (
 		e: React.MouseEvent<HTMLDivElement, MouseEvent>

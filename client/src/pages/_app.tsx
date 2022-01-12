@@ -68,8 +68,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 					userDataVar(res.data)
 				})
 				.catch(async error => {
-					console.log(error)
+					console.log(error, '토큰 만료!!')
 					if (error.message === 'Request failed with status code 401') {
+						console.log('토큰 요청 ㄱㄱ?')
+
 						await axios
 							.post(
 								`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/accessToken`,
@@ -78,10 +80,11 @@ function MyApp({ Component, pageProps }: AppProps) {
 								}
 							)
 							.then(res => {
-								console.log(res)
+								console.log(res, '토큰 왔어요')
+
 								// 토큰이 body로 넘어와서
 								// localStorage를 쓰지 않는 지금은 그냥 로그인 화면으로 돌린다.
-								router.push('/')
+								// router.push('/')
 							})
 							.catch(error => {
 								console.log(error)

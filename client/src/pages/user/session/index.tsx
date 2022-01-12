@@ -1,13 +1,11 @@
-import { useQuery, useReactiveVar } from '@apollo/client'
+import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Loading from '../../../components/Loading'
-import { UserDocument } from '../../../graphql/graphql'
-import {
-	sessionExerciseInputVar,
-	userDataVar
-} from '../../../graphql/vars'
+import { useUserLazyQuery } from '../../../generated/graphql'
+import { userDataVar } from '../../../graphql/vars'
+import useSessionStorage from '../../../hooks/useSessionStorage'
 
 interface MemberSession {
 	id: number
@@ -17,11 +15,9 @@ interface MemberSession {
 const Session: NextPage = () => {
 	const router = useRouter()
 	const userData = useReactiveVar(userDataVar)
-	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
-	const { loading, data } = useQuery(UserDocument, {
-		variables: { id: userData?.id }
-	})
-
+	const [sessionExerciseInput, setSessionExerciseInput] =
+		useSessionStorage('sessionExerciseInput')
+	const [userLazyQuery, { loading, data }] = useUserLazyQuery()
 	const week = ['일', '월', '화', '수', '목', '금', '토']
 
 	const sessionObject: Record<string, MemberSession[]> = {}
@@ -41,7 +37,7 @@ const Session: NextPage = () => {
 						completedSessionObject[date] = []
 					}
 					completedSessionObject[date].push({
-						id: session.id,
+						id: session.id as number,
 						date: session.date
 					})
 				} else {
@@ -49,12 +45,20 @@ const Session: NextPage = () => {
 						sessionObject[date] = []
 					}
 					sessionObject[date].push({
-						id: session.id,
+						id: session.id as number,
 						date: session.date
 					})
 				}
 			})
 	}
+
+	useEffect(() => {
+		if (userData) {
+			userLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	if (loading) return <Loading />
 	return (
@@ -92,7 +96,7 @@ const Session: NextPage = () => {
 													e !== null &&
 													e.target instanceof HTMLElement
 												) {
-													sessionExerciseInputVar({
+													setSessionExerciseInput({
 														...sessionExerciseInput,
 														sessionId: session.id
 													})

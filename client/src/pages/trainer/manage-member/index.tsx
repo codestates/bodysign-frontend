@@ -2,7 +2,7 @@ import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Avatar from '../../../components/atoms/Avatar'
 import AddCategoryIcon from '../../../components/atoms/icons/AddCategoryIcon'
@@ -19,14 +19,10 @@ import {
 	TrainerDocument,
 	useCreateUserCategoryMutation,
 	useFindOneUserByPhoneNumberLazyQuery,
-	useTrainerQuery,
+	useTrainerLazyQuery,
 	useUpdateUserMutation
 } from '../../../generated/graphql'
-import {
-	managedUserInfoVar,
-	modalVar,
-	userDataVar
-} from '../../../graphql/vars'
+import { modalVar, userDataVar } from '../../../graphql/vars'
 import useSessionStorage from '../../../hooks/useSessionStorage'
 
 interface FormInput {
@@ -39,15 +35,14 @@ const ManageMember: NextPage = () => {
 	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
 	const userData = useReactiveVar(userDataVar)
+	const [_, setIsUser] = useSessionStorage('isUser')
+	const [__, setMangedMemberInfo] = useSessionStorage('mangedMemberInfo')
 	const [category, setCategory] = useState('관리중')
 	const [checkModal, setCheckModal] = useState('addmember')
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const [phoneNumber, setPhoneNumber] = useState('')
-	const [_, setIsUser] = useSessionStorage('isUser', false)
-	const { loading, data } = useTrainerQuery({
-		variables: { id: userData?.id as number }
-	})
+	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 	const [createUserCategory] = useCreateUserCategoryMutation()
 	const [updateUser] = useUpdateUserMutation()
 	const [
@@ -106,6 +101,14 @@ const ManageMember: NextPage = () => {
 			}
 		}
 	}
+
+	useEffect(() => {
+		if (userData) {
+			trainerLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	// const socket = io(process.env.NEXT_PUBLIC_API_DOMAIN_SOCKET as string)
 	// useEffect(() => {
@@ -172,19 +175,19 @@ const ManageMember: NextPage = () => {
 		if (!readyDelete) {
 			if (!member.email) {
 				setIsUser(false)
-				managedUserInfoVar({
+				setMangedMemberInfo({
 					userId: +member.id,
-					email: '',
+					emailId: '',
 					userName: member.userName,
 					gender: member.gender
 				})
-				const url = `/trainer/manage-member/${member.id}/info`
+				// const url = `/trainer/manage-member/${member.id}/info`
 				// router.push(url)
 			} else {
 				setIsUser(true)
-				managedUserInfoVar({
+				setMangedMemberInfo({
 					userId: +member.id,
-					email: member.email.split('@')[0],
+					emailId: member.email.split('@')[0],
 					userName: member.userName,
 					gender: member.gender
 				})
