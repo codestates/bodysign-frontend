@@ -13,7 +13,7 @@ import Head from 'next/head'
 import Layout from '../components/Layout'
 import '../components/loading.css'
 import '../styles/globals.css'
-import useAuthHandler from '../utils/useAuthHandler'
+import AuthHandler from '../utils/AuthHandler'
 
 const httpLink = new HttpLink({
 	uri: process.env.NEXT_PUBLIC_API_DOMAIN_GRAPHQL,
@@ -38,8 +38,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 		cache: new InMemoryCache(),
 		connectToDevTools: true
 	})
-
-	useAuthHandler()
+	AuthHandler()
 
 	return (
 		<>
