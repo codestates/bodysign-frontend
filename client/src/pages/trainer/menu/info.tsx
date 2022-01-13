@@ -1,5 +1,7 @@
 import { useReactiveVar } from '@apollo/client'
+import { removeCookies } from 'cookies-next'
 import { NextPage } from 'next'
+import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -19,6 +21,7 @@ interface FormInput {
 }
 
 const TrainerInfo: NextPage = () => {
+	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
 	const userData = useReactiveVar(userDataVar)
 	const [checkModal, setCheckModal] = useState('changepassword')
@@ -136,7 +139,7 @@ const TrainerInfo: NextPage = () => {
 				</span>
 			</div>
 
-			<div className="mt-4 text-[1.8rem]">
+			<div className="mt-[1.6rem] text-[1.8rem]">
 				{data && data.trainer && (
 					<div className="flex flex-col justify-between">
 						<div className="flex justify-between">
@@ -182,19 +185,30 @@ const TrainerInfo: NextPage = () => {
 						</div>
 					</div>
 				)}
-				<button
-					data-check-modal="changepassword"
-					onClick={e => {
-						if (e !== null && e.target instanceof HTMLButtonElement) {
-							{
-								setCheckModal(e.target.dataset.checkModal as string)
+				<div className="flex flex-col items-end mt-[0.8rem]">
+					<button
+						className="font-thin w-[14rem] p-[1.2rem] text-[1.4rem] border"
+						data-check-modal="changepassword"
+						onClick={e => {
+							if (e !== null && e.target instanceof HTMLButtonElement) {
+								{
+									setCheckModal(e.target.dataset.checkModal as string)
+								}
 							}
-						}
-						modalVar(true)
-					}}
-					className="font-thin w-[14rem] p-[1.2rem] mt-[0.8rem] text-[10px] border float-right">
-					비밀번호 변경
-				</button>
+							modalVar(true)
+						}}>
+						비밀번호 변경
+					</button>
+					<button
+						className="font-thin w-[14rem] p-[1.2rem] mt-[0.4rem] text-[1.4rem] border"
+						onClick={() => {
+							removeCookies('accessToken')
+							removeCookies('refreshToken')
+							router.push('/')
+						}}>
+						로그아웃
+					</button>
+				</div>
 			</div>
 			<div
 				className="text-[1.8rem] text-red-600 hover:text-gray-400 cursor-pointer absolute bottom-[2rem]"
