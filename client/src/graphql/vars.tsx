@@ -14,10 +14,12 @@ interface UserData {
 	updatedAt: Date
 }
 
-export const loginTypeVar = makeVar('local')
 export const modalVar = makeVar(false)
 export const deleteStateVar = makeVar(false)
 export const selectedUserVar = makeVar('')
 export const chatTargetUserIdVar = makeVar<number | null>(null)
-export const accessTokenVar = makeVar('token')
+
+export const accessTokenVar = makeVar<string | undefined>(undefined)
+export const refreshTokenVar = makeVar<string | undefined>(undefined)
+export const loginTypeVar = makeVar('local')
 export const userDataVar = makeVar<UserData | null>(null)
