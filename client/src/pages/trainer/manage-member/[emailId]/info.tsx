@@ -12,11 +12,7 @@ import {
 	useUpdateUserMutation,
 	useUserLazyQuery
 } from '../../../../generated/graphql'
-import {
-	chatTargetUserIdVar,
-	modalVar,
-	userDataVar
-} from '../../../../graphql/vars'
+import { modalVar, userDataVar } from '../../../../graphql/vars'
 import useSessionStorage from '../../../../hooks/useSessionStorage'
 
 interface FormInput {
@@ -32,6 +28,7 @@ const Info: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
 	const [isUser, _] = useSessionStorage('isUser')
 	const [mangedMemberInfo, __] = useSessionStorage('mangedMemberInfo')
+	const [___, setChatTargetUserId] = useSessionStorage('chatTargetUserId')
 	const [emailId, setEmailId] = useState('')
 	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 	const [userLazyQuery, { loading: memberLoading, data: memberData }] =
@@ -136,7 +133,7 @@ const Info: NextPage = () => {
 						viewBox="0 0 25 25"
 						stroke="currentColor"
 						onClick={() => {
-							chatTargetUserIdVar(memberData && memberData.user.id)
+							setChatTargetUserId(mangedMemberInfo.userId)
 						}}>
 						<path
 							strokeLinecap="round"

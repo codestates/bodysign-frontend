@@ -9,6 +9,7 @@ import useSessionStorage from '../../../../../hooks/useSessionStorage'
 const Sessions: NextPage = () => {
 	const router = useRouter()
 	const [mangedMemberInfo, _] = useSessionStorage('mangedMemberInfo')
+	const [___, setChatTargetUserId] = useSessionStorage('chatTargetUserId')
 	const [sessionExerciseInput, setSessionExerciseInput] =
 		useSessionStorage('sessionExerciseInput')
 	const [emailId, setEmailId] = useState('')
@@ -57,7 +58,7 @@ const Sessions: NextPage = () => {
 						viewBox="0 0 25 25"
 						stroke="currentColor"
 						onClick={() => {
-							// chatTargetUserIdVar(+member.id)
+							setChatTargetUserId(mangedMemberInfo.userId)
 						}}>
 						<path
 							strokeLinecap="round"

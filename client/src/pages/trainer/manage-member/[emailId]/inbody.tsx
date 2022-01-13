@@ -23,6 +23,7 @@ interface FormInput {
 const Inbody: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
 	const [mangedMemberInfo, __] = useSessionStorage('mangedMemberInfo')
+	const [___, setChatTargetUserId] = useSessionStorage('chatTargetUserId')
 	const canvasRef = useRef(null)
 	const [emailId, setEmailId] = useState('')
 	const [userLazyQuery, { loading, data }] = useUserLazyQuery()
@@ -154,7 +155,7 @@ const Inbody: NextPage = () => {
 						viewBox="0 0 25 25"
 						stroke="currentColor"
 						onClick={() => {
-							// chatTargetUserIdVar(+member.id)
+							setChatTargetUserId(mangedMemberInfo.userId)
 						}}>
 						<path
 							strokeLinecap="round"
