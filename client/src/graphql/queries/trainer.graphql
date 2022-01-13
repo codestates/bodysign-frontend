@@ -38,6 +38,7 @@ query Trainer($id: Int!) {
 			date
 			user {
 				id
+				email
 				userName
 				gender
 			}
