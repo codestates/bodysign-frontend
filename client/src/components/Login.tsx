@@ -1,4 +1,5 @@
 import { gql, useMutation, useReactiveVar } from '@apollo/client'
+import axios from 'axios'
 import type { NextPage } from 'next'
 import { useSession } from 'next-auth/client'
 import { useRouter } from 'next/dist/client/router'
@@ -25,7 +26,6 @@ const LOGIN = gql`
 `
 
 const Login: NextPage = () => {
-	console.log(process.env.NEXT_PUBLIC_API_DOMAIN)
 	const [form, setForm] = useState({
 		email: '',
 		password: ''
@@ -73,7 +73,7 @@ const Login: NextPage = () => {
 				refreshTokenVar(res.data.refereshToken)
 
 				// ! 여기서 유저나 트레이너 페이지로 이동할 때 해당 유저의 정보를 받아서 이동 (app.tsx에서)
-				window.location.href = res.data.redirectUrl
+				router.push(res.data.redirectUrl)
 			})
 		} catch (error) {
 			console.log(error)

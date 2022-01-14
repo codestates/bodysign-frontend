@@ -5,7 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import { io } from 'socket.io-client'
-import { chatTargetUserIdVar, userDataVar } from '../../../../graphql/vars'
+import { userDataVar } from '../../../../graphql/vars'
+import useSessionStorage from '../../../../hooks/useSessionStorage'
 
 enum SenderReceiver {
 	User = 'User',
@@ -26,7 +27,7 @@ interface Chat {
 
 const Chat: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
-	const chatTargetUserId = useReactiveVar(chatTargetUserIdVar)
+	const [chatTargetUserId, _] = useSessionStorage('chatTargetUserId')
 	const botRef = useRef<HTMLDivElement>(null)
 	const [message, setMessage] = useState('')
 	const [chats, setChat] = useState<Chat[]>([])
@@ -67,7 +68,7 @@ const Chat: NextPage = () => {
 				return el
 			})
 		})
-	}, [])
+	}, [userData])
 
 	useEffect(() => {
 		socket.on('receiveChat', chat => {
@@ -244,6 +245,7 @@ const Chat: NextPage = () => {
 							type="file"
 							id="upload"
 							accept="image/*"
+							onClick={() => setMessage('')}
 							onChange={e => {
 								if (e !== null && e.target instanceof HTMLElement) {
 									fileChange(e.target)
@@ -254,10 +256,8 @@ const Chat: NextPage = () => {
 							className="py-[0.8rem] px-[1.2rem] w-full h-[3.5rem] text-[1.6rem] resize-none bg-gray-50 focus:h-[6.3rem] overflow-auto mr-[0.8rem]"
 							autoFocus={true}
 							disabled={img.readyUpload ? true : false}
-							defaultValue=""
-							onBlur={e => {
-								setMessage(e.target.value)
-							}}
+							value={message}
+							onChange={e => setMessage(e.target.value)}
 							onFocus={e => {
 								e.target.scrollTop = e.target.scrollHeight
 							}}
@@ -265,6 +265,7 @@ const Chat: NextPage = () => {
 						<button
 							className="h-[3.6rem]"
 							onClick={() => {
+								setMessage('')
 								sendChat()
 							}}>
 							<svg

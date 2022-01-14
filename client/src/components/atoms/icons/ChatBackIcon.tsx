@@ -1,4 +1,4 @@
-const AddMemberIcon = () => {
+const ChatBackIcon = () => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -6,10 +6,11 @@ const AddMemberIcon = () => {
 			fill="none"
 			viewBox="0 0 24 24"
 			stroke="currentColor"
-			onClick={() => {
-				socket.emit('leaveRoom', `${chatTargetUserId}|${userData?.id}`)
-				chatTargetUserIdVar(null)
-			}}>
+			// onClick={() => {
+			// 	socket.emit('leaveRoom', `${chatTargetUserId}|${userData?.id}`)
+			// 	chatTargetUserIdVar(null)
+			// }}
+		>
 			<path
 				strokeLinecap="round"
 				strokeLinejoin="round"
@@ -20,4 +21,4 @@ const AddMemberIcon = () => {
 	)
 }
 
-export default AddMemberIcon
+export default ChatBackIcon

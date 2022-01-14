@@ -7,13 +7,15 @@ import React, { useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useCreateSessionMutation } from '../../../../generated/graphql'
-import { managedUserInfoVar, userDataVar } from '../../../../graphql/vars'
+import { userDataVar } from '../../../../graphql/vars'
+import useSessionStorage from '../../../../hooks/useSessionStorage'
 
 const AddSession: NextPage = () => {
 	const router = useRouter()
 	const userData = useReactiveVar(userDataVar)
-	const managedUserInfo = useReactiveVar(managedUserInfoVar)
 	const [startDate, setStartDate] = useState(new Date())
+	const [mangedMemberInfo, setMangedMemberInfo] =
+		useSessionStorage('mangedMemberInfo')
 	const [createSession] = useCreateSessionMutation()
 
 	return (
@@ -28,9 +30,9 @@ const AddSession: NextPage = () => {
 							viewBox="0 0 24 24"
 							stroke="currentColor"
 							onClick={() => {
-								managedUserInfoVar({
+								setMangedMemberInfo({
 									userId: 0,
-									email: '',
+									emailId: '',
 									userName: '',
 									gender: ''
 								})
@@ -47,7 +49,7 @@ const AddSession: NextPage = () => {
 				</span>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
-					className="cursor-pointer w-[3.6rem] h-[3.6rem] text-[#FDAD00]"
+					className="cursor-pointer w-[3.6rem] h-[3.6rem] text-[#FED06E]"
 					fill="none"
 					viewBox="0 0 24 24"
 					stroke="currentColor"
@@ -56,7 +58,7 @@ const AddSession: NextPage = () => {
 							await createSession({
 								variables: {
 									createSessionInput: {
-										userId: managedUserInfo.userId,
+										userId: mangedMemberInfo.userId,
 										trainerId: userData?.id as number,
 										date: startDate,
 										status: 'active',
@@ -64,9 +66,9 @@ const AddSession: NextPage = () => {
 									}
 								}
 							})
-							managedUserInfoVar({
+							setMangedMemberInfo({
 								userId: 0,
-								email: '',
+								emailId: '',
 								userName: '',
 								gender: ''
 							})
@@ -86,7 +88,7 @@ const AddSession: NextPage = () => {
 
 			<div className="mt-[2.4rem]">
 				<div className="text-[1.8rem] font-semibold">회원</div>
-				{managedUserInfo.userName === '' ? (
+				{mangedMemberInfo.userName === '' ? (
 					<Link href="/trainer/session/add-session/select-member" passHref>
 						<button className="w-full h-[7rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white">
 							회원 선택
@@ -94,13 +96,13 @@ const AddSession: NextPage = () => {
 					</Link>
 				) : (
 					<div className="h-[7rem] flex items-center justify-center mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white ">
-						{managedUserInfoVar().gender === 'male' ? (
+						{mangedMemberInfo.gender === 'male' ? (
 							<Image src="/man.png" width="25" height="25" alt="image" />
 						) : (
 							<Image src="/woman.png" width="25" height="25" alt="image" />
 						)}
 						<div className="ml-[0.8rem]">
-							{managedUserInfoVar().userName} 회원님
+							{mangedMemberInfo.userName} 회원님
 						</div>
 					</div>
 				)}

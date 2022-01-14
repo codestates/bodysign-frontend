@@ -6,20 +6,18 @@ import React, { useEffect, useRef, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Loading from '../../../components/Loading'
-import { useTrainerQuery } from '../../../generated/graphql'
+import { useTrainerLazyQuery } from '../../../generated/graphql'
 import { modalVar, userDataVar } from '../../../graphql/vars'
 
 const Sales: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
 	const userData = useReactiveVar(userDataVar)
+	const canvasRef = useRef(null)
 	const [startDate, setStartDate] = useState(new Date())
 	const [endDate, setEndDate] = useState(new Date())
 	const [rangeFilterResult, setRangeFilterResult] = useState(0)
 	const [date, setDate] = useState('')
-	const canvasRef = useRef(null)
-	const { loading, data } = useTrainerQuery({
-		variables: { id: userData?.id as number }
-	})
+	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 
 	let sessionHistories: any[] = []
 	if (!loading && data && data.trainer.users) {
@@ -61,6 +59,14 @@ const Sales: NextPage = () => {
 		if (dateA < dateB) return -1
 		return 0
 	})
+
+	useEffect(() => {
+		if (userData) {
+			trainerLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	useEffect(() => {
 		if (canvasRef.current) {
@@ -173,9 +179,9 @@ const Sales: NextPage = () => {
 
 			<div className="mt-[2.4rem] text-[1.8rem]">
 				<form className="flex flex-col" onSubmit={e => handleSubmit(e)}>
-					<div className="flex items-center justify-around">
+					<div className="flex items-center justify-between">
 						<DatePicker
-							className="w-[12rem] p-[0.8rem] border text-center mr-[0.8rem] rounded-2xl"
+							className="w-[12rem] py-[0.5rem] border text-center rounded-2xl"
 							selected={startDate}
 							onChange={date => setStartDate(date as Date)}
 							selectsStart
@@ -184,7 +190,7 @@ const Sales: NextPage = () => {
 						/>
 						~
 						<DatePicker
-							className="w-[12rem] p-[0.8rem] border text-center ml-[0.8rem] rounded-2xl"
+							className="w-[12rem] py-[0.5rem] border text-center rounded-2xl"
 							selected={endDate}
 							onChange={date => setEndDate(date as Date)}
 							selectsEnd
@@ -193,7 +199,7 @@ const Sales: NextPage = () => {
 							minDate={startDate}
 						/>
 						<button
-							className="p-[0.8rem] bg-[#FDAD00] border rounded-2xl"
+							className="p-[0.6rem] bg-[#FDAD00] border rounded-2xl"
 							type="submit">
 							조회
 						</button>
@@ -211,16 +217,16 @@ const Sales: NextPage = () => {
 					<table className="min-w-full divide-y divide-gray-200">
 						<thead className="bg-gray-50">
 							<tr>
-								<th className="p-[1.2rem] text-left text-gray-500">
+								<th className="p-[0.8rem] text-left text-gray-500">
 									기간
 								</th>
-								<th className="p-[1.2rem] text-left text-gray-500">
+								<th className="p-[0.8rem] text-left text-gray-500">
 									매출총액
 								</th>
-								<th className="p-[1.2rem] text-left text-gray-500">
+								<th className="p-[0.8rem] text-left text-gray-500">
 									평균단가
 								</th>
-								<th className="p-[1.2rem] text-left text-gray-500"> </th>
+								<th className="p-[0.8rem] text-left text-gray-500"> </th>
 							</tr>
 						</thead>
 						<tbody className="bg-white divide-y divide-gray-200">
@@ -228,23 +234,23 @@ const Sales: NextPage = () => {
 								return (
 									<React.Fragment key={idx}>
 										<tr>
-											<td className="p-[1.2rem] text-gray-500">
+											<td className="p-[0.8rem] text-gray-500">
 												{`${sessionHistory[0].split('.')[0]}.${
 													sessionHistory[0].split('.')[1]
 												}`}
 											</td>
-											<td className="p-[1.2rem] text-gray-500">
+											<td className="p-[0.8rem] text-gray-500">
 												{sessionHistory[1].reduce((acc, cur) => acc + cur)}
 												원
 											</td>
-											<td className="p-[1.2rem] text-gray-500">
+											<td className="p-[0.8rem] text-gray-500">
 												{Math.floor(
 													sessionHistory[1].reduce(
 														(acc, cur) => acc + cur
 													) / sessionHistory[1].length
 												)}
 											</td>
-											<td className="flex justify-end p-1 text-gray-500">
+											<td className="flex justify-end p-[0.4rem] text-gray-500">
 												<span
 													className="flex items-center cursor-pointer"
 													onClick={() => {
@@ -276,7 +282,7 @@ const Sales: NextPage = () => {
 			</div>
 
 			{modal ? (
-				<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
+				<div className="fixed bottom-0 right-0 w-full font-IBM">
 					<div
 						className="fixed inset-0 z-[-1] bg-black opacity-20"
 						onClick={() => modalVar(false)}></div>

@@ -1,4 +1,5 @@
 import { makeVar } from '@apollo/client'
+import UserData from '../types/userData'
 
 interface UserData {
 	id: number

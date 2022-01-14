@@ -6,5 +6,8 @@ query FindImgsByUserIdAndTrainerId($findImgsInput: FindImgsInput!) {
 		userId
 		trainerId
 		createdAt
+		chat {
+			sender
+		}
 	}
 }

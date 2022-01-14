@@ -2,7 +2,7 @@ import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Avatar from '../../../components/atoms/Avatar'
 import AddCategoryIcon from '../../../components/atoms/icons/AddCategoryIcon'
@@ -19,14 +19,11 @@ import {
 	TrainerDocument,
 	useCreateUserCategoryMutation,
 	useFindOneUserByPhoneNumberLazyQuery,
-	useTrainerQuery,
+	useTrainerLazyQuery,
 	useUpdateUserMutation
 } from '../../../generated/graphql'
-import {
-	managedUserInfoVar,
-	modalVar,
-	userDataVar
-} from '../../../graphql/vars'
+import { modalVar, userDataVar } from '../../../graphql/vars'
+import useSessionStorage from '../../../hooks/useSessionStorage'
 
 interface FormInput {
 	phoneNumber: string
@@ -38,14 +35,14 @@ const ManageMember: NextPage = () => {
 	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
 	const userData = useReactiveVar(userDataVar)
+	const [_, setIsUser] = useSessionStorage('isUser')
+	const [__, setMangedMemberInfo] = useSessionStorage('mangedMemberInfo')
 	const [category, setCategory] = useState('관리중')
 	const [checkModal, setCheckModal] = useState('addmember')
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
 	const [phoneNumber, setPhoneNumber] = useState('')
-	const { loading, data } = useTrainerQuery({
-		variables: { id: userData?.id as number }
-	})
+	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 	const [createUserCategory] = useCreateUserCategoryMutation()
 	const [updateUser] = useUpdateUserMutation()
 	const [
@@ -105,6 +102,14 @@ const ManageMember: NextPage = () => {
 		}
 	}
 
+	useEffect(() => {
+		if (userData) {
+			trainerLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
+
 	// const socket = io(process.env.NEXT_PUBLIC_API_DOMAIN_SOCKET as string)
 	// useEffect(() => {
 	// 	socket.emit('joinLounge', userData?.id)
@@ -132,6 +137,7 @@ const ManageMember: NextPage = () => {
 	}
 
 	const handleDelete = async () => {
+		// 회원 삭제 step 2
 		const deleteItemId = Array.from(deleteLists)[0]
 		if (deleteItemId) {
 			try {
@@ -149,10 +155,10 @@ const ManageMember: NextPage = () => {
 						}
 					]
 				})
-				deleteLists.clear()
 			} catch (error) {
 				console.log(error)
 			}
+			deleteLists.clear()
 		}
 		setReadyDelete(false)
 	}
@@ -167,16 +173,29 @@ const ManageMember: NextPage = () => {
 		e: React.MouseEvent<HTMLDivElement, MouseEvent>
 	) => {
 		if (!readyDelete) {
-			managedUserInfoVar({
-				userId: +member.id,
-				email: member.email.split('@')[0],
-				userName: member.userName,
-				gender: member.gender
-			})
-			const url = `/trainer/manage-member/${
-				member.email.split('@')[0]
-			}/info`
-			router.push(url)
+			if (!member.email) {
+				setIsUser(false)
+				setMangedMemberInfo({
+					userId: +member.id,
+					emailId: '',
+					userName: member.userName,
+					gender: member.gender
+				})
+				// const url = `/trainer/manage-member/${member.id}/info`
+				// router.push(url)
+			} else {
+				setIsUser(true)
+				setMangedMemberInfo({
+					userId: +member.id,
+					emailId: member.email.split('@')[0],
+					userName: member.userName,
+					gender: member.gender
+				})
+				const url = `/trainer/manage-member/${
+					member.email.split('@')[0]
+				}/info`
+				router.push(url)
+			}
 		} else {
 			if (e !== null && e.target instanceof HTMLElement) {
 				// 회원 삭제 step 1
@@ -266,6 +285,48 @@ const ManageMember: NextPage = () => {
 														{!readyDelete ? (
 															<ChatLink memberId={member.id} />
 														) : null}
+													</RowMemberItem>
+												</>
+											)
+										}
+									})}
+
+							{userCategory?.nonRegisteredUsers &&
+								userCategory?.nonRegisteredUsers
+									.filter(nonRegisteredMember => {
+										if (
+											category === '관리중' &&
+											!nonRegisteredMember?.graduate
+										) {
+											return nonRegisteredMember
+										} else if (
+											category === '졸업' &&
+											nonRegisteredMember?.graduate
+										) {
+											return nonRegisteredMember
+										}
+									})
+									.map(nonRegisteredMember => {
+										if (nonRegisteredMember) {
+											return (
+												<>
+													<RowMemberItem
+														member={nonRegisteredMember}
+														deleteLists={deleteLists}
+														handleManagedMember={handleManagedMember}>
+														<div className="flex">
+															<Avatar
+																gender={nonRegisteredMember.gender}
+															/>
+															<ColMemberGroup>
+																<div className="text-left">
+																	{nonRegisteredMember.userName} 회원
+																</div>
+																{/* <div className="text-[1.4rem] text-right text-[#9F9F9F]">
+																	{`${sumUsedCount} / ${sumTotalCount}`}회
+																</div> */}
+															</ColMemberGroup>
+														</div>
 													</RowMemberItem>
 												</>
 											)

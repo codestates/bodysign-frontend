@@ -1,16 +1,18 @@
 import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
+import { useRouter } from 'next/dist/client/router'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Loading from '../../../components/Loading'
 import {
 	TrainerDocument,
 	useRemoveSessionMutation,
-	useTrainerQuery,
+	useTrainerLazyQuery,
 	useUpdateSessionMutation
 } from '../../../generated/graphql'
 import { modalVar, userDataVar } from '../../../graphql/vars'
+import useSessionStorage from '../../../hooks/useSessionStorage'
 
 interface MemberSession {
 	id: number
@@ -20,27 +22,28 @@ interface MemberSession {
 }
 
 const Session: NextPage = () => {
+	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
 	const userData = useReactiveVar(userDataVar)
+	const [sessionExerciseInput, setSessionExerciseInput] =
+		useSessionStorage('sessionExerciseInput')
 	const [category, setCategory] = useState('일정')
 	const [sessionId, setSessionId] = useState<number>()
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
-	const { loading, data } = useTrainerQuery({
-		variables: { id: userData?.id as number }
-	})
+	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 	const [updateSession] = useUpdateSessionMutation()
 	const [removeSession] = useRemoveSessionMutation()
 
 	const sessionObject: Record<string, MemberSession[]> = {}
 	const completedSessionObject: Record<string, MemberSession[]> = {}
 	if (!loading && data && data.trainer.sessions) {
-		let $Data = [...data.trainer.sessions]
-		$Data
+		let $sortedSessionsData = [...data.trainer.sessions]
+		$sortedSessionsData
 			.sort((a, b) => {
 				const aDate = new Date(a!.date).getTime()
 				const bDate = new Date(b!.date).getTime()
-				return aDate > bDate ? -1 : 1
+				return aDate > bDate ? 1 : -1
 			})
 			.forEach(session => {
 				if (session) {
@@ -69,6 +72,14 @@ const Session: NextPage = () => {
 				}
 			})
 	}
+
+	useEffect(() => {
+		if (userData) {
+			trainerLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	if (loading) return <Loading />
 	return (
@@ -146,10 +157,10 @@ const Session: NextPage = () => {
 												}
 											]
 										})
-										deleteLists.clear()
 									} catch (error) {
 										console.log(error)
 									}
+									deleteLists.clear()
 								}
 								setReadyDelete(false)
 							}}>
@@ -164,28 +175,41 @@ const Session: NextPage = () => {
 				</span>
 			</div>
 
-			{Object.entries(
-				category === '일정' ? sessionObject : completedSessionObject
-			).map((entry, idx) => {
-				const date = entry[0].split('-')
-				return (
-					<React.Fragment key={idx}>
-						<div className="mt-[2.4rem]">
-							<div className="text-[1.8rem] font-semibold">
-								{`${date[1]}월 ${date[2]}일`}
-							</div>
-							{entry[1].map(session => {
-								const date = new Date(session.date)
-								let hours = date.getHours() + ''
-								if (hours.length === 1) {
-									hours = 0 + hours
-								}
-								let minutes = date.getMinutes() + ''
-								if (minutes.length === 1) {
-									minutes = 0 + minutes
-								}
-								return (
-									<React.Fragment key={session.id}>
+			{data &&
+				data.trainer.sessions &&
+				data.trainer.sessions
+					.filter(session => {
+						if (category === '일정') {
+							return session?.completedSession === false
+						} else if (category === '피드백') {
+							if (!session?.sentFeedback) {
+								return session?.completedSession === true
+							}
+						}
+					})
+					.sort((a, b) => {
+						const aDate = new Date(a!.date).getTime()
+						const bDate = new Date(b!.date).getTime()
+						return aDate > bDate ? 1 : -1
+					})
+					.map(session => {
+						if (session) {
+							const [_, month, day] = session.date.split('T')[0].split('-')
+							const date = new Date(session.date)
+							let hours = date.getHours() + ''
+							if (hours.length === 1) {
+								hours = 0 + hours
+							}
+							let minutes = date.getMinutes() + ''
+							if (minutes.length === 1) {
+								minutes = 0 + minutes
+							}
+							return (
+								<React.Fragment key={session.id}>
+									<div className="mt-[2.4rem]">
+										<div className="text-[1.8rem] font-semibold">
+											{`${month}월 ${day}일`}
+										</div>
 										<div
 											className={`${
 												session.id === deleteLists.keys().next().value
@@ -197,10 +221,27 @@ const Session: NextPage = () => {
 												!readyDelete
 													? category === '일정'
 														? () => {
-																setSessionId(session.id)
+																setSessionId(session.id as number)
 																modalVar(true)
 														  }
-														: undefined
+														: e => {
+																if (
+																	e !== null &&
+																	e.target instanceof HTMLElement
+																) {
+																	setSessionExerciseInput({
+																		...sessionExerciseInput,
+																		sessionId: session.id
+																	})
+																	router.push(
+																		`/trainer/manage-member/${
+																			session.user.email.split('@')[0]
+																		}/sessions/${
+																			session.date.split('T')[0]
+																		}`
+																	)
+																}
+														  }
 													: e => {
 															if (
 																e !== null &&
@@ -230,7 +271,7 @@ const Session: NextPage = () => {
 													  }
 											}>
 											<div className="flex">
-												{session.gender === 'male' ? (
+												{session.user.gender === 'male' ? (
 													<Image
 														src="/man.png"
 														width="36"
@@ -246,20 +287,18 @@ const Session: NextPage = () => {
 													/>
 												)}
 												<div className="self-center ml-[1.2rem]">
-													{session.userName} 회원
+													{session.user.userName} 회원
 												</div>
 											</div>
 											<div>
 												{`${hours}:${minutes === '0' ? '00' : minutes}`}
 											</div>
 										</div>
-									</React.Fragment>
-								)
-							})}
-						</div>
-					</React.Fragment>
-				)
-			})}
+									</div>
+								</React.Fragment>
+							)
+						}
+					})}
 
 			{modal ? (
 				<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">

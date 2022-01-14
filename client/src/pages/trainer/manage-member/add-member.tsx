@@ -2,12 +2,12 @@ import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Loading from '../../../components/Loading'
 import {
 	useCreateNonRegisteredUserMutation,
-	useTrainerQuery
+	useTrainerLazyQuery
 } from '../../../generated/graphql'
 import { userDataVar } from '../../../graphql/vars'
 
@@ -25,9 +25,7 @@ const labelProperties =
 const AddMember: NextPage = () => {
 	const router = useRouter()
 	const userData = useReactiveVar(userDataVar)
-	const { loading, data } = useTrainerQuery({
-		variables: { id: userData?.id as number }
-	})
+	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 	const [createNonRegisteredUser] = useCreateNonRegisteredUserMutation()
 	const {
 		register,
@@ -60,6 +58,14 @@ const AddMember: NextPage = () => {
 			console.log(error)
 		}
 	}
+
+	useEffect(() => {
+		if (userData) {
+			trainerLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	if (loading) return <Loading />
 	return (

@@ -1,18 +1,23 @@
-import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Loading from '../../../../components/Loading'
-import { useSessionQuery } from '../../../../generated/graphql'
-import { sessionExerciseInputVar } from '../../../../graphql/vars'
+import { useSessionLazyQuery } from '../../../../generated/graphql'
+import useSessionStorage from '../../../../hooks/useSessionStorage'
 
 const Detail: NextPage = () => {
 	const router = useRouter()
-	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
-	const { loading, data } = useSessionQuery({
-		variables: { id: sessionExerciseInput.sessionId }
-	})
+	const [sessionExerciseInput, _] = useSessionStorage(
+		'sessionExerciseInput'
+	)
+	const [sessionLazyQuery, { loading, data }] = useSessionLazyQuery()
+
+	useEffect(() => {
+		sessionLazyQuery({
+			variables: { id: sessionExerciseInput.sessionId }
+		})
+	}, [sessionExerciseInput])
 
 	if (loading) return <Loading />
 	return (

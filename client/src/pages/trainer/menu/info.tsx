@@ -1,12 +1,14 @@
 import { useReactiveVar } from '@apollo/client'
+import { removeCookies } from 'cookies-next'
 import { NextPage } from 'next'
+import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Loading from '../../../components/Loading'
 import {
 	useRemoveTrainerMutation,
-	useTrainerQuery,
+	useTrainerLazyQuery,
 	useUpdatePasswordTrainerMutation,
 	useUpdateTrainerMutation
 } from '../../../generated/graphql'
@@ -19,6 +21,7 @@ interface FormInput {
 }
 
 const TrainerInfo: NextPage = () => {
+	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
 	const userData = useReactiveVar(userDataVar)
 	const [checkModal, setCheckModal] = useState('changepassword')
@@ -26,9 +29,7 @@ const TrainerInfo: NextPage = () => {
 	const [updateTrainerInput, setUpdateTrainerInput] = useState({
 		phoneNumber: ''
 	})
-	const { loading, data } = useTrainerQuery({
-		variables: { id: userData?.id as number }
-	})
+	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 	const [updateTrainer] = useUpdateTrainerMutation()
 	const [removeTrainer] = useRemoveTrainerMutation()
 	const [updatePasswordTrainer] = useUpdatePasswordTrainerMutation()
@@ -56,6 +57,14 @@ const TrainerInfo: NextPage = () => {
 			console.log(error)
 		}
 	}
+
+	useEffect(() => {
+		if (userData) {
+			trainerLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	if (loading) return <Loading />
 	return (
@@ -130,7 +139,7 @@ const TrainerInfo: NextPage = () => {
 				</span>
 			</div>
 
-			<div className="mt-4 text-[1.8rem]">
+			<div className="mt-[1.6rem] text-[1.8rem]">
 				{data && data.trainer && (
 					<div className="flex flex-col justify-between">
 						<div className="flex justify-between">
@@ -176,19 +185,30 @@ const TrainerInfo: NextPage = () => {
 						</div>
 					</div>
 				)}
-				<button
-					data-check-modal="changepassword"
-					onClick={e => {
-						if (e !== null && e.target instanceof HTMLButtonElement) {
-							{
-								setCheckModal(e.target.dataset.checkModal as string)
+				<div className="flex flex-col items-end mt-[0.8rem]">
+					<button
+						className="font-thin w-[14rem] p-[1.2rem] text-[1.4rem] border"
+						data-check-modal="changepassword"
+						onClick={e => {
+							if (e !== null && e.target instanceof HTMLButtonElement) {
+								{
+									setCheckModal(e.target.dataset.checkModal as string)
+								}
 							}
-						}
-						modalVar(true)
-					}}
-					className="font-thin w-[14rem] p-[1.2rem] mt-[0.8rem] text-[10px] border float-right">
-					비밀번호 변경
-				</button>
+							modalVar(true)
+						}}>
+						비밀번호 변경
+					</button>
+					<button
+						className="font-thin w-[14rem] p-[1.2rem] mt-[0.4rem] text-[1.4rem] border"
+						onClick={() => {
+							removeCookies('accessToken')
+							removeCookies('refreshToken')
+							router.push('/')
+						}}>
+						로그아웃
+					</button>
+				</div>
 			</div>
 			<div
 				className="text-[1.8rem] text-red-600 hover:text-gray-400 cursor-pointer absolute bottom-[2rem]"
@@ -206,7 +226,7 @@ const TrainerInfo: NextPage = () => {
 
 			{modal ? (
 				checkModal === 'changepassword' ? (
-					<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
+					<div className="fixed bottom-0 right-0 w-full font-IBM">
 						<div
 							className="fixed inset-0 z-[-1] bg-black opacity-20"
 							onClick={() => modalVar(false)}></div>
@@ -277,7 +297,7 @@ const TrainerInfo: NextPage = () => {
 						</div>
 					</div>
 				) : (
-					<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
+					<div className="fixed bottom-0 right-0 w-full font-IBM">
 						<div
 							className="fixed inset-0 z-[-1] bg-black opacity-20"
 							onClick={() => modalVar(false)}></div>

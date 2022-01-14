@@ -2,22 +2,19 @@ import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Loading from '../../../../../../components/Loading'
 import {
 	SessionDocument,
 	useCreateSessionExerciseVolumeMutation,
+	UserDocument,
 	useRemoveSessionExerciseMutation,
-	useSessionQuery,
+	useSessionLazyQuery,
 	useUpdateSessionMutation
 } from '../../../../../../generated/graphql'
-import { UserDocument } from '../../../../../../graphql/graphql'
-import {
-	managedUserInfoVar,
-	modalVar,
-	sessionExerciseInputVar
-} from '../../../../../../graphql/vars'
+import { modalVar } from '../../../../../../graphql/vars'
+import useSessionStorage from '../../../../../../hooks/useSessionStorage'
 
 interface FormInput {
 	weight: string
@@ -28,13 +25,12 @@ interface FormInput {
 const Detail: NextPage = () => {
 	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
-	const managedUserInfo = useReactiveVar(managedUserInfoVar)
-	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
+	const [mangedMemberInfo, _] = useSessionStorage('mangedMemberInfo')
+	const [sessionExerciseInput, setSessionExerciseInput] =
+		useSessionStorage('sessionExerciseInput')
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
-	const { loading, data } = useSessionQuery({
-		variables: { id: sessionExerciseInput.sessionId }
-	})
+	const [sessionLazyQuery, { loading, data }] = useSessionLazyQuery()
 	const [createSessionExerciseVolume] =
 		useCreateSessionExerciseVolumeMutation()
 	const [updateSession] = useUpdateSessionMutation()
@@ -59,11 +55,11 @@ const Detail: NextPage = () => {
 				refetchQueries: [
 					{
 						query: UserDocument,
-						variables: { id: managedUserInfo.userId }
+						variables: { id: mangedMemberInfo.userId }
 					}
 				]
 			})
-			sessionExerciseInputVar({
+			setSessionExerciseInput({
 				...sessionExerciseInput,
 				sessionExerciseId: 0
 			})
@@ -72,6 +68,12 @@ const Detail: NextPage = () => {
 			console.log(error)
 		}
 	}
+
+	useEffect(() => {
+		sessionLazyQuery({
+			variables: { id: sessionExerciseInput.sessionId }
+		})
+	}, [sessionExerciseInput])
 
 	if (loading) return <Loading />
 	return (
@@ -104,19 +106,19 @@ const Detail: NextPage = () => {
 						<>
 							<span className="relative inline-block w-[4rem] align-middle select-none">
 								<input
-									className="absolute block w-[2.8rem] h-[2.8rem] bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#FDAD00] peer"
+									className="absolute block w-[2.8rem] h-[2.8rem] bg-white border-4 rounded-full appearance-none cursor-pointer checked:right-0 checked:border-[#FED06E] peer"
 									type="checkbox"
 									name="toggle"
 									id="toggle"
-									checked={data && data.session.sentFeedback}
+									checked={data && data.session.completedSession}
 									onChange={async e => {
-										// 피드백 완료 여부 API
+										// 수업 완료 API
 										try {
 											await updateSession({
 												variables: {
 													updateSessionInput: {
 														id: sessionExerciseInput.sessionId,
-														sentFeedback: e.target.checked
+														completedSession: e.target.checked
 													}
 												},
 												refetchQueries: [
@@ -134,7 +136,7 @@ const Detail: NextPage = () => {
 									}}
 								/>
 								<label
-									className="block h-[2.8rem]	bg-gray-200 rounded-full cursor-pointer peer peer-checked:bg-[#FDAD00] overflow-hidden"
+									className="block h-[2.8rem]	bg-gray-200 rounded-full cursor-pointer peer peer-checked:bg-[#FED06E] overflow-hidden"
 									htmlFor="toggle"
 								/>
 							</span>
@@ -178,10 +180,10 @@ const Detail: NextPage = () => {
 												}
 											]
 										})
-										deleteLists.clear()
 									} catch (error) {
 										console.log(error)
 									}
+									deleteLists.clear()
 								}
 								setReadyDelete(false)
 							}}>
@@ -196,7 +198,7 @@ const Detail: NextPage = () => {
 				</span>
 
 				{/* <span className="text-[1.6rem] text-right">
-								{managedUserInfo.userName} 회원
+								{mangedMemberInfo.userName} 회원
 							</span> */}
 			</div>
 
@@ -264,7 +266,7 @@ const Detail: NextPage = () => {
 												onClick={
 													!readyDelete
 														? () => {
-																sessionExerciseInputVar({
+																setSessionExerciseInput({
 																	...sessionExerciseInput,
 																	exerciseName: exercise.name,
 																	sessionExerciseId: exercise.id
@@ -336,7 +338,8 @@ const Detail: NextPage = () => {
 							variables: {
 								updateSessionInput: {
 									id: sessionExerciseInput.sessionId,
-									feedback: e.target.value
+									feedback: e.target.value,
+									sentFeedback: e.target.value === '' ? false : true
 								}
 							}
 						})
@@ -347,7 +350,7 @@ const Detail: NextPage = () => {
 			/>
 
 			{modal ? (
-				<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
+				<div className="fixed bottom-0 right-0 w-full font-IBM">
 					<div
 						className="fixed inset-0 z-[-1] bg-black opacity-20"
 						onClick={() => modalVar(false)}></div>
