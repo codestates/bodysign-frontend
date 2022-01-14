@@ -4,9 +4,11 @@ interface UserData {
 	id: number
 	email: string
 	userName: string
+	userCategoryId: null
 	birthDate: Date
 	phoneNumber: null
 	gender: string
+	graduate: boolean
 	trainerId: number
 	loginType: string
 	status: string
@@ -14,7 +16,7 @@ interface UserData {
 	updatedAt: Date
 }
 
-export const loginTypeVar = makeVar('local')
+export const loginTypeVar = makeVar('')
 export const modalVar = makeVar(false)
 export const deleteStateVar = makeVar(false)
 export const selectedUserVar = makeVar('')
@@ -30,5 +32,6 @@ export const sessionExerciseInputVar = makeVar({
 	sessionExerciseId: 0
 })
 export const chatTargetUserIdVar = makeVar<number | null>(null)
-export const accessTokenVar = makeVar('token')
 export const userDataVar = makeVar<UserData | null>(null)
+export const accessTokenVar = makeVar('')
+export const refreshTokenVar = makeVar('')
