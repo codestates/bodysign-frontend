@@ -5,9 +5,10 @@ import { useSession } from 'next-auth/client'
 import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
 import React, { useState } from 'react'
-import { accessTokenVar, loginTypeVar } from '../graphql/vars'
+import { accessTokenVar, loginTypeVar, refreshTokenVar } from '../graphql/vars'
 import Loading from './Loading'
 // import { Cookies } from 'react-cookie'
+import axios from 'axios'
 
 // TODO : env로 빼야함
 const GOOGLE_CLIENT_ID =
@@ -57,19 +58,23 @@ const Login: NextPage = () => {
 	}
 
 	const onSubmit = async (e: any) => {
+		loginTypeVar('local')
 		try {
-			axios
-				.post(
-					'http://localhost:4000/auth/localLogin',
-					{
-						email: form.email,
-						password: form.password
-					},
-					{ withCredentials: true }
-				)
-				.then(function (res) {
-					router.push(res.data.redirectUrl)
-				})
+			axios.post("http://localhost:4000/auth/localLogin", {
+				email: form.email,
+				password: form.password
+			},
+			{
+				withCredentials: true
+			}
+			).then(function(res){
+				// 액세스 토큰과 리프레쉬 토큰을 var 에 담아두기
+				accessTokenVar(res.data.accessToken)
+				refreshTokenVar(res.data.refereshToken)
+
+				// ! 여기서 유저나 트레이너 페이지로 이동할 때 해당 유저의 정보를 받아서 이동 (app.tsx에서)
+				router.push(res.data.redirectUrl)
+			})
 		} catch (error) {
 			console.log(error)
 		}
@@ -77,7 +82,6 @@ const Login: NextPage = () => {
 	if (!loading && data) {
 		const accessToken = data.loginAuth.accessToken
 		const userType = data.loginAuth.userType
-		accessTokenVar(accessToken)
 
 		if (userType === 'user') {
 			router.push(`${process.env.NEXT_PUBLIC_CLIENT_DOMAIN}/user`)
@@ -87,6 +91,7 @@ const Login: NextPage = () => {
 	}
 
 	const onGoogleLogin = () => {
+		loginTypeVar('google')
 		window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=http://localhost:4000/auth/google&response_type=token&scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&
 		include_granted_scopes=true`
 	}
