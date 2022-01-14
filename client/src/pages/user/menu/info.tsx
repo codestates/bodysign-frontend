@@ -1,15 +1,15 @@
-import { useQuery, useReactiveVar } from '@apollo/client'
+import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Loading from '../../../components/Loading'
 import {
 	useRemoveUserMutation,
 	useUpdatePasswordUserMutation,
-	useUpdateUserMutation
+	useUpdateUserMutation,
+	useUserLazyQuery
 } from '../../../generated/graphql'
-import { UserDocument } from '../../../graphql/graphql'
 import { modalVar, userDataVar } from '../../../graphql/vars'
 
 interface FormInput {
@@ -26,9 +26,7 @@ const UserInfo: NextPage = () => {
 	const [updateUserInput, setUpdateUserInput] = useState({
 		phoneNumber: ''
 	})
-	const { loading, data } = useQuery(UserDocument, {
-		variables: { id: userData?.id }
-	})
+	const [userLazyQuery, { loading, data }] = useUserLazyQuery()
 	const [updateUser] = useUpdateUserMutation()
 	const [removeUser] = useRemoveUserMutation()
 	const [updatePasswordUser] = useUpdatePasswordUserMutation()
@@ -57,6 +55,14 @@ const UserInfo: NextPage = () => {
 			console.log(error)
 		}
 	}
+
+	useEffect(() => {
+		if (userData) {
+			userLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	if (loading) return <Loading />
 	return (
@@ -134,30 +140,32 @@ const UserInfo: NextPage = () => {
 				<div className="flex flex-col justify-between">
 					<div className="flex justify-between">
 						<span>이름</span>
-						<span className="font-thin">{data.user.userName}</span>
+						<span className="font-thin">{data && data.user.userName}</span>
 					</div>
 					<div className="flex justify-between mt-[0.4rem]">
 						<span>성별</span>
-						<span className="font-thin">{data.user.gender}</span>
+						<span className="font-thin">{data && data.user.gender}</span>
 					</div>
 					<div className="flex justify-between mt-[0.4rem]">
 						<span>이메일</span>
-						<span className="font-thin">{data.user.email}</span>
+						<span className="font-thin">{data && data.user.email}</span>
 					</div>
 					<div className="flex justify-between mt-[0.4rem]">
 						<span>생년월일</span>
 						<span className="font-thin">
-							{data.user.birthDate.split('T')[0]}
+							{data && data.user.birthDate.split('T')[0]}
 						</span>
 					</div>
 					<div className="flex justify-between mt-[0.4rem]">
 						<span>전화번호</span>
 						{!isModify ? (
-							<span className="font-thin">{data.user.phoneNumber}</span>
+							<span className="font-thin">
+								{data && data.user.phoneNumber}
+							</span>
 						) : (
 							<input
 								type="text"
-								defaultValue={data.user.phoneNumber}
+								defaultValue={data && data.user.phoneNumber}
 								onChange={e => {
 									setUpdateUserInput({
 										...updateUserInput,

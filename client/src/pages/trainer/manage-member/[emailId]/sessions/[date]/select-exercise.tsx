@@ -2,36 +2,41 @@ import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Loading from '../../../../../../components/Loading'
 import {
 	useBulkCreateSessionExercisesMutation,
-	useTrainerQuery
+	useTrainerLazyQuery
 } from '../../../../../../generated/graphql'
-import {
-	sessionExerciseInputVar,
-	userDataVar
-} from '../../../../../../graphql/vars'
+import { userDataVar } from '../../../../../../graphql/vars'
+import useSessionStorage from '../../../../../../hooks/useSessionStorage'
 // import { useGetScroll } from '../../../../../../utils/useGetScroll'
 
 const Exercise: NextPage = () => {
 	const router = useRouter()
 	const userData = useReactiveVar(userDataVar)
-	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
-	const refs = useRef<(HTMLSpanElement | null)[]>([])
+	const [sessionExerciseInput, _] = useSessionStorage(
+		'sessionExerciseInput'
+	)
 	// const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
+	const refs = useRef<(HTMLSpanElement | null)[]>([])
 	const [exerciseNames, setExerciseNames] = useState<Set<string>>(
 		new Set()
 	)
 	const [exerciseCategoryNames, setExerciseCategoryNames] = useState<
 		string[]
 	>([])
-	const { loading, data } = useTrainerQuery({
-		variables: { id: userData?.id as number }
-	})
+	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 	const [bulkCreateSessionExercises] =
 		useBulkCreateSessionExercisesMutation()
-	console.log(exerciseNames, exerciseCategoryNames)
+
+	useEffect(() => {
+		if (userData) {
+			trainerLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	if (loading) return <Loading />
 	return (

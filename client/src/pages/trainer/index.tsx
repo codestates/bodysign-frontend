@@ -5,7 +5,7 @@ import Loading from '../../components/Loading'
 import HomeLogoHeader from '../../components/molecules/Header/HomeLogoHeader'
 import HomeTrainerIntro from '../../components/molecules/TrainerHomeIntro'
 import HomeSessionList from '../../components/molecules/TrainerHomeSessionList'
-import { Session, useTrainerQuery } from '../../generated/graphql'
+import { Session, useTrainerLazyQuery } from '../../generated/graphql'
 import { userDataVar } from '../../graphql/vars'
 
 // TODO: CSS 애니메이션 꾸미기
@@ -16,9 +16,15 @@ const Main: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
 	const [monthAccountsData, setMonthAccountsData] = useState(0)
 	const [sessions, setSessions] = useState<Session[] | null>(null)
-	const { loading, data } = useTrainerQuery({
-		variables: { id: userData?.id as number }
-	})
+	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
+
+	useEffect(() => {
+		if (userData) {
+			trainerLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	useEffect(() => {
 		const month = new Date().getMonth()

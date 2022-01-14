@@ -8,30 +8,35 @@ import Loading from '../../../../../components/Loading'
 import {
 	FindImgsByUserIdAndTrainerIdDocument,
 	useBulkRemoveImgMutation,
-	useFindImgsByUserIdAndTrainerIdQuery
+	useFindImgsByUserIdAndTrainerIdLazyQuery
 } from '../../../../../generated/graphql'
-import {
-	chatTargetUserIdVar,
-	userDataVar
-} from '../../../../../graphql/vars'
+import { userDataVar } from '../../../../../graphql/vars'
+import useSessionStorage from '../../../../../hooks/useSessionStorage'
 
 const Photos: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
-	const chatTargetUserId = useReactiveVar(chatTargetUserIdVar)
+	const [chatTargetUserId, _] = useSessionStorage('chatTargetUserId')
 	const [imgs, setImgs] = useState<Record<string, string[][]>>()
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
-	const { loading, data } = useFindImgsByUserIdAndTrainerIdQuery({
-		variables: {
-			findImgsInput: {
-				page: 0,
-				per: 20,
-				trainerId: userData?.id as number,
-				userId: chatTargetUserId as number
-			}
-		}
-	})
+	const [findImgsByUserIdAndTrainerIdLazyQuery, { loading, data }] =
+		useFindImgsByUserIdAndTrainerIdLazyQuery()
 	const [bulkRemoveImg] = useBulkRemoveImgMutation()
+
+	useEffect(() => {
+		if (userData) {
+			findImgsByUserIdAndTrainerIdLazyQuery({
+				variables: {
+					findImgsInput: {
+						page: 0,
+						per: 20,
+						trainerId: userData?.id as number,
+						userId: chatTargetUserId as number
+					}
+				}
+			})
+		}
+	}, [userData])
 
 	useEffect(() => {
 		const imgs: Record<string, string[][]> = {}

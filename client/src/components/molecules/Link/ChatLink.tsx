@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
-import { chatTargetUserIdVar } from '../../../graphql/vars'
+import useSessionStorage from '../../../hooks/useSessionStorage'
 import ChatIcon from '../../atoms/icons/ChatIcon'
 
 interface ChatLinkProps {
@@ -8,12 +8,14 @@ interface ChatLinkProps {
 }
 
 const ChatLink = ({ memberId }: ChatLinkProps) => {
+	const [___, setChatTargetUserId] = useSessionStorage('chatTargetUserId')
+
 	return (
 		<Link href={`/trainer/manage-member/chat`} passHref>
 			<span
 				onClick={e => {
 					e.stopPropagation()
-					chatTargetUserIdVar(memberId)
+					setChatTargetUserId(memberId)
 				}}>
 				<ChatIcon />
 			</span>

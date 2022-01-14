@@ -6,20 +6,18 @@ import React, { useEffect, useRef, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Loading from '../../../components/Loading'
-import { useTrainerQuery } from '../../../generated/graphql'
+import { useTrainerLazyQuery } from '../../../generated/graphql'
 import { modalVar, userDataVar } from '../../../graphql/vars'
 
 const Sales: NextPage = () => {
 	const modal = useReactiveVar(modalVar)
 	const userData = useReactiveVar(userDataVar)
+	const canvasRef = useRef(null)
 	const [startDate, setStartDate] = useState(new Date())
 	const [endDate, setEndDate] = useState(new Date())
 	const [rangeFilterResult, setRangeFilterResult] = useState(0)
 	const [date, setDate] = useState('')
-	const canvasRef = useRef(null)
-	const { loading, data } = useTrainerQuery({
-		variables: { id: userData?.id as number }
-	})
+	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 
 	let sessionHistories: any[] = []
 	if (!loading && data && data.trainer.users) {
@@ -61,6 +59,14 @@ const Sales: NextPage = () => {
 		if (dateA < dateB) return -1
 		return 0
 	})
+
+	useEffect(() => {
+		if (userData) {
+			trainerLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	useEffect(() => {
 		if (canvasRef.current) {
@@ -276,7 +282,7 @@ const Sales: NextPage = () => {
 			</div>
 
 			{modal ? (
-				<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
+				<div className="fixed bottom-0 right-0 w-full font-IBM">
 					<div
 						className="fixed inset-0 z-[-1] bg-black opacity-20"
 						onClick={() => modalVar(false)}></div>

@@ -5,7 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import { io } from 'socket.io-client'
-import { chatTargetUserIdVar, userDataVar } from '../../../../graphql/vars'
+import { userDataVar } from '../../../../graphql/vars'
+import useSessionStorage from '../../../../hooks/useSessionStorage'
 
 enum SenderReceiver {
 	User = 'User',
@@ -26,7 +27,7 @@ interface Chat {
 
 const Chat: NextPage = () => {
 	const userData = useReactiveVar(userDataVar)
-	const chatTargetUserId = useReactiveVar(chatTargetUserIdVar)
+	const [chatTargetUserId, _] = useSessionStorage('chatTargetUserId')
 	const botRef = useRef<HTMLDivElement>(null)
 	const [message, setMessage] = useState('')
 	const [chats, setChat] = useState<Chat[]>([])
@@ -67,7 +68,7 @@ const Chat: NextPage = () => {
 				return el
 			})
 		})
-	}, [])
+	}, [userData])
 
 	useEffect(() => {
 		socket.on('receiveChat', chat => {

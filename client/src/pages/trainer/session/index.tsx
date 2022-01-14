@@ -2,12 +2,12 @@ import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Loading from '../../../components/Loading'
 import {
 	TrainerDocument,
 	useRemoveSessionMutation,
-	useTrainerQuery,
+	useTrainerLazyQuery,
 	useUpdateSessionMutation
 } from '../../../generated/graphql'
 import { modalVar, userDataVar } from '../../../graphql/vars'
@@ -26,11 +26,7 @@ const Session: NextPage = () => {
 	const [sessionId, setSessionId] = useState<number>()
 	const [readyDelete, setReadyDelete] = useState(false)
 	const [deleteLists, setDeleteLists] = useState<Set<number>>(new Set())
-	const { loading, data } = useTrainerQuery({
-		variables: { id: userData?.id as number }
-	})
-	console.log(data)
-
+	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 	const [updateSession] = useUpdateSessionMutation()
 	const [removeSession] = useRemoveSessionMutation()
 	const sessionObject: Record<string, MemberSession[]> = {}
@@ -70,6 +66,14 @@ const Session: NextPage = () => {
 				}
 			})
 	}
+
+	useEffect(() => {
+		if (userData) {
+			trainerLazyQuery({
+				variables: { id: userData?.id as number }
+			})
+		}
+	}, [userData])
 
 	if (loading) return <Loading />
 	return (

@@ -1,24 +1,30 @@
-import { useQuery, useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/dist/client/router'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Loading from '../../../../../components/Loading'
-import { UserDocument } from '../../../../../graphql/graphql'
-import {
-	managedUserInfoVar,
-	sessionExerciseInputVar
-} from '../../../../../graphql/vars'
+import { useUserLazyQuery } from '../../../../../generated/graphql'
+import useSessionStorage from '../../../../../hooks/useSessionStorage'
 
 const Sessions: NextPage = () => {
 	const router = useRouter()
-	const managedUserInfo = useReactiveVar(managedUserInfoVar)
-	const sessionExerciseInput = useReactiveVar(sessionExerciseInputVar)
-	const { loading, data } = useQuery(UserDocument, {
-		variables: { id: managedUserInfo.userId }
-	})
-
+	const [mangedMemberInfo, _] = useSessionStorage('mangedMemberInfo')
+	const [___, setChatTargetUserId] = useSessionStorage('chatTargetUserId')
+	const [sessionExerciseInput, setSessionExerciseInput] =
+		useSessionStorage('sessionExerciseInput')
+	const [emailId, setEmailId] = useState('')
+	const [userLazyQuery, { loading, data }] = useUserLazyQuery({})
 	const week = ['일', '월', '화', '수', '목', '금', '토']
+
+	useEffect(() => {
+		userLazyQuery({
+			variables: { id: mangedMemberInfo.userId }
+		})
+	}, [mangedMemberInfo])
+
+	useEffect(() => {
+		setEmailId(`${mangedMemberInfo.emailId}/`)
+	}, [mangedMemberInfo])
 
 	if (loading) return <Loading />
 	return (
@@ -41,7 +47,7 @@ const Sessions: NextPage = () => {
 						</svg>
 					</Link>
 					<div className="ml-[0.8rem] font-bold">
-						{data.user.userName} 회원
+						{data && data.user.userName} 회원
 					</div>
 				</span>
 				<Link href={`/trainer/manage-member/chat`} passHref>
@@ -52,7 +58,7 @@ const Sessions: NextPage = () => {
 						viewBox="0 0 25 25"
 						stroke="currentColor"
 						onClick={() => {
-							// chatTargetUserIdVar(+member.id)
+							setChatTargetUserId(mangedMemberInfo.userId)
 						}}>
 						<path
 							strokeLinecap="round"
@@ -65,19 +71,13 @@ const Sessions: NextPage = () => {
 			</div>
 
 			<div className="flex justify-between mt-[2.4rem] text-[2.2rem]">
-				<Link
-					href={`/trainer/manage-member/${managedUserInfo.email}/info`}
-					passHref>
+				<Link href={`/trainer/manage-member/${emailId}info`} passHref>
 					<span className="pb-[0.4rem] cursor-pointer">회원정보</span>
 				</Link>
-				<Link
-					href={`/trainer/manage-member/${managedUserInfo.email}/inbody`}
-					passHref>
+				<Link href={`/trainer/manage-member/${emailId}inbody`} passHref>
 					<span className="ml-[0.8rem] cursor-pointer">인바디</span>
 				</Link>
-				<Link
-					href={`/trainer/manage-member/${managedUserInfo.email}/sessions`}
-					passHref>
+				<Link href={`/trainer/manage-member/${emailId}sessions`} passHref>
 					<span className="ml-[0.8rem] border-b-[3px] border-[#FED06E] cursor-pointer">
 						수업기록
 					</span>
@@ -85,45 +85,46 @@ const Sessions: NextPage = () => {
 			</div>
 
 			<div className="flex flex-col mt-[2.4rem]">
-				{data.user.sessions.map((session: any) => {
-					const date = new Date(session.date)
-					let hours = date.getHours() + ''
-					if (hours.length === 1) {
-						hours = 0 + hours
-					}
-					let minutes = date.getMinutes() + ''
-					if (minutes.length === 1) {
-						minutes = 0 + minutes
-					}
+				{data &&
+					data.user.sessions.map((session: any) => {
+						const date = new Date(session.date)
+						let hours = date.getHours() + ''
+						if (hours.length === 1) {
+							hours = 0 + hours
+						}
+						let minutes = date.getMinutes() + ''
+						if (minutes.length === 1) {
+							minutes = 0 + minutes
+						}
 
-					return (
-						<React.Fragment key={session.id}>
-							<div
-								className="h-[7rem] flex justify-around items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white first:mt-0 relative cursor-pointer"
-								onClick={e => {
-									if (e !== null && e.target instanceof HTMLElement) {
-										sessionExerciseInputVar({
-											...sessionExerciseInput,
-											sessionId: session.id
-										})
-										router.push(
-											`/trainer/manage-member/${
-												data.user.email.split('@')[0]
-											}/sessions/${session.date.split('T')[0]}`
-										)
-									}
-								}}>
-								<span>
-									{session.date.split('T')[0].replace(/\-/g, '.')} (
-									{week[new Date(session.date).getDay()]})
-								</span>
-								<span>{`${hours}:${
-									minutes === '0' ? '00' : minutes
-								}`}</span>
-							</div>
-						</React.Fragment>
-					)
-				})}
+						return (
+							<React.Fragment key={session.id}>
+								<div
+									className="h-[7rem] flex justify-around items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white first:mt-0 relative cursor-pointer"
+									onClick={e => {
+										if (e !== null && e.target instanceof HTMLElement) {
+											setSessionExerciseInput({
+												...sessionExerciseInput,
+												sessionId: session.id
+											})
+											router.push(
+												`/trainer/manage-member/${
+													data.user.email.split('@')[0]
+												}/sessions/${session.date.split('T')[0]}`
+											)
+										}
+									}}>
+									<span>
+										{session.date.split('T')[0].replace(/\-/g, '.')} (
+										{week[new Date(session.date).getDay()]})
+									</span>
+									<span>{`${hours}:${
+										minutes === '0' ? '00' : minutes
+									}`}</span>
+								</div>
+							</React.Fragment>
+						)
+					})}
 				<Link href="/trainer/session/add-session" passHref>
 					<div className="text-[1.8rem] mt-[0.8rem] flex justify-center py-[2rem] bg-white rounded-full shadow-md border">
 						<svg
