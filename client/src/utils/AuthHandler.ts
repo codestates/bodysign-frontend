@@ -51,7 +51,7 @@ const AuthHandler = async () => {
 		else {
 			getProfile()
 		}
-	}, [])
+	}, [router])
 }
 
 export default AuthHandler

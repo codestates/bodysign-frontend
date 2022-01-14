@@ -238,6 +238,7 @@ const Chat: NextPage = () => {
 							type="file"
 							id="upload"
 							accept="image/*"
+							onClick={() => setMessage('')}
 							onChange={e => {
 								if (e !== null && e.target instanceof HTMLElement) {
 									fileChange(e.target)
@@ -248,10 +249,8 @@ const Chat: NextPage = () => {
 							className="py-[0.8rem] px-[1.2rem] w-full h-[3.5rem] text-[1.6rem] resize-none bg-gray-50 focus:h-[6.3rem] overflow-auto mr-[0.8rem]"
 							autoFocus={true}
 							disabled={img.readyUpload ? true : false}
-							defaultValue=""
-							onBlur={e => {
-								setMessage(e.target.value)
-							}}
+							value={message}
+							onChange={e => setMessage(e.target.value)}
 							onFocus={e => {
 								e.target.scrollTop = e.target.scrollHeight
 							}}
@@ -265,6 +264,7 @@ const Chat: NextPage = () => {
 								width="30"
 								height="30"
 								onClick={() => {
+									setMessage('')
 									sendChat()
 								}}>
 								<path

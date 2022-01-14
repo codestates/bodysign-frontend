@@ -1,5 +1,6 @@
 import { useReactiveVar } from '@apollo/client'
 import { NextPage } from 'next'
+import { useRouter } from 'next/dist/client/router'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
@@ -11,6 +12,7 @@ import {
 	useUpdateSessionMutation
 } from '../../../generated/graphql'
 import { modalVar, userDataVar } from '../../../graphql/vars'
+import useSessionStorage from '../../../hooks/useSessionStorage'
 
 interface MemberSession {
 	id: number
@@ -20,8 +22,11 @@ interface MemberSession {
 }
 
 const Session: NextPage = () => {
+	const router = useRouter()
 	const modal = useReactiveVar(modalVar)
 	const userData = useReactiveVar(userDataVar)
+	const [sessionExerciseInput, setSessionExerciseInput] =
+		useSessionStorage('sessionExerciseInput')
 	const [category, setCategory] = useState('일정')
 	const [sessionId, setSessionId] = useState<number>()
 	const [readyDelete, setReadyDelete] = useState(false)
@@ -29,6 +34,7 @@ const Session: NextPage = () => {
 	const [trainerLazyQuery, { loading, data }] = useTrainerLazyQuery()
 	const [updateSession] = useUpdateSessionMutation()
 	const [removeSession] = useRemoveSessionMutation()
+
 	const sessionObject: Record<string, MemberSession[]> = {}
 	const completedSessionObject: Record<string, MemberSession[]> = {}
 	if (!loading && data && data.trainer.sessions) {
@@ -218,7 +224,24 @@ const Session: NextPage = () => {
 																setSessionId(session.id as number)
 																modalVar(true)
 														  }
-														: undefined
+														: e => {
+																if (
+																	e !== null &&
+																	e.target instanceof HTMLElement
+																) {
+																	setSessionExerciseInput({
+																		...sessionExerciseInput,
+																		sessionId: session.id
+																	})
+																	router.push(
+																		`/trainer/manage-member/${
+																			session.user.email.split('@')[0]
+																		}/sessions/${
+																			session.date.split('T')[0]
+																		}`
+																	)
+																}
+														  }
 													: e => {
 															if (
 																e !== null &&
