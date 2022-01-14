@@ -45,25 +45,27 @@ function MyApp({ Component, pageProps }: AppProps) {
 				url: 'http://localhost:4000/auth/profile',
 				headers: { 'Authorization': `Bearer ${getCookies().accessToken}` }
 			}).then(function(res){
+				const { id, email, userName, userCategoryId, birthDate, phoneNumber, gender, graduate, trainerId, loginType, status, createdAt, updatedAt } = res.data
 				userDataVar({
-					id: res.data.id,
-					email: res.data.email,
-					userName: res.data.userName,
-					userCategoryId: res.data.userCategoryId,
-					birthDate: res.data.birthDate,
-					phoneNumber: res.data.phoneNumber,
-					gender: res.data.gender,
-					graduate: res.data.graduate,
-					trainerId: res.data.trainerId,
-					loginType: res.data.loginType,
-					status: res.data.status,
-					createdAt: res.data.createdAt,
-					updatedAt: res.data.updatedAt,
+					id,
+					email,
+					userName,
+					userCategoryId,
+					birthDate,
+					phoneNumber,
+					gender,
+					graduate,
+					trainerId,
+					loginType,
+					status,
+					createdAt,
+					updatedAt,
 				})
 			}).catch(function(err) {
 				// console.log(err.request)
 				if(err.request.status === 401) {
 					// 리프레쉬 토큰으로 액세스 토큰 요청하기
+					console.log(getCookies().refreshToken)
 					axios({
 						method: 'post',
 						url: 'http://localhost:4000/auth/accessToken',
@@ -76,8 +78,35 @@ function MyApp({ Component, pageProps }: AppProps) {
 						// response body로 accessToken 과 refreshToken 이 들어올 예정인데
 						//! 404가 뜨네..
 						// 이걸 쿠키에 !?
+						axios({
+							method: 'get',
+							url: 'http://localhost:4000/auth/profile',
+							headers: { 'Authorization': `Bearer ${getCookies().accessToken}` }
+						}).then(function(res){
+							const { id, email, userName, userCategoryId, birthDate, phoneNumber, gender, graduate, trainerId, loginType, status, createdAt, updatedAt } = res.data
+							userDataVar({
+								id,
+								email,
+								userName,
+								userCategoryId,
+								birthDate,
+								phoneNumber,
+								gender,
+								graduate,
+								trainerId,
+								loginType,
+								status,
+								createdAt,
+								updatedAt,
+							})
+						}).catch(function(error) {
+							// 여기는 auth/profile 요청에 대한 에러
+							console.log(error.request)
+						})
+						
 					}).catch(function(error) {
-						console.log(error.request)
+						// 여기는 auth/accessToken 요청에 대한 에러
+						console.log(error.request.response)
 					})
 				}
 			})
