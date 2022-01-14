@@ -8,6 +8,7 @@ interface UserData {
 	trainerId: number
 	loginType: string
 	status: string
+	userCategoryId: string
 	createdAt: Date
 	updatedAt: Date
 }

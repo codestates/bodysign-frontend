@@ -10,7 +10,7 @@ import {
 	useCreateTrainerMutation,
 	useCreateUserMutation
 } from '../generated/graphql'
-import { loginTypeVar, modalVar } from '../graphql/vars'
+import { modalVar } from '../graphql/vars'
 
 interface FormInput {
 	email: string | undefined | string[]
@@ -39,7 +39,6 @@ const Signup: NextPage<FormInput> = () => {
 		{ id: 5, type: 'Etc', name: '기타', status: false }
 	])
 	const [checkedPersonalInfo, setCheckedPersonalInfo] = useState(false)
-	const loginType = useReactiveVar(loginTypeVar)
 	const modal = useReactiveVar(modalVar)
 	const [createTrainer] = useCreateTrainerMutation()
 	const [createUser] = useCreateUserMutation()
@@ -68,7 +67,7 @@ const Signup: NextPage<FormInput> = () => {
 									userName: data.userName,
 									gender: data.gender,
 									interests: test,
-									loginType
+									loginType: 'google'
 								}
 							}
 					  })
@@ -80,7 +79,7 @@ const Signup: NextPage<FormInput> = () => {
 									phoneNumber: data.phoneNumber,
 									gender: data.gender,
 									birthDate: new Date(data.birthDate),
-									loginType
+									loginType: 'google'
 								}
 							}
 					  })
@@ -99,7 +98,7 @@ const Signup: NextPage<FormInput> = () => {
 									password: data.password,
 									gender: data.gender,
 									interests: test,
-									loginType
+									loginType: 'local'
 								}
 							}
 					  })
@@ -112,7 +111,7 @@ const Signup: NextPage<FormInput> = () => {
 									phoneNumber: data.phoneNumber,
 									gender: data.gender,
 									birthDate: new Date(data.birthDate),
-									loginType
+									loginType: 'local'
 								}
 							}
 					  })
@@ -121,10 +120,6 @@ const Signup: NextPage<FormInput> = () => {
 				console.log(error)
 			}
 		}
-
-		// 1
-		// alert('회원가입이 완료되었습니다.')
-		// location.href = 'http://localhost:3000'
 	}
 
 	return (
@@ -151,7 +146,7 @@ const Signup: NextPage<FormInput> = () => {
 								<input
 									className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
 									type="text"
-									disabled={loginType === 'google'}
+									disabled={queryLoginType === 'google'}
 									// defaultValue 소셜 회원가입 이메일
 									{...register('email', {
 										required: true,
@@ -169,7 +164,7 @@ const Signup: NextPage<FormInput> = () => {
 									<input
 										className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
 										type="password"
-										disabled={loginType === 'google'}
+										disabled={queryLoginType === 'google'}
 										{...register('password', {
 											required: true,
 											minLength: 8
@@ -187,7 +182,7 @@ const Signup: NextPage<FormInput> = () => {
 								<input
 									className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
 									type="password"
-									disabled={loginType === 'google'}
+									disabled={queryLoginType === 'google'}
 									{...register('password', {
 										required: true,
 										minLength: 8
