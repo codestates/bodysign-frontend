@@ -13,8 +13,6 @@ import {
 const GOOGLE_CLIENT_ID =
 	'228447519514-17eoff0h38vfipbkd7ata2gtt7e2bbo7.apps.googleusercontent.com'
 
-// TODO : 유저/트레이너 타입을 받아서 각각 페이지로 라우팅하기
-
 const Login: NextPage = () => {
 	const [form, setForm] = useState({
 		email: '',
@@ -73,36 +71,38 @@ const Login: NextPage = () => {
 
 	return (
 		<>
-			<div className="flex flex-col text-[15px] items-center justify-center mx-auto">
+			<div className="flex flex-col text-[15px] items-center justify-center mx-auto mb-[5rem] p-[3rem] border rounded-[2rem] shadow">
 				<div className="max-w-screen-md">
 					<input
-						className="w-4/5 p-1 m-1 font-thin border font-IBM rounded-xl"
+						className="w-full p-[1.2rem] mt-[0.4rem] border shadow-md h-[4.8rem] rounded-[2rem]"
 						type="text"
 						placeholder="이메일"
 						onChange={onChangeId}
 					/>
 					<input
-						className="w-4/5 p-1 m-1 font-thin border font-IBM rounded-xl"
+						className="w-full p-[1.2rem] mt-[1.5rem] border shadow-md h-[4.8rem] rounded-[2rem]"
 						type="password"
 						placeholder="비밀번호"
 						onChange={onChangePassword}
 					/>
 					<button
 						onClick={onSubmit}
-						className="w-4/5 py-1 m-1 font-thin text-gray-800 rounded font-IBM hover:bg-gray-400 hover:text-white bg-[#FED06E]">
+						className={`w-full h-[4.8rem] mt-[2rem] text-black bg-[#FDAD00] cursor-pointer disabled:opacity-50 rounded-[2rem]`}
+					>
 						로그인
 					</button>
 					<button
 						onClick={onGoogleLogin}
-						className="w-4/5 py-1 m-1 font-thin text-gray-800 bg-gray-200 rounded font-IBM hover:bg-gray-400 hover:text-white ">
+						className={`w-full h-[4.8rem] mt-[0.7rem] text-black bg-gray-200 cursor-pointer disabled:opacity-50 rounded-[2rem]`}
+					>
 						GOOGLE로 로그인
 					</button>
-					<div className="flex w-4/5 border-0"></div>
-					<Link href="/signup" passHref>
-						<button className="w-4/5 py-1 m-1 font-thin text-gray-500 transition-colors duration-150 border border-gray-300 rounded font-IBM focus:shadow-outline hover:bg-gray-300 hover:text-white">
-							회원가입
-						</button>
-					</Link>
+					<div className="flex ml-[1rem]">
+						<div className="flex border-0 mt-[2rem]">처음이신가요?</div>
+						<Link href="/signup" passHref>
+							<div className="underline mt-[2rem] text-[#FDAD00] ml-[0.5rem]">회원가입</div>
+						</Link>
+					</div>
 				</div>
 			</div>
 		</>
