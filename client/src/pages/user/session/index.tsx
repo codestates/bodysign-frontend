@@ -21,34 +21,23 @@ const Session: NextPage = () => {
 	const week = ['일', '월', '화', '수', '목', '금', '토']
 
 	const sessionObject: Record<string, MemberSession[]> = {}
-	const completedSessionObject: Record<string, MemberSession[]> = {}
 	if (!loading && data) {
 		let $Data = [...data.user.sessions]
 		$Data
 			.sort((a, b) => {
 				const aDate = new Date(a.date).getTime()
 				const bDate = new Date(b.date).getTime()
-				return aDate > bDate ? -1 : 1
+				return aDate > bDate ? 1 : -1
 			})
 			.forEach(session => {
 				const date = session.date.split('T')[0]
-				if (session.completedSession) {
-					if (completedSessionObject[date] === undefined) {
-						completedSessionObject[date] = []
-					}
-					completedSessionObject[date].push({
-						id: session.id as number,
-						date: session.date
-					})
-				} else {
-					if (sessionObject[date] === undefined) {
-						sessionObject[date] = []
-					}
-					sessionObject[date].push({
-						id: session.id as number,
-						date: session.date
-					})
+				if (sessionObject[date] === undefined) {
+					sessionObject[date] = []
 				}
+				sessionObject[date].push({
+					id: session.id as number,
+					date: session.date
+				})
 			})
 	}
 

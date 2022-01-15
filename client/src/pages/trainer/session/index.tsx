@@ -6,6 +6,7 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import Loading from '../../../components/Loading'
 import {
+	Session as TypeSession,
 	TrainerDocument,
 	useRemoveSessionMutation,
 	useTrainerLazyQuery,
@@ -35,8 +36,8 @@ const Session: NextPage = () => {
 	const [updateSession] = useUpdateSessionMutation()
 	const [removeSession] = useRemoveSessionMutation()
 
-	const sessionObject: Record<string, MemberSession[]> = {}
-	const completedSessionObject: Record<string, MemberSession[]> = {}
+	const incompleteSessions: Record<string, TypeSession[]> = {}
+	const completedSessions: Record<string, TypeSession[]> = {}
 	if (!loading && data && data.trainer.sessions) {
 		let $sortedSessionsData = [...data.trainer.sessions]
 		$sortedSessionsData
@@ -49,25 +50,15 @@ const Session: NextPage = () => {
 				if (session) {
 					const date = session.date.split('T')[0]
 					if (session.completedSession) {
-						if (completedSessionObject[date] === undefined) {
-							completedSessionObject[date] = []
+						if (completedSessions[date] === undefined) {
+							completedSessions[date] = []
 						}
-						completedSessionObject[date].push({
-							id: session.id as number,
-							date: session.date,
-							userName: session.user.userName,
-							gender: session.user.gender
-						})
+						completedSessions[date].push(session as TypeSession)
 					} else {
-						if (sessionObject[date] === undefined) {
-							sessionObject[date] = []
+						if (incompleteSessions[date] === undefined) {
+							incompleteSessions[date] = []
 						}
-						sessionObject[date].push({
-							id: session.id as number,
-							date: session.date,
-							userName: session.user.userName,
-							gender: session.user.gender
-						})
+						incompleteSessions[date].push(session as TypeSession)
 					}
 				}
 			})
@@ -175,130 +166,132 @@ const Session: NextPage = () => {
 				</span>
 			</div>
 
-			{data &&
-				data.trainer.sessions &&
-				data.trainer.sessions
-					.filter(session => {
-						if (category === '일정') {
-							return session?.completedSession === false
-						} else if (category === '피드백') {
-							if (!session?.sentFeedback) {
-								return session?.completedSession === true
-							}
-						}
-					})
-					.sort((a, b) => {
-						const aDate = new Date(a!.date).getTime()
-						const bDate = new Date(b!.date).getTime()
-						return aDate > bDate ? 1 : -1
-					})
-					.map(session => {
-						if (session) {
-							const [_, month, day] = session.date.split('T')[0].split('-')
-							const date = new Date(session.date)
-							let hours = date.getHours() + ''
-							if (hours.length === 1) {
-								hours = 0 + hours
-							}
-							let minutes = date.getMinutes() + ''
-							if (minutes.length === 1) {
-								minutes = 0 + minutes
-							}
-							return (
-								<React.Fragment key={session.id}>
-									<div className="mt-[2.4rem]">
-										<div className="text-[1.8rem] font-semibold">
-											{`${month}월 ${day}일`}
-										</div>
-										<div
-											className={`${
-												session.id === deleteLists.keys().next().value
-													? 'ring-2 ring-[#FED06E]'
-													: ''
-											} h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white hover:ring-2 hover:ring-[#FED06E]`}
-											data-id={session.id}
-											onClick={
-												!readyDelete
-													? category === '일정'
-														? () => {
-																setSessionId(session.id as number)
-																modalVar(true)
-														  }
+			{Object.entries(
+				category === '일정' ? incompleteSessions : completedSessions
+			).map(entry => {
+				if (entry) {
+					const [date, sessions] = entry
+					const [_, month, day] = date.split('T')[0].split('-')
+					return (
+						<React.Fragment key={date}>
+							<div className="mt-[2.4rem]">
+								<div className="text-[1.8rem] font-semibold">
+									{`${month}월 ${day}일`}
+								</div>
+								{sessions
+									.filter(session => {
+										if (category === '일정') {
+											return session?.completedSession === false
+										} else if (category === '피드백') {
+											if (!session?.sentFeedback) {
+												return session?.completedSession === true
+											}
+										}
+									})
+									.map(session => {
+										const _date = new Date(session.date)
+										let hours = _date.getHours() + ''
+										if (hours.length === 1) {
+											hours = 0 + hours
+										}
+										let minutes = _date.getMinutes() + ''
+										if (minutes.length === 1) {
+											minutes = 0 + minutes
+										}
+										return (
+											<div
+												className={`${
+													session.id === deleteLists.keys().next().value
+														? 'ring-2 ring-[#FED06E]'
+														: ''
+												} h-[7rem] flex justify-between items-center px-[2rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white hover:ring-2 hover:ring-[#FED06E]`}
+												data-id={session.id}
+												onClick={
+													!readyDelete
+														? category === '일정'
+															? () => {
+																	setSessionId(session.id as number)
+																	modalVar(true)
+															  }
+															: e => {
+																	if (
+																		e !== null &&
+																		e.target instanceof HTMLElement
+																	) {
+																		setSessionExerciseInput({
+																			...sessionExerciseInput,
+																			sessionId: session.id
+																		})
+																		router.push(
+																			`/trainer/manage-member/${
+																				session.user.email.split('@')[0]
+																			}/sessions/${
+																				session.date.split('T')[0]
+																			}`
+																		)
+																	}
+															  }
 														: e => {
 																if (
 																	e !== null &&
 																	e.target instanceof HTMLElement
 																) {
-																	setSessionExerciseInput({
-																		...sessionExerciseInput,
-																		sessionId: session.id
-																	})
-																	router.push(
-																		`/trainer/manage-member/${
-																			session.user.email.split('@')[0]
-																		}/sessions/${
-																			session.date.split('T')[0]
-																		}`
-																	)
+																	// 수업 삭제 step 1
+																	if (e.target.dataset.id) {
+																		const id = +e.target.dataset.id
+																		// 하나만 가능한 조건
+																		if (deleteLists.size > 0) {
+																			setDeleteLists(prev => new Set())
+																		}
+																		if (deleteLists.has(id)) {
+																			setDeleteLists(
+																				prev =>
+																					new Set(
+																						[...prev].filter(
+																							el => el !== id
+																						)
+																					)
+																			)
+																		} else {
+																			setDeleteLists(
+																				prev => new Set(prev.add(id))
+																			)
+																		}
+																	}
 																}
 														  }
-													: e => {
-															if (
-																e !== null &&
-																e.target instanceof HTMLElement
-															) {
-																// 수업 삭제 step 1
-																if (e.target.dataset.id) {
-																	const id = +e.target.dataset.id
-																	// 하나만 가능한 조건
-																	if (deleteLists.size > 0) {
-																		setDeleteLists(prev => new Set())
-																	}
-																	if (deleteLists.has(id)) {
-																		setDeleteLists(
-																			prev =>
-																				new Set(
-																					[...prev].filter(el => el !== id)
-																				)
-																		)
-																	} else {
-																		setDeleteLists(
-																			prev => new Set(prev.add(id))
-																		)
-																	}
-																}
-															}
-													  }
-											}>
-											<div className="flex">
-												{session.user.gender === 'male' ? (
-													<Image
-														src="/man.png"
-														width="36"
-														height="30"
-														alt="image"
-													/>
-												) : (
-													<Image
-														src="/woman.png"
-														width="36"
-														height="30"
-														alt="image"
-													/>
-												)}
-												<div className="self-center ml-[1.2rem]">
-													{session.user.userName} 회원
+												}>
+												<div className="flex">
+													{session.user.gender === 'male' ? (
+														<Image
+															src="/man.png"
+															width="36"
+															height="30"
+															alt="image"
+														/>
+													) : (
+														<Image
+															src="/woman.png"
+															width="36"
+															height="30"
+															alt="image"
+														/>
+													)}
+													<div className="self-center ml-[1.2rem]">
+														{session.user.userName} 회원
+													</div>
+												</div>
+												<div>
+													{`${hours}:${minutes === '0' ? '00' : minutes}`}
 												</div>
 											</div>
-											<div>
-												{`${hours}:${minutes === '0' ? '00' : minutes}`}
-											</div>
-										</div>
-									</div>
-								</React.Fragment>
-							)
-						}
-					})}
+										)
+									})}
+							</div>
+						</React.Fragment>
+					)
+				}
+			})}
 
 			{modal ? (
 				<div className="fixed bottom-[6.3rem] right-0 w-full font-IBM">
