@@ -50,7 +50,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 		if (userData) return
 		else {
 			try {
-				// ! 요청을 어떤 상황에 보내는지 조건을 잘 작성하기 (기본 화면에서의 401 에러 방지 / 토큰이 유효하다면? 유효한지 아닌지 어케 확인하지)
+				// 요청을 어떤 상황에 보내는지 조건 작성 (토큰이 유효하다면?)
 				// 액세스 토큰 전달해서 받아온 유저 정보를 userDataVar 에 저장
 				axios({
 					method: 'get',
@@ -74,9 +74,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 									}
 								)
 								.then(function (res) {
-									// response body로 accessToken 과 refreshToken 이 들어올 예정인데
-									//! 404가 뜨네..
-									// 이걸 쿠키에 !?
 									axios({
 										method: 'get',
 										url: 'process.env.NEXT_PUBLIC_SERVER_HOST/auth/profile',
@@ -89,17 +86,17 @@ function MyApp({ Component, pageProps }: AppProps) {
 										})
 										.catch(function (error) {
 											// 여기는 auth/profile 요청에 대한 에러
-											console.log(error.request)
+											alert('유저 정보를 불러오지 못했습니다.')
 										})
 								})
 								.catch(function (error) {
 									// 여기는 auth/accessToken 요청에 대한 에러
-									console.log(error.request.response)
+									alert('다시 로그인해 주세요.')
 								})
 						}
 					})
 			} catch (error) {
-				console.log(error)
+				window.location.href = process.env.NEXT_PUBLIC_CLIENT_HOST
 			}
 		}
 	}, [router])
@@ -126,33 +123,5 @@ function MyApp({ Component, pageProps }: AppProps) {
 		</>
 	)
 }
-
-// MyApp.getInitialProps = async (appContext) => {
-//   // calls page's `getInitialProps` and fills `appProps.pageProps`
-//   const appProps = await App.getInitialProps(appContext);
-
-//   return { ...appProps }
-// }
-
-// MyApp.getInitialProps = async (appContext: any) => {
-
-// 	// 웹 페이지는 각 페이지마다 사전에 불러와야할 데이터들이 있다.
-// 	// Data Fectching이라고도 하는 로직은 CSR(Client Side Rendering)에서는
-// 	// react 로직에 따라 componentDidMount or useEffect로 컴포넌트가 마운트 되고 나서 하는 경우가 많다.
-// 	// 이 과정을 서버에서 미리 처리하도록 도와주는 것이 바로 getInitialProps이다.
-
-// 	const { req, res } = appContext
-// 	// getCookies().accessToken
-// 	let pageProps = { accessTokenVar };
-
-// 	// if (Component.getInitialProps) {
-// 	// 	// Component의 context로 ctx를 넣어주자
-// 	// 	pageProps = await Component.getInitialProps(ctx);
-// 	// }
-// 	//! 토큰을 쿠키에서 받아오기
-// 	//! 여기서 헤더에 토큰 담아서 axios 요청
-
-// 	return { pageProps }
-// }
 
 export default MyApp

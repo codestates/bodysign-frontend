@@ -56,7 +56,7 @@ const Login: NextPage = () => {
 					router.push(res.data.redirectUrl)
 				})
 		} catch (error) {
-			console.log(error)
+			alert('다시 로그인 해주세요')
 		}
 	}
 
