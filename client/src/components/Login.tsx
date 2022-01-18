@@ -9,10 +9,6 @@ import {
 	refreshTokenVar
 } from '../graphql/vars'
 
-// TODO : env로 빼야함
-const GOOGLE_CLIENT_ID =
-	'228447519514-17eoff0h38vfipbkd7ata2gtt7e2bbo7.apps.googleusercontent.com'
-
 const Login: NextPage = () => {
 	const [form, setForm] = useState({
 		email: '',
@@ -42,7 +38,7 @@ const Login: NextPage = () => {
 		try {
 			axios
 				.post(
-					'http://localhost:4000/auth/localLogin',
+					'process.env.NEXT_PUBLIC_SERVER_HOST/auth/localLogin',
 					{
 						email: form.email,
 						password: form.password
@@ -65,7 +61,7 @@ const Login: NextPage = () => {
 	}
 
 	const onGoogleLogin = () => {
-		window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=http://localhost:4000/auth/google&response_type=token&scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&
+		window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=process.env.NEXT_PUBLIC_SERVER_HOST/auth/google&response_type=token&scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&
 		include_granted_scopes=true`
 	}
 

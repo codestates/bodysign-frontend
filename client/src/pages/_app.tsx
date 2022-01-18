@@ -42,7 +42,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 function MyApp({ Component, pageProps }: AppProps) {
 	const router = useRouter()
 	const userData = useReactiveVar(userDataVar)
-
+	
 	useEffect(() => {
 		if (router.pathname === '/') return
 		if (router.pathname === '/signup') return
@@ -54,7 +54,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 				// 액세스 토큰 전달해서 받아온 유저 정보를 userDataVar 에 저장
 				axios({
 					method: 'get',
-					url: 'http://localhost:4000/auth/profile',
+					url: 'process.env.NEXT_PUBLIC_SERVER_HOST/auth/profile',
 					headers: { Authorization: `Bearer ${getCookies().accessToken}` }
 				})
 					.then(function (res) {
@@ -65,7 +65,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 							// 리프레쉬 토큰으로 액세스 토큰 요청하기
 							axios
 								.post(
-									'http://localhost:4000/auth/accessToken',
+									'process.env.NEXT_PUBLIC_SERVER_HOST/auth/accessToken',
 									{
 										refreshToken: getCookies().refreshToken
 									},
@@ -79,7 +79,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 									// 이걸 쿠키에 !?
 									axios({
 										method: 'get',
-										url: 'http://localhost:4000/auth/profile',
+										url: 'process.env.NEXT_PUBLIC_SERVER_HOST/auth/profile',
 										headers: {
 											Authorization: `Bearer ${getCookies().accessToken}`
 										}
