@@ -75,7 +75,7 @@ const ManageMember: NextPage = () => {
 				})
 				modalVar(false)
 			} catch (error) {
-				console.log(error)
+				alert('다시 시도해 주세요.')
 			}
 		}
 		// 카테고리 추가 API
@@ -97,7 +97,7 @@ const ManageMember: NextPage = () => {
 				})
 				modalVar(false)
 			} catch (error) {
-				console.log(error)
+				alert('다시 시도해 주세요.')
 			}
 		}
 	}
@@ -156,7 +156,7 @@ const ManageMember: NextPage = () => {
 					]
 				})
 			} catch (error) {
-				console.log(error)
+				alert('다시 시도해 주세요.')
 			}
 			deleteLists.clear()
 		}
@@ -448,7 +448,7 @@ const ManageMember: NextPage = () => {
 														})
 													}
 												} catch (error) {
-													console.log(error)
+													alert('다시 시도해 주세요.')
 												}
 											}}>
 											검색

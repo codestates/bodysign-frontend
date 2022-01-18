@@ -71,7 +71,7 @@ const Photos: NextPage = () => {
 					]
 				})
 			} catch (error) {
-				console.log(error)
+				alert('사진 삭제에 실패했습니다. 다시 시도해 주세요.')
 			}
 			deleteLists.clear()
 		}

@@ -55,7 +55,7 @@ const Inbody: NextPage = () => {
 			})
 			modalVar(false)
 		} catch (error) {
-			console.log(error)
+			alert('다시 시도해 주세요.')
 		}
 	}
 

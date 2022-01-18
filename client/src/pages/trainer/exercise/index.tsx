@@ -51,7 +51,7 @@ const Exercise: NextPage = () => {
 				})
 				modalVar(false)
 			} catch (error) {
-				console.log(error)
+				alert('다시 시도해 주세요.')
 			}
 		}
 		// 운동 카테고리 추가 API
@@ -73,7 +73,7 @@ const Exercise: NextPage = () => {
 				})
 				modalVar(false)
 			} catch (error) {
-				console.log(error)
+				alert('다시 시도해 주세요.')
 			}
 		}
 	}
@@ -145,7 +145,7 @@ const Exercise: NextPage = () => {
 											]
 										})
 									} catch (error) {
-										console.log(error)
+										alert('다시 시도해 주세요.')
 									}
 									deleteLists.clear()
 								}

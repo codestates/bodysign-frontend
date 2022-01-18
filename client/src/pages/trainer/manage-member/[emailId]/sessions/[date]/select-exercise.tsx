@@ -78,7 +78,7 @@ const Exercise: NextPage = () => {
 							})
 							router.push(router.asPath.split('select')[0])
 						} catch (error) {
-							console.log(error)
+							alert('운동이 추가되지 않았습니다. 다시 시도해 주세요.')
 						}
 					}}>
 					<path

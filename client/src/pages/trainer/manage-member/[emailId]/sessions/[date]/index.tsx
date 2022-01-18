@@ -65,7 +65,7 @@ const Detail: NextPage = () => {
 			})
 			modalVar(false)
 		} catch (error) {
-			console.log(error)
+			alert('운동이 추가되지 않았습니다.')
 		}
 	}
 
@@ -131,7 +131,7 @@ const Detail: NextPage = () => {
 												]
 											})
 										} catch (error) {
-											console.log(error)
+											alert('수업이 완료 처리되지 못했습니다. 다시 시도해 주세요.')
 										}
 									}}
 								/>
@@ -181,7 +181,7 @@ const Detail: NextPage = () => {
 											]
 										})
 									} catch (error) {
-										console.log(error)
+										alert('운동이 삭제되지 않았습니다. 다시 시도해 주세요.')
 									}
 									deleteLists.clear()
 								}
@@ -344,7 +344,7 @@ const Detail: NextPage = () => {
 							}
 						})
 					} catch (error) {
-						console.log(error)
+						alert('피드백을 다시 작성해 주세요.')
 					}
 				}}
 			/>

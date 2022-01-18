@@ -20,7 +20,6 @@ const AuthHandler = async () => {
 				userDataVar(res.data)
 			})
 			.catch(async error => {
-				console.log(error)
 				removeCookies('accessToken')
 				await getAccessToken()
 			})
@@ -39,7 +38,6 @@ const AuthHandler = async () => {
 				await getProfile()
 			})
 			.catch(error => {
-				console.log(error)
 				router.push('/')
 			})
 	}

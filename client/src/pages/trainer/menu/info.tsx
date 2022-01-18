@@ -54,7 +54,7 @@ const TrainerInfo: NextPage = () => {
 			})
 			modalVar(false)
 		} catch (error) {
-			console.log(error)
+			alert('비밀번호 변경에 실패했습니다. 다시 시도해 주세요.')
 		}
 	}
 
@@ -124,7 +124,7 @@ const TrainerInfo: NextPage = () => {
 										}
 									})
 								} catch (error) {
-									console.log(error)
+									alert('정보 수정에 실패했습니다. 다시 시도해 주세요.')
 								}
 								setIsmodify(false)
 							}}>
@@ -325,7 +325,7 @@ const TrainerInfo: NextPage = () => {
 												}
 											})
 										} catch (error) {
-											console.log(error)
+											alert('회원 탈퇴에 실패했습니다.')
 										}
 										modalVar(false)
 									}}>

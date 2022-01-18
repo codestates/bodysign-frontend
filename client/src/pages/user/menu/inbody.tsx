@@ -52,7 +52,7 @@ const Inbody: NextPage = () => {
 			})
 			modalVar(false)
 		} catch (error) {
-			console.log(error)
+			alert('인바디 추가에 실패했습니다. 다시 시도해 주세요.')
 		}
 	}
 

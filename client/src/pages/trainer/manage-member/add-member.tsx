@@ -55,7 +55,7 @@ const AddMember: NextPage = () => {
 			})
 			router.push('/trainer/manage-member')
 		} catch (error) {
-			console.log(error)
+			alert('다시 시도해 주세요.')
 		}
 	}
 

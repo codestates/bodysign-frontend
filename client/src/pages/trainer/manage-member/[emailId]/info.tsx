@@ -66,7 +66,7 @@ const Info: NextPage = () => {
 			})
 			modalVar(false)
 		} catch (error) {
-			console.log(error)
+			alert('다시 시도해 주세요.')
 		}
 	}
 
@@ -222,7 +222,7 @@ const Info: NextPage = () => {
 											]
 										})
 									} catch (error) {
-										console.log(error)
+										alert('다시 시도해 주세요.')
 									}
 								}}>
 								<option
@@ -301,7 +301,7 @@ const Info: NextPage = () => {
 											]
 										})
 									} catch (error) {
-										console.log(error)
+										alert('다시 시도해 주세요.')
 									}
 								}}
 							/>

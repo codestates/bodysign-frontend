@@ -149,7 +149,7 @@ const Session: NextPage = () => {
 											]
 										})
 									} catch (error) {
-										console.log(error)
+										alert('수업 삭제에 실패했습니다. 다시 시도해 주세요.')
 									}
 									deleteLists.clear()
 								}
@@ -330,7 +330,7 @@ const Session: NextPage = () => {
 										})
 										modalVar(false)
 									} catch (error) {
-										console.log(error)
+										alert('다시 시도해 주세요.')
 									}
 								}}>
 								완료
