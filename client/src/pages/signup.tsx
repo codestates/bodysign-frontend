@@ -85,7 +85,7 @@ const Signup: NextPage<FormInput> = () => {
 					  })
 				router.push('/')
 			} catch (error) {
-				alert('구글 로그인을 다시 시도해 주세요.')
+				alert('소셜 회원가입에 실패했습니다.')
 			}
 		} else {
 			try {
@@ -117,7 +117,7 @@ const Signup: NextPage<FormInput> = () => {
 					  })
 				router.push('/')
 			} catch (error) {
-				alert('로그인을 다시 시도해 주세요.')
+				alert('회원가입에 실패했습니다.') 
 			}
 		}
 	}
