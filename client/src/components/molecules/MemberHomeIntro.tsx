@@ -10,7 +10,7 @@ const MemberHomeIntro = ({ userName, inbodies }: MemberHomeIntroProps) => {
 	let measuredDate
 	let changedBodyWeight
 
-	if (inbodies) {
+	if (inbodies && inbodies.length) {
 		if (inbodies.length > 1) isFirst = false
 		measuredDate = inbodies[0].measuredDate
 			.split('T')[0]
