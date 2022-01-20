@@ -97,7 +97,7 @@ const Chat: NextPage = () => {
 			formData.append('image', files[0], files[0].name)
 
 			await axios
-				.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}/imgs`, formData)
+				.post(`${process.env.NEXT_PUBLIC_SERVER_HOST}/imgs`, formData)
 				.then(res => {
 					const imgData = res.data
 					setImg(prev => {
