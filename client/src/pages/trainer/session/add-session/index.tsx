@@ -88,7 +88,7 @@ const AddSession: NextPage = () => {
 
 			<div className="mt-[2.4rem]">
 				<div className="text-[1.8rem] font-semibold">회원</div>
-				{mangedMemberInfo.userName === '' ? (
+				{/* {mangedMemberInfo.userName === '' ? (
 					<Link href="/trainer/session/add-session/select-member" passHref>
 						<button className="w-full h-[7rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white">
 							회원 선택
@@ -105,7 +105,7 @@ const AddSession: NextPage = () => {
 							{mangedMemberInfo.userName} 회원님
 						</div>
 					</div>
-				)}
+				)} */}
 			</div>
 
 			<div className="mt-[2.4rem]">
