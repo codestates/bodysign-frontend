@@ -1,0 +1,97 @@
+query Trainer($id: Int!) {
+	trainer(id: $id) {
+		id
+		email
+		userName
+		birthDate
+		phoneNumber
+		gender
+		users {
+			id
+			email
+			userName
+			birthDate
+			phoneNumber
+			gender
+			graduate
+			userCategoryId
+			sessionHistories {
+				id
+				date
+				costPerSession
+				totalCount
+				usedCount
+				commission
+				userId
+				user {
+					userName
+				}
+			}
+		}
+		sessions {
+			id
+			userId
+			trainerId
+			feedback
+			sentFeedback
+			completedSession
+			date
+			user {
+				id
+				email
+				userName
+				gender
+			}
+			sessionExercises {
+				name
+				sessionExerciseVolumes {
+					id
+					reps
+					sets
+					weight
+					seq
+				}
+			}
+		}
+		exerciseCategories {
+			id
+			name
+			trainerId
+			exercises {
+				id
+				name
+				exerciseCategoryId
+			}
+		}
+		userCategories {
+			id
+			name
+			trainerId
+			users {
+				id
+				email
+				userName
+				gender
+				graduate
+				sessionHistories {
+					id
+					date
+					costPerSession
+					totalCount
+					usedCount
+					commission
+				}
+			}
+			nonRegisteredUsers {
+				id
+				userName
+				phoneNumber
+				graduate
+				gender
+				userCategory {
+					name
+				}
+			}
+		}
+	}
+}

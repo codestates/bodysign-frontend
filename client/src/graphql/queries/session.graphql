@@ -1,0 +1,24 @@
+query Session($id: Int!) {
+	session(id: $id) {
+		id
+		userId
+		trainerId
+		feedback
+		sentFeedback
+		completedSession
+		date
+		sessionExercises {
+			id
+			name
+			sessionId
+			exerciseCategoryName
+			sessionExerciseVolumes {
+				id
+				reps
+				sets
+				weight
+				seq
+			}
+		}
+	}
+}

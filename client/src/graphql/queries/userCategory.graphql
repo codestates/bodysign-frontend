@@ -1,0 +1,7 @@
+query UserCategory($id: Int!) {
+	userCategory(id: $id) {
+		id
+		name
+		trainerId
+	}
+}

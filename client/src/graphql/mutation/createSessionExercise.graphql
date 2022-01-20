@@ -1,0 +1,12 @@
+mutation CreateSessionExercise(
+	$createSessionExerciseInput: CreateSessionExerciseInput!
+) {
+	createSessionExercise(
+		createSessionExerciseInput: $createSessionExerciseInput
+	) {
+		id
+		name
+		sessionId
+		exerciseCategoryName
+	}
+}

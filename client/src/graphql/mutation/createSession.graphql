@@ -1,0 +1,9 @@
+mutation CreateSession($createSessionInput: CreateSessionInput!) {
+	createSession(createSessionInput: $createSessionInput) {
+		id
+		userId
+		date
+		trainerId
+		feedback
+	}
+}

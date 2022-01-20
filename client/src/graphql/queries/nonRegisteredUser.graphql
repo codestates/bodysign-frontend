@@ -1,0 +1,10 @@
+query NonRegisteredUser($id: Int!) {
+	nonRegisteredUser(id: $id) {
+		id
+		userName
+		phoneNumber
+		graduate
+		gender
+		userCategoryId
+	}
+}

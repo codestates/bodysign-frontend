@@ -1,0 +1,7 @@
+mutation CreateExercise($createExerciseInput: CreateExerciseInput!) {
+	createExercise(createExerciseInput: $createExerciseInput) {
+		id
+		name
+		exerciseCategoryId
+	}
+}

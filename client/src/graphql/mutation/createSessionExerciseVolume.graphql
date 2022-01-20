@@ -1,0 +1,13 @@
+mutation CreateSessionExerciseVolume(
+	$createSessionExerciseVolumeInput: CreateSessionExerciseVolumeInput!
+) {
+	createSessionExerciseVolume(
+		createSessionExerciseVolumeInput: $createSessionExerciseVolumeInput
+	) {
+		id
+		reps
+		sets
+		weight
+		seq
+	}
+}

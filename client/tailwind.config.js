@@ -1,12 +1,17 @@
 module.exports = {
 	mode: 'jit',
-	purge: [
+	content: [
 		'./src/pages/**/*.{js,ts,jsx,tsx}',
 		'./src/components/**/*.{js,ts,jsx,tsx}'
 	],
-	darkMode: false, // or 'media' or 'class'
+	darkMode: 'media', // or 'media' or 'class'
 	theme: {
-		extend: {}
+		extend: {
+			fontFamily: {
+				IBM: ['IBM Plex Sans KR', 'sans-serif']
+			},
+			screens: { 'sm-max': { max: '640px' } }
+		}
 	},
 	variants: {
 		extend: {}
