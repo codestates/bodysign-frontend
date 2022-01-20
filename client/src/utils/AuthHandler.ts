@@ -11,7 +11,7 @@ const AuthHandler = async () => {
 
 	const getProfile = async () => {
 		axios
-			.get(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/profile`, {
+			.get(`${process.env.NEXT_PUBLIC_SERVER_HOST}/auth/profile`, {
 				headers: {
 					Authorization: `Bearer ${getCookies().accessToken}`
 				}
@@ -28,7 +28,7 @@ const AuthHandler = async () => {
 	const getAccessToken = async () => {
 		axios
 			.post(
-				`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/accessToken`,
+				`${process.env.NEXT_PUBLIC_SERVER_HOST}/auth/accessToken`,
 				{
 					refreshToken: getCookies().refreshToken
 				},
