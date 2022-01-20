@@ -91,12 +91,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 								})
 								.catch(function (error) {
 									// 여기는 auth/accessToken 요청에 대한 에러
-									alert('다시 로그인해 주세요.')
+									alert('다시 로그인 해주세요.')
 								})
 						}
 					})
 			} catch (error) {
-				window.location.href = process.env.NEXT_PUBLIC_CLIENT_HOST
+				alert('다시 로그인 해주세요.')
 			}
 		}
 	}, [router])
