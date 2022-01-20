@@ -1,3 +1,21 @@
+import { useReactiveVar } from '@apollo/client'
+import { io } from 'socket.io-client'
+import React, { useEffect, useState } from 'react'
+import { userDataVar } from '../../../graphql/vars'
+import useSessionStorage from '../../../hooks/useSessionStorage'
+
+const userData = useReactiveVar(userDataVar)
+const [chatTargetUserId, _] = useSessionStorage('chatTargetUserId')
+
+const socket = io(process.env.NEXT_PUBLIC_API_DOMAIN_SOCKET as string)
+useEffect(() => {
+	socket.emit('joinLounge', userData?.id)
+	socket.on('joinedLounge', data => {
+		// console.log(data)
+		// 배포 이후 소켓 통신에 문제가 없는지부터 확인.
+	})
+}, [socket])
+
 const PhotoAlbumIcon = () => {
 	return (
 		<svg
@@ -8,7 +26,7 @@ const PhotoAlbumIcon = () => {
 			stroke="currentColor"
 			onClick={() => {
 				socket.emit('leaveRoom', `${chatTargetUserId}|${userData?.id}`)
-				chatTargetUserIdVar(null)
+				// chatTargetUserIdVar(null)
 			}}>
 			<path
 				strokeLinecap="round"

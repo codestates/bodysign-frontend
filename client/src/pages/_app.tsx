@@ -54,7 +54,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 				// 액세스 토큰 전달해서 받아온 유저 정보를 userDataVar 에 저장
 				axios({
 					method: 'get',
-					url: 'process.env.NEXT_PUBLIC_SERVER_HOST/auth/profile',
+					url: `${process.env.NEXT_PUBLIC_SERVER_HOST}/auth/profile`,
 					headers: { Authorization: `Bearer ${getCookies().accessToken}` }
 				})
 					.then(function (res) {
@@ -64,8 +64,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 						if (err.request.status === 401) {
 							// 리프레쉬 토큰으로 액세스 토큰 요청하기
 							axios
-								.post(
-									'process.env.NEXT_PUBLIC_SERVER_HOST/auth/accessToken',
+								.post( 
+									`${process.env.NEXT_PUBLIC_SERVER_HOST}/auth/accessToken`,
 									{
 										refreshToken: getCookies().refreshToken
 									},
@@ -76,7 +76,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 								.then(function (res) {
 									axios({
 										method: 'get',
-										url: 'process.env.NEXT_PUBLIC_SERVER_HOST/auth/profile',
+										url: `${process.env.NEXT_PUBLIC_SERVER_HOST}/auth/profile`,
 										headers: {
 											Authorization: `Bearer ${getCookies().accessToken}`
 										}
@@ -91,12 +91,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 								})
 								.catch(function (error) {
 									// 여기는 auth/accessToken 요청에 대한 에러
-									alert('다시 로그인해 주세요.')
+									alert('다시 로그인 해주세요.')
 								})
 						}
 					})
 			} catch (error) {
-				window.location.href = process.env.NEXT_PUBLIC_CLIENT_HOST
+				alert('다시 로그인 해주세요.')
 			}
 		}
 	}, [router])

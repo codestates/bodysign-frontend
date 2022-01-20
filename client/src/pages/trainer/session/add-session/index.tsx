@@ -88,7 +88,7 @@ const AddSession: NextPage = () => {
 
 			<div className="mt-[2.4rem]">
 				<div className="text-[1.8rem] font-semibold">회원</div>
-				{mangedMemberInfo.userName === '' ? (
+				{mangedMemberInfo && mangedMemberInfo.userName === '' ? (
 					<Link href="/trainer/session/add-session/select-member" passHref>
 						<button className="w-full h-[7rem] mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white">
 							회원 선택
@@ -96,13 +96,13 @@ const AddSession: NextPage = () => {
 					</Link>
 				) : (
 					<div className="h-[7rem] flex items-center justify-center mt-[0.8rem] border text-[1.8rem] rounded-full shadow-md bg-white ">
-						{mangedMemberInfo.gender === 'male' ? (
+						{mangedMemberInfo && mangedMemberInfo.gender === 'male' ? (
 							<Image src="/man.png" width="25" height="25" alt="image" />
 						) : (
 							<Image src="/woman.png" width="25" height="25" alt="image" />
 						)}
 						<div className="ml-[0.8rem]">
-							{mangedMemberInfo.userName} 회원님
+							{mangedMemberInfo && mangedMemberInfo.userName} 회원님
 						</div>
 					</div>
 				)}

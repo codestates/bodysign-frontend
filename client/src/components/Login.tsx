@@ -38,7 +38,7 @@ const Login: NextPage = () => {
 		try {
 			axios
 				.post(
-					'process.env.NEXT_PUBLIC_SERVER_HOST/auth/localLogin',
+					`${process.env.NEXT_PUBLIC_SERVER_HOST}/auth/localLogin`,
 					{
 						email: form.email,
 						password: form.password
