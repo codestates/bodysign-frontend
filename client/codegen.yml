@@ -1,5 +1,5 @@
 overwrite: true
-schema: 'process.env.NEXT_PUBLIC_SERVER_HOST/graphql'
+schema: `${process.env.NEXT_PUBLIC_SERVER_HOST}/graphql`
 documents: 'src/**/*.graphql'
 generates:
   src/generated/graphql.tsx:
