@@ -61,7 +61,7 @@ const Login: NextPage = () => {
 	}
 
 	const onGoogleLogin = () => {
-		window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=process.env.NEXT_PUBLIC_SERVER_HOST/auth/google&response_type=token&scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&
+		window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_SERVER_HOST}/auth/google&response_type=token&scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&
 		include_granted_scopes=true`
 	}
 
