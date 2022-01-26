@@ -114,6 +114,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 					name="viewport"
 					content="width=device-width, height=device-height, initial-scale=1.0"
 				/>
+				<meta name="google-site-verification" content="oojpITtzz6oGU6-ExzRxY0VVCJkgJ-gJg_M0p6zeRDo" />
 			</Head>
 			<ApolloProvider client={client}>
 				<Layout>
